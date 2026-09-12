@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import sys
 import time
+import traceback
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, build_opener, ProxyHandler
 
@@ -103,7 +104,10 @@ def main():
                 else:raise TimeoutError('Health deadline exceeded')
                 observed={k.lower():v for k,v in health_headers.items()}
                 assert observed.get('x-nhfl-service-instance')==launch['instance_id'],observed
-                assert int(observed.get('x-nhfl-service-pid','0'))==process.pid
+                # The CLI may be launched through a Python wrapper on Windows.
+                # Bind the health response to the desktop service PID emitted
+                # by its startup handshake, not to that wrapper's PID.
+                assert int(observed.get('x-nhfl-service-pid','0'))==launch['pid']
                 launches.append({'cycle':cycle,'instance_id':launch['instance_id'],'pid':process.pid,'startup_seconds':round(time.monotonic()-start,3)})
                 paths=['/', '/nh-review','/api/runtime/ui-manifest','/api/runtime/release-scope','/ui-assets/nh-review.js','/ui-assets/nh-review.css','/ui-assets/brand/nh-banner.png','/brand-assets/assets/favicon/favicon.svg',f'/api/nh-review/status?as_of_date={AS_OF}']
                 for path in paths:
@@ -135,7 +139,10 @@ def main():
                 if args.browser and cycle==0:
                     browser_record=run_browser(origin,work,output.parent)
             except Exception as exc:
-                errors.append(f'{type(exc).__name__}: {exc}')
+                # Qualification failures must identify the failed acceptance
+                # assertion.  Bare AssertionError text otherwise turns a
+                # reproducible desktop regression into an unactionable gate.
+                errors.append(traceback.format_exc().strip())
                 break
             finally:
                 if process.poll() is None:
@@ -165,8 +172,12 @@ def run_browser(origin,work,evidence):
             page.locator('#as-of').fill(AS_OF)
             page.locator('#as-of').dispatch_event('change')
             page.locator('#question').fill('Review my child-support order and parenting-plan modification. What evidence is missing?')
+            page.locator('details > summary').click()
+            page.locator('#facts').fill('{"parenting":{"permanent_order":true}}')
             page.locator('#analyze').click()
-            page.wait_for_function('document.getElementById("export").disabled === false')
+            # Locator waits do not inject a string-evaluated predicate, which
+            # would be blocked by the production CSP during a real browser run.
+            page.locator('#export:not([disabled])').wait_for()
             assert page.locator('#results').inner_text().find('human review')>=0 or page.locator('#results').inner_text().find('blocked')>=0
             evidence.mkdir(parents=True,exist_ok=True)
             page.screenshot(path=str(evidence/'browser-desktop.png'))
@@ -177,7 +188,7 @@ def run_browser(origin,work,evidence):
             # Preserve the browser's compact serialization, rather than reordering JSON keys.
             assert page.evaluate('async () => { const a = document.querySelectorAll("#results .source button"); return a.length; }')>0
             page.locator('#results .source button:enabled').first.click()
-            page.wait_for_function('document.getElementById("source-text").textContent.length > 0')
+            page.locator('#source-text:not(:empty)').wait_for()
             assert 'not the official statute text' in page.locator('#source-notice').inner_text()
             page.locator('#close-source').click()
             page.locator('#question').fill('Changed input')

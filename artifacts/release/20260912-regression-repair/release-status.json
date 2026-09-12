@@ -10,6 +10,7 @@
   "attorney_reviewed": false,
   "official_original_sources_acquired": "partial_unreviewed_29_of_37_seed_responses",
   "frozen_executable_smoke": {"status": "pass", "artifact": "dist/windows-portable-v2/NHFamilyLawLLM/NHFamilyLawLLM.exe", "sha256": "E60394A48E478994DEB756088F79DC6CDFF24A38BA7DA964E34DA8F0488E8859"},
+  "source_browser_acceptance": {"status": "pass", "artifact": "dist/desktop-browser-qualification-final-2/qualification.json", "engine": "Chromium", "launches": 2, "checks": 20},
   "unsigned_msix": {"status": "pass", "artifact": "dist/store-v3/msix/NHFamilyLawLLM_8.0.10.0_x64.msix", "sha256": "884851AE888A92007A4C2F326E0AFA8F831B07A06F7F4048D563569FE42967A3", "audits": ["frozen_runtime_smoke", "private_data", "sealed_payload", "sealed_archive", "essential_size_budget"]},
   "windows_package_qualified": false,
   "signing_qualified": false
