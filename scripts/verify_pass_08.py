@@ -66,7 +66,12 @@ def main():
                 if name in names:require(archive.read(name)==(ROOT/'src'/name).read_bytes(), 'wheel source byte parity '+name)
             require(not any('/.git/' in name or name.lower().endswith(('.pfx','.p12','.ttf','.otf','.woff','.woff2')) for name in names), 'no private keys, git database or font files in wheel')
             metadata=archive.read(next(name for name in names if name.endswith('.dist-info/METADATA'))).decode()
-            require('\nVersion: '+VERSION+'\n' in metadata, 'wheel metadata version')
+            metadata_fields = {
+                line.partition(':')[0]: line.partition(':')[2].strip()
+                for line in metadata.splitlines()
+                if ':' in line
+            }
+            require(metadata_fields.get('Version') == VERSION, 'wheel metadata version')
             require('Name: nh-family-law-llm' in metadata or 'Name: nh_family_law_llm' in metadata,'wheel package identity')
             wheel_receipt={'filename':wheel.name,'sha256':hashlib.sha256(wheel.read_bytes()).hexdigest(),'bytes':wheel.stat().st_size,'members':len(names)}
     report={'pass':8,'status':'pass' if not errors else 'fail','scope':'source and wheel packaging only','check_count':len(checked),'checks':checked,'errors':errors,'wheel':wheel_receipt,'windows_qualified':False,'production_ready':False,'authority_promotions':0}
