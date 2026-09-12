@@ -79,3 +79,4 @@ def test_launcher_source_mentions_installed_corpus_library_controls() -> None:
     assert "Installed corpus library" in build_ui_source
     assert "Use selected corpus" in build_ui_source
     assert "Switch the active corpus here" in build_ui_source
+    assert "fictional NH sample (no personal info)" in build_ui_source

@@ -658,8 +658,33 @@ class NHFamilyLawLauncher(tk.Tk):
             justify="left",
         ).grid(row=1, column=0, columnspan=3, sticky="w", pady=(10, 0))
 
+        sample_card = ttk.LabelFrame(
+            start_tab,
+            text="Try the fictional New Hampshire sample first",
+            style="Card.TLabelframe",
+            padding=14,
+        )
+        sample_card.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        sample_card.columnconfigure(0, weight=1)
+        ttk.Label(
+            sample_card,
+            text=(
+                "Explore a clearly labeled fictional family-matter corpus before adding any personal records. "
+                "It contains only synthetic orientation material, never legal advice or a real person’s information."
+            ),
+            style="Muted.TLabel",
+            wraplength=820,
+            justify="left",
+        ).grid(row=0, column=0, sticky="w")
+        action_button(
+            sample_card,
+            "Build and open fictional NH sample (no personal info)",
+            "build_sample_case",
+            style_name="Primary.TButton",
+        ).grid(row=1, column=0, sticky="ew", pady=(10, 0))
+
         library_frame = ttk.LabelFrame(start_tab, text="Installed corpus library", style="Card.TLabelframe", padding=14)
-        library_frame.grid(row=2, column=0, sticky="ew")
+        library_frame.grid(row=3, column=0, sticky="ew")
         library_frame.columnconfigure(0, weight=1)
         ttk.Label(
             library_frame,
@@ -1036,7 +1061,7 @@ class NHFamilyLawLauncher(tk.Tk):
             return _case_corpus_builder().create_sample_case_build(
                 self.repo_root,
                 output_root=_case_workspace().default_workspace_root() / "sample_cases",
-                case_name="Example Family Matter",
+                case_name="Fictional New Hampshire Family Matter — Sample Only",
             )
 
         def _on_success(result: object) -> None:
@@ -1044,19 +1069,19 @@ class NHFamilyLawLauncher(tk.Tk):
             _case_workspace().append_case_ingest_history(
                 build_result.case_root,
                 mode="sample_case",
-                case_name="Example Family Matter",
+                case_name="Fictional New Hampshire Family Matter — Sample Only",
                 source_roots_added=_case_workspace().read_case_source_roots(build_result.case_root),
                 cumulative_source_roots=_case_workspace().read_case_source_roots(build_result.case_root),
-                notes="Neutral sample case for orientation and testing.",
+                notes="Clearly fictional New Hampshire sample for orientation and testing; no personal information.",
             )
             self._set_case_root(
                 build_result.case_root,
-                "Built a neutral sample case corpus and refreshed its portal, indexes, and packages.",
+                "Built the fictional NH sample corpus. It is active now; explore it before adding personal records.",
             )
 
         self._run_case_build_async(
-            action_label="Build Neutral Sample Corpus",
-            progress_message="Building the neutral sample corpus in the background. The launcher will stay responsive.",
+            action_label="Build fictional NH sample corpus",
+            progress_message="Building the fictional NH sample in the background. The launcher will stay responsive.",
             worker=_worker,
             on_success=_on_success,
         )
