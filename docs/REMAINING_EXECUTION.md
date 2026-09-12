@@ -10,6 +10,6 @@
 | R10-01 | Acquire and inventory official NH original sources | active | — | Requires bounded official-source crawl and substantive review; no originals have been promoted. |
 | R10-02 | Case-law collection and retrieval integration | pending | — | Depends on R10-01 source/provenance inventory. |
 | R11-01 | Independent NH legal-review packet and attorney sign-off | pending external gate | — | Engineering packet may be prepared; attorney review cannot be self-certified. |
-| R12-01 | Clean dependency resolution and full Windows suite | active | — | Repository-local clean environment in progress. |
+| R12-01 | Clean dependency resolution and full Windows suite | active | `dist/clean-dependency-env` | Native Windows Python 3.14.3 clean install of `.[api,dev]` and `pip check` passed; full-suite reconciliation remains. |
 | R12-02 | Browser, frozen executable, installer/MSIX, signing and clean-machine qualification | pending | — | Depends on available tooling and approved signing identity. |
 | R12-03 | Assemble release archive and reconcile final evidence | pending | — | Only after current engineering results are collected. |

@@ -4,6 +4,8 @@
   "status": "blocked_rc",
   "scope": "reported regression repair",
   "targeted_tests": {"passed": 34, "failed": 0},
+  "clean_windows_dependencies": {"python": "3.14.3", "install": "pass", "pip_check": "pass", "pip_audit": "no known vulnerabilities; local project itself not published to PyPI"},
+  "wheel_packaging_gate": {"status": "pass", "checks": 83, "sha256": "65230a31ac176d74be3ab5c0a9079c693374a8eae8896988588792153ac12395"},
   "synthetic_evaluations": true,
   "attorney_reviewed": false,
   "official_original_sources_acquired": false,
