@@ -80,6 +80,20 @@ def list_registered_case_roots():
     return _case_library().list_registered_case_roots()
 
 
+def mountain_token_logo_path(repo_root: Path) -> Path:
+    """Return the original, token-inspired desktop mark bundled with the app."""
+
+    return (
+        repo_root
+        / "assets"
+        / "brand"
+        / "nh_family_law_llm_brand_kit"
+        / "assets"
+        / "logo"
+        / "nh-family-law-llm-mountain-token-v1.png"
+    )
+
+
 ACTION_SPECS = (
     ("Open Local AI Chat", "open_local_ai_chat"),
     ("Create New Case Corpus", "create_new_case"),
@@ -578,20 +592,37 @@ class NHFamilyLawLauncher(tk.Tk):
 
         brand = tk.Frame(header, bg="#1f2933")
         brand.grid(row=0, column=1, sticky="e")
+        brand_details = tk.Frame(brand, bg="#1f2933")
+        brand_details.pack(side="right", anchor="e")
         tk.Label(
-            brand,
+            brand_details,
             text=APP_DISPLAY_NAME,
             bg="#1f2933",
             fg="#ffffff",
             font=("Segoe UI", 12, "bold"),
         ).pack(anchor="e")
         tk.Label(
-            brand,
+            brand_details,
             text=f"v{VERSION} · local-only",
             bg="#1f2933",
             fg="#cbd5df",
             font=("Segoe UI", 9),
         ).pack(anchor="e")
+        self.mountain_token_image = None
+        logo_path = mountain_token_logo_path(self.repo_root)
+        if logo_path.is_file():
+            try:
+                original_logo = tk.PhotoImage(file=str(logo_path))
+                self.mountain_token_image = original_logo.subsample(18, 18)
+                tk.Label(
+                    brand,
+                    image=self.mountain_token_image,
+                    bg="#1f2933",
+                    takefocus=False,
+                ).pack(side="right", padx=(0, 10))
+            except tk.TclError:
+                # Branding must never keep the local, offline application from opening.
+                self.mountain_token_image = None
 
         notebook = ttk.Notebook(shell)
         notebook.grid(row=1, column=0, sticky="nsew")

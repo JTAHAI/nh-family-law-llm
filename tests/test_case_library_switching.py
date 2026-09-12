@@ -80,3 +80,12 @@ def test_launcher_source_mentions_installed_corpus_library_controls() -> None:
     assert "Use selected corpus" in build_ui_source
     assert "Switch the active corpus here" in build_ui_source
     assert "fictional NH sample (no personal info)" in build_ui_source
+
+
+def test_launcher_bundles_the_original_mountain_token_mark() -> None:
+    from app import launcher
+
+    logo_path = launcher.mountain_token_logo_path(launcher.REPO_ROOT)
+    assert logo_path.name == "nh-family-law-llm-mountain-token-v1.png"
+    assert logo_path.is_file()
+    assert "mountain_token_image" in inspect.getsource(launcher.NHFamilyLawLauncher._build_ui)
