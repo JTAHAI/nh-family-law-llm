@@ -27,6 +27,18 @@ SPEC.loader.exec_module(runner)
 NOW = datetime(2026, 8, 28, tzinfo=timezone.utc)
 
 
+@pytest.fixture(autouse=True)
+def synthetic_application_root(tmp_path, monkeypatch):
+    """Keep fixture authority data outside a distinct synthetic app root.
+
+    The test data stays beneath pytest's repository-local ``dist`` basetemp,
+    while production continues to use the actual source root as its boundary.
+    """
+    app_root = tmp_path / "synthetic-application-root"
+    app_root.mkdir()
+    monkeypatch.setattr(runner, "ROOT", app_root)
+
+
 def write_json(path, payload):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload), encoding="utf-8")

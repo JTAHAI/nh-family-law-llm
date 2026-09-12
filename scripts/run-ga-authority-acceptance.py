@@ -22,6 +22,7 @@ from urllib.parse import urlsplit
 from zipfile import BadZipFile, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
+SOURCE_ROOT = ROOT
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -197,11 +198,11 @@ def source_audit(build: PinnedBuild, now: datetime) -> tuple[dict, list[str]]:
         or not all(isinstance(row, dict) for row in rows)
     ):
         raise EvidenceError("source_manifest_invalid")
-    policy = strict_json(read_regular(ROOT / "configs/nh_authority_build_policy.json"))
+    policy = strict_json(read_regular(SOURCE_ROOT / "configs/nh_authority_build_policy.json"))
     # Reuse canonical field/parser checks, without following mutable snapshot
     # paths. Pinned snapshots were independently verified above.
     auditor = AuthorityBuildAuditor(
-        project_root=ROOT,
+        project_root=SOURCE_ROOT,
         data_root=build.root,
         policy={**policy, "require_snapshot_files_exist": False},
     )
@@ -332,7 +333,7 @@ def verifier_contracts() -> dict:
             [text],
         ),
         ("stale", text, ["stale"], ["nh"], [text]),
-        ("jurisdiction_mismatch", text, ["verified_official_nh"], ["new_hampshire"], [text]),
+        ("jurisdiction_mismatch", text, ["verified_official_nh"], ["maine"], [text]),
         ("not_verifiable", text, ["unknown"], ["nh"], []),
     ]:
         result = ClaimSupportVerifier().verify(
@@ -514,7 +515,7 @@ def git_identity() -> dict:
         }.items():
             values[name] = (
                 subprocess.check_output(
-                    ["git", *command], cwd=ROOT, stderr=subprocess.DEVNULL, timeout=15
+                    ["git", *command], cwd=SOURCE_ROOT, stderr=subprocess.DEVNULL, timeout=15
                 )
                 .decode()
                 .strip()

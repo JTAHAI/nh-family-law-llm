@@ -1,0 +1,12 @@
+{
+  "schema": "nhfl.release-status.v1",
+  "generated_at": "2026-09-12T00:00:00-04:00",
+  "status": "blocked_rc",
+  "scope": "reported regression repair",
+  "targeted_tests": {"passed": 34, "failed": 0},
+  "synthetic_evaluations": true,
+  "attorney_reviewed": false,
+  "official_original_sources_acquired": false,
+  "windows_package_qualified": false,
+  "signing_qualified": false
+}

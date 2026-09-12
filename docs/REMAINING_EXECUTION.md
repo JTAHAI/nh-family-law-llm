@@ -1,0 +1,15 @@
+# Remaining execution ledger
+
+| ID | Task | Status | Changed files | Evidence / next dependency |
+| --- | --- | --- | --- | --- |
+| R9-01 | Establish local import checkpoint | complete | `.git/` | `98ddfff` is the ZIP import checkpoint; original Git history was not supplied. |
+| R9-02 | Restore missing conversation engineering evaluations | complete | `eval_data/conversation/nh_conversation_eval_cases.json` | Synthetic, non-attorney-reviewed cases include missing facts, safety, interstate scope, and prompt injection. |
+| R9-03 | Restore missing user-journey engineering evaluations | complete | `eval_data/user_journeys/nh_user_journey_eval_cases.json` | 27 synthetic journeys; all are engineering fixtures, not gold legal answers. |
+| R9-04 | Repair authority acceptance fixture boundary | complete | `scripts/run-ga-authority-acceptance.py`, `tests/test_current_authority_acceptance.py` | Synthetic app and authority roots are separate under repository `dist`; production boundary remains source-root based. |
+| R9-05 | Reproduce and resolve reported 16 failures | complete | files above | 34 targeted tests passed on Windows; receipt under `artifacts/release/20260912-regression-repair/`. |
+| R10-01 | Acquire and inventory official NH original sources | active | — | Requires bounded official-source crawl and substantive review; no originals have been promoted. |
+| R10-02 | Case-law collection and retrieval integration | pending | — | Depends on R10-01 source/provenance inventory. |
+| R11-01 | Independent NH legal-review packet and attorney sign-off | pending external gate | — | Engineering packet may be prepared; attorney review cannot be self-certified. |
+| R12-01 | Clean dependency resolution and full Windows suite | active | — | Repository-local clean environment in progress. |
+| R12-02 | Browser, frozen executable, installer/MSIX, signing and clean-machine qualification | pending | — | Depends on available tooling and approved signing identity. |
+| R12-03 | Assemble release archive and reconcile final evidence | pending | — | Only after current engineering results are collected. |

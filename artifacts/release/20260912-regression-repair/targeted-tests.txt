@@ -1,0 +1,4 @@
+Command: python -m pytest tests/test_current_authority_acceptance.py tests/test_conversation_regression_cases.py tests/test_user_journey_evals.py tests/test_conversation_quality_regression.py --basetemp dist/pytest-regression-repair-3 -ra
+Platform: Windows PowerShell host
+Result: 34 passed in 7.89s
+Scope: reported missing evaluation datasets and authority-acceptance boundary/verifier regressions.
