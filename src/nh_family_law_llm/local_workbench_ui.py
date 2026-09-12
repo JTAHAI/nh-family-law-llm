@@ -10,7 +10,7 @@ from .version import BUILD_NUMBER, PACKAGE_VERSION, UI_FOOTER_LABEL, UI_PASS_MAR
 
 _EDITION_COPY = {
     "personal": {
-        "label": "Personal edition",
+        "label": "New Hampshire Family Law LLM",
         "version": VERSION,
         "track": "Local family workspace",
         "scope": "Private matter tools stay local to this device.",
@@ -78,7 +78,7 @@ def render_workbench_html(*, edition: str = "personal") -> str:
 
 
 def render_local_workbench_html() -> str:
-    """Return the Personal Edition local workbench shell."""
+    """Return the local New Hampshire workbench shell."""
 
     return render_workbench_html(edition="personal")
 

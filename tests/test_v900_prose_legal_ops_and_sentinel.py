@@ -11,7 +11,8 @@ def test_personal_and_public_edition_shells_are_explicit() -> None:
     public = render_public_workbench_html()
 
     assert 'data-edition="personal"' in personal
-    assert "Personal edition" in personal
+    assert "New Hampshire Family Law LLM" in personal
+    assert "Personal edition" not in personal
     assert 'data-edition="public"' in public
     assert "Public edition" in public
     from nh_family_law_llm.version import VERSION
