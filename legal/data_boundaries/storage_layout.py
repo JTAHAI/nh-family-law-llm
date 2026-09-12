@@ -87,9 +87,19 @@ def ensure_external_authority_root(
     *,
     project_root: Path | str = ".",
     extra_forbidden_roots: tuple[Path | str, ...] = (),
+    allow_repository_dist_acquisition: bool = False,
 ) -> Path:
     root = Path(path).expanduser().resolve()
-    if is_inside_project_repo(root, project_root):
+    project = Path(project_root).resolve()
+    approved_acquisition_root = project / "dist" / "authority-acquisition"
+    try:
+        root.relative_to(approved_acquisition_root)
+        is_approved_acquisition_workspace = True
+    except ValueError:
+        is_approved_acquisition_workspace = False
+    if is_inside_project_repo(root, project_root) and not (
+        allow_repository_dist_acquisition and is_approved_acquisition_workspace
+    ):
         raise ValueError("authority data root must be outside the source repository")
     forbidden_roots = list(extra_forbidden_roots)
     if os.name == "nt":

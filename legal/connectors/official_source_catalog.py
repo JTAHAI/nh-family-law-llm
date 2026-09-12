@@ -34,7 +34,7 @@ def _parser_for(row: dict[str, Any], url: str) -> str:
 
     kind = str(row.get("authority_type") or row.get("source_class") or "").strip().lower()
     is_pdf = _content_type(url, row) == "application/pdf"
-    if kind in {"statute", "session_law", "constitution"}:
+    if kind in {"statute", "session_law", "session_law_index", "constitution"}:
         return "nh_general_court_section" if not is_pdf else "pdf_snapshot"
     if kind in {
         "court_rule",
@@ -44,9 +44,9 @@ def _parser_for(row: dict[str, Any], url: str) -> str:
         "administrative_order",
     }:
         return "nh_rules_text" if is_pdf else "nh_rules_index"
-    if kind in {"court_form", "form"}:
+    if kind in {"court_form", "form", "form_index"}:
         return "nh_form_text" if is_pdf else "nh_forms_index"
-    if kind in {"case", "opinion", "case_law"}:
+    if kind in {"case", "opinion", "case_law", "case_law_index"}:
         return "nh_supreme_court_opinion_text" if is_pdf else "nh_supreme_court_opinion_index"
     return "pdf_snapshot" if is_pdf else "html_snapshot"
 

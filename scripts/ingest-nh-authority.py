@@ -112,6 +112,14 @@ def main() -> int:
         help="External data root. Defaults outside the source repository.",
     )
     parser.add_argument(
+        "--repository-dist-workspace",
+        action="store_true",
+        help=(
+            "Permit only the repository-owned dist/authority-acquisition workspace. "
+            "This is for bounded acquisition qualification; production data roots remain external."
+        ),
+    )
+    parser.add_argument(
         "--target-id",
         action="append",
         default=[],
@@ -191,7 +199,11 @@ def main() -> int:
 
     project_root = ROOT.resolve()
     try:
-        data_root = ensure_external_authority_root(args.data_root, project_root=project_root)
+        data_root = ensure_external_authority_root(
+            args.data_root,
+            project_root=project_root,
+            allow_repository_dist_acquisition=args.repository_dist_workspace,
+        )
     except ValueError as exc:
         raise SystemExit(
             "Refusing to ingest official authority into the source repository: "
