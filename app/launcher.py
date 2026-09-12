@@ -94,6 +94,39 @@ def mountain_token_logo_path(repo_root: Path) -> Path:
     )
 
 
+def make_scrollable_tab(parent: ttk.Notebook) -> tuple[ttk.Frame, ttk.Frame]:
+    """Create a notebook tab whose content remains reachable on short displays."""
+
+    tab = ttk.Frame(parent, style="App.TFrame")
+    tab.columnconfigure(0, weight=1)
+    tab.rowconfigure(0, weight=1)
+    canvas = tk.Canvas(tab, background="#eee8de", highlightthickness=0, borderwidth=0)
+    scrollbar = ttk.Scrollbar(tab, orient="vertical", command=canvas.yview)
+    canvas.configure(yscrollcommand=scrollbar.set)
+    canvas.grid(row=0, column=0, sticky="nsew")
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    content = ttk.Frame(canvas, style="App.TFrame", padding=4)
+    content.columnconfigure(0, weight=1)
+    window = canvas.create_window((0, 0), window=content, anchor="nw")
+
+    def refresh_scroll_region(_event=None) -> None:
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    def fit_content_width(event) -> None:
+        canvas.itemconfigure(window, width=event.width)
+
+    def scroll_wheel(event) -> str:
+        if event.delta:
+            canvas.yview_scroll(-int(event.delta / 120), "units")
+        return "break"
+
+    content.bind("<Configure>", refresh_scroll_region)
+    canvas.bind("<Configure>", fit_content_width)
+    canvas.bind("<MouseWheel>", scroll_wheel)
+    content.bind("<MouseWheel>", scroll_wheel)
+    return tab, content
+
+
 ACTION_SPECS = (
     ("Open Local AI Chat", "open_local_ai_chat"),
     ("Create New Case Corpus", "create_new_case"),
@@ -627,14 +660,14 @@ class NHFamilyLawLauncher(tk.Tk):
         notebook = ttk.Notebook(shell)
         notebook.grid(row=1, column=0, sticky="nsew")
 
-        start_tab = ttk.Frame(notebook, style="App.TFrame", padding=4)
-        review_tab = ttk.Frame(notebook, style="App.TFrame", padding=4)
-        support_tab = ttk.Frame(notebook, style="App.TFrame", padding=4)
+        start_tab, start_content = make_scrollable_tab(notebook)
+        review_tab, review_content = make_scrollable_tab(notebook)
+        support_tab, support_content = make_scrollable_tab(notebook)
         notebook.add(start_tab, text="Start here")
         notebook.add(review_tab, text="Review & export")
         notebook.add(support_tab, text="Support & tools")
 
-        for tab in (start_tab, review_tab, support_tab):
+        for tab in (start_content, review_content, support_content):
             tab.columnconfigure(0, weight=1)
 
         def action_button(parent: tk.Misc, label: str, method_name: str, *, style_name: str = "Action.TButton") -> ttk.Button:
@@ -642,7 +675,7 @@ class NHFamilyLawLauncher(tk.Tk):
             self.action_buttons[method_name] = button
             return button
 
-        start_card = ttk.Frame(start_tab, style="Card.TFrame", padding=18)
+        start_card = ttk.Frame(start_content, style="Card.TFrame", padding=18)
         start_card.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         start_card.columnconfigure(0, weight=1)
         ttk.Label(
@@ -665,7 +698,7 @@ class NHFamilyLawLauncher(tk.Tk):
             row=2, column=0, sticky="ew"
         )
 
-        quick = ttk.LabelFrame(start_tab, text="Matter setup", style="Card.TLabelframe", padding=14)
+        quick = ttk.LabelFrame(start_content, text="Matter setup", style="Card.TLabelframe", padding=14)
         quick.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         for idx in range(3):
             quick.columnconfigure(idx, weight=1)
@@ -690,7 +723,7 @@ class NHFamilyLawLauncher(tk.Tk):
         ).grid(row=1, column=0, columnspan=3, sticky="w", pady=(10, 0))
 
         sample_card = ttk.LabelFrame(
-            start_tab,
+            start_content,
             text="Try the fictional New Hampshire sample first",
             style="Card.TLabelframe",
             padding=14,
@@ -714,7 +747,7 @@ class NHFamilyLawLauncher(tk.Tk):
             style_name="Primary.TButton",
         ).grid(row=1, column=0, sticky="ew", pady=(10, 0))
 
-        library_frame = ttk.LabelFrame(start_tab, text="Installed corpus library", style="Card.TLabelframe", padding=14)
+        library_frame = ttk.LabelFrame(start_content, text="Installed corpus library", style="Card.TLabelframe", padding=14)
         library_frame.grid(row=3, column=0, sticky="ew")
         library_frame.columnconfigure(0, weight=1)
         ttk.Label(
@@ -736,7 +769,7 @@ class NHFamilyLawLauncher(tk.Tk):
         ttk.Label(library_frame, textvariable=self.case_root_var, style="Muted.TLabel", wraplength=820).grid(row=3, column=0, columnspan=4, sticky="w", pady=(12, 2))
         ttk.Label(library_frame, textvariable=self.case_summary_var, style="Body.TLabel", wraplength=820, justify="left").grid(row=4, column=0, columnspan=4, sticky="w")
 
-        review_intro = ttk.Frame(review_tab, style="Card.TFrame", padding=16)
+        review_intro = ttk.Frame(review_content, style="Card.TFrame", padding=16)
         review_intro.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         ttk.Label(review_intro, text="Review the active matter", style="Body.TLabel", font=("Segoe UI", 14, "bold")).pack(anchor="w")
         ttk.Label(
@@ -747,7 +780,7 @@ class NHFamilyLawLauncher(tk.Tk):
             justify="left",
         ).pack(anchor="w", pady=(5, 0))
 
-        review_grid = ttk.LabelFrame(review_tab, text="Review portals and role packages", style="Card.TLabelframe", padding=14)
+        review_grid = ttk.LabelFrame(review_content, text="Review portals and role packages", style="Card.TLabelframe", padding=14)
         review_grid.grid(row=1, column=0, sticky="ew", pady=(0, 10))
         for idx in range(2):
             review_grid.columnconfigure(idx, weight=1)
@@ -766,7 +799,7 @@ class NHFamilyLawLauncher(tk.Tk):
                 row=idx // 2, column=idx % 2, sticky="ew", padx=(0 if idx % 2 == 0 else 8, 0), pady=(0 if idx < 2 else 8, 0)
             )
 
-        proof_grid = ttk.LabelFrame(review_tab, text="Proof and export", style="Card.TLabelframe", padding=14)
+        proof_grid = ttk.LabelFrame(review_content, text="Proof and export", style="Card.TLabelframe", padding=14)
         proof_grid.grid(row=2, column=0, sticky="ew")
         for idx in range(3):
             proof_grid.columnconfigure(idx, weight=1)
@@ -777,7 +810,7 @@ class NHFamilyLawLauncher(tk.Tk):
         )):
             action_button(proof_grid, label, method_name).grid(row=0, column=idx, sticky="ew", padx=(0 if idx == 0 else 8, 0))
 
-        support_card = ttk.LabelFrame(support_tab, text="Support and local runtime", style="Card.TLabelframe", padding=14)
+        support_card = ttk.LabelFrame(support_content, text="Support and local runtime", style="Card.TLabelframe", padding=14)
         support_card.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         for idx in range(2):
             support_card.columnconfigure(idx, weight=1)
@@ -792,7 +825,7 @@ class NHFamilyLawLauncher(tk.Tk):
                 row=idx // 2, column=idx % 2, sticky="ew", padx=(0 if idx % 2 == 0 else 8, 0), pady=(0 if idx < 2 else 8, 0)
             )
         ttk.Label(
-            support_tab,
+            support_content,
             text=STORE_MISSION_TAGLINE,
             style="Muted.TLabel",
             wraplength=820,

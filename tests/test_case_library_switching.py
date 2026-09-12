@@ -89,3 +89,13 @@ def test_launcher_bundles_the_original_mountain_token_mark() -> None:
     assert logo_path.name == "nh-family-law-llm-mountain-token-v1.png"
     assert logo_path.is_file()
     assert "mountain_token_image" in inspect.getsource(launcher.NHFamilyLawLauncher._build_ui)
+
+
+def test_launcher_uses_scrollable_tabs_for_short_desktop_windows() -> None:
+    from app import launcher
+
+    source = inspect.getsource(launcher.make_scrollable_tab)
+    build_ui_source = inspect.getsource(launcher.NHFamilyLawLauncher._build_ui)
+    assert "ttk.Scrollbar" in source
+    assert "canvas.yview" in source
+    assert "make_scrollable_tab(notebook)" in build_ui_source
