@@ -1,0 +1,58 @@
+New Hampshire Family Law LLM v8.0.2
+
+Maintenance package: browser-session private-record chat no longer requires an
+unrelated authority store to initialize. Legal-source admission remains intact.
+Product version 8.0.2; Microsoft Store package target 8.0.2.0; build 55.
+Build smoke runs once and cleans its owned fictional runtime profile.
+Research models remain excluded. Build, test and frozen-UI evidence do not
+substitute for installed-package, WACK, legal-quality or Enterprise qualification.
+
+New Hampshire Family Law LLM v8.0.1
+
+Maintenance package: source-bound specialist guards, bounded worker memory,
+reliable cancellation, source/evidence traceability, and build containment.
+Product version 8.0.1; Microsoft Store package target 8.0.1.0.
+New research adapters are excluded pending passing evaluation and admission.
+Package, installed-app, attorney, pilot, and Enterprise claims require their
+own recorded evidence; this version entry does not assert them.
+
+New Hampshire Family Law LLM v8.0.0
+Current completed implementation pass number: 66
+Seven-pass roadmap position: completed; post-roadmap v8 hardening checkpoint
+
+Local workbench expansion, faster source-backed chat, and interaction hardening
+
+- Product version 8.0.0; Microsoft Store manifest target 8.0.0.0.
+- Added canonical, matter-scoped Add-on Studio and Productivity Studio verticals with encrypted local state, audit receipts, source drill-down, and review-required outputs.
+- Expanded the chat-first workbench with streaming, correction, comparison, question decomposition, fact pins, temporal checks, authority-conflict checks, and collapsible supporting surfaces.
+- Added stronger contrast, keyboard and focus behavior, responsive panel collapse, and modern chat layout modes.
+- Preserved fail-closed filing, privacy, matter-isolation, and local-network boundaries.
+- v8 Store qualification, attorney review, controlled pilot evidence, and Enterprise GA remain separate external gates.
+
+New Hampshire Family Law LLM v7.0.0
+
+Verified scope, official-source acceptance, and fail-closed release hardening
+
+- Product version 7.0.0; Microsoft Store manifest target 7.0.0.0.
+- Retained 16 source/frozen-runtime-verified public capabilities and hid incomplete slices 21-44.
+- Added admitted external authority generations with exact source, citation, quote, and claim verification.
+- Consolidated final-like outputs behind the canonical filing gate; the 16-case release set has zero false passes.
+- Hardened Local-only networking, matter isolation, untrusted-document handling, privacy, audit, and startup behavior.
+- Built and audited the self-contained x64 MSIX without private matters or authority data.
+- Store qualification remains blocked pending isolated clean installation and WACK; no Store certification or Enterprise GA is claimed.
+
+Historical v5.2.0 summary
+
+Answer-first evidence, protected document drafting, and tracked Word review
+
+- Product version 5.2.0; Microsoft Store manifest target 5.2.0.0.
+- Moved answer-specific evidence and clickable source actions into the large main chat response.
+- Added an in-app Documents & Drafting workspace with answer-to-draft and record-to-draft actions.
+- Added immutable first revisions, optimistic concurrency, line-by-line review, one-use confirmation capabilities, revision history, and a hash-chained local audit log.
+- Added two-phase recoverable soft deletion and fail-closed audit-chain enforcement.
+- Added review-required TXT, Markdown, and Word exports without overwriting imported evidence.
+- Added MIT-licensed docx-editor integration for hash-anchored paragraphs, tracked changes, comments, and new-copy-only Word output.
+- Added explicit credit and retained MIT notices for Lê Minh Hiếu/Paparusi and Pablo Speciale.
+- Hardened loopback Host/origin/body filtering, capability token concurrency, and bounded record-open caching.
+- Added no automatic network access, shell execution, executable plugin loader, or autonomous destructive document permission.
+- All output remains local-first, source-grounded, review-required, not filing-ready, and not legal advice.

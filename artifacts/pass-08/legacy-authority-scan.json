@@ -1,0 +1,18 @@
+{
+  "allowed_provenance_paths": [
+    "CHANGELOG.md",
+    "LEGACY_AUTHORITY_SCAN.md",
+    "MIGRATION_REPORT.md",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "docs/MAINE_TO_NH_CROSSWALK.md",
+    "docs/PASS_01_CODE_REPAIR.md",
+    "docs/PASS_02_NH_AUTHORITY_ELIMINATION.md",
+    "docs/v3/PASS_00_BASELINE_RECONCILIATION.md",
+    "scripts/audit_nh_authorities.py",
+    "scripts/scan_for_maine_authority.py"
+  ],
+  "finding_count": 0,
+  "findings": [],
+  "ok": true
+}

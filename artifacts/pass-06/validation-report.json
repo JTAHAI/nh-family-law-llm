@@ -1,0 +1,126 @@
+{
+  "schema": "nh_family_law_llm.pass06_validation.v1",
+  "generated_at": "2026-09-11T21:16:08Z",
+  "release": {
+    "version": "8.0.8",
+    "package_version": "8.0.8.0",
+    "build_number": 60,
+    "branch": "pass-06-nh-legal-behavior",
+    "feature_commit": "48ddddbf7003bee1d27b0b616bfd8c14fd5e5b9c",
+    "release_type": "source_legal_behavior_checkpoint"
+  },
+  "authority": {
+    "manifest_records": 76,
+    "current_verified": 37,
+    "future_effective_pending": 2,
+    "promotions_in_pass": 0,
+    "uifsa_status": "source_seed_unverified_fail_closed"
+  },
+  "validation": {
+    "source_checks": [
+      {
+        "name": "compile",
+        "returncode": 0,
+        "duration_seconds": 1.171,
+        "output": ""
+      },
+      {
+        "name": "pass04",
+        "returncode": 0,
+        "duration_seconds": 1.3,
+        "output": "{\n  \"ok\": true,\n  \"current_verified\": 37,\n  \"future_pending\": 2,\n  \"total\": 76,\n  \"embedded_package_copies\": 2,\n  \"as_of\": \"2026-09-11\"\n}"
+      },
+      {
+        "name": "pass06",
+        "returncode": 0,
+        "duration_seconds": 1.37,
+        "output": "{\n  \"ok\": true,\n  \"version\": \"8.0.8\",\n  \"package_version\": \"8.0.8.0\",\n  \"build_number\": 60,\n  \"authority_total\": 76,\n  \"current_verified\": 37,\n  \"future_effective_pending\": 2,\n  \"authority_promotions\": 0,\n  \"example_status\": \"review_required\",\n  \"example_routes\": 3,\n  \"future_effective_gate\": \"pass\"\n}"
+      },
+      {
+        "name": "maine",
+        "returncode": 0,
+        "duration_seconds": 9.922,
+        "output": "PASS: no active Maine legal-authority markers found outside approved provenance/history files."
+      },
+      {
+        "name": "legacy",
+        "returncode": 0,
+        "duration_seconds": 1.553,
+        "output": "PASS: no inherited runtime identifiers outside compatibility lane"
+      },
+      {
+        "name": "diff",
+        "returncode": 0,
+        "duration_seconds": 0.016,
+        "output": ""
+      },
+      {
+        "name": "status",
+        "returncode": 0,
+        "duration_seconds": 0.062,
+        "output": ""
+      }
+    ],
+    "core_regression": {
+      "tests": 44,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 7.319
+    },
+    "version_ui_regression": {
+      "tests": 85,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 6.803
+    },
+    "collection": {
+      "files": 532,
+      "tests": 2643
+    },
+    "full_suite": {
+      "status": "incomplete",
+      "claim": "not_passed",
+      "note": "A bounded full-suite attempt did not complete. Collection succeeded; no full-suite pass is claimed."
+    },
+    "ruff": {
+      "status": "unavailable",
+      "detail": "python -m ruff --version returned No module named ruff in this runtime."
+    },
+    "privacy": {
+      "ok": true,
+      "patterns": [
+        "screenshot_filename",
+        "phone_digits",
+        "phone_formatted",
+        "private_file_id"
+      ],
+      "hits": {
+        "screenshot_filename": [],
+        "phone_digits": [],
+        "phone_formatted": [],
+        "private_file_id": []
+      }
+    }
+  },
+  "behavior_contract": {
+    "review_required": true,
+    "filing_ready": false,
+    "legal_advice": false,
+    "child_support_calculator_enabled": false,
+    "unilateral_order_noncompliance_allowed": false,
+    "guaranteed_outcomes_allowed": false,
+    "forms_require_current_official_verification": true
+  },
+  "packaging_boundary": {
+    "source_wheel_smoke_completed_before_receipt": true,
+    "windows_frozen_runtime_validated": false,
+    "msix_validated": false,
+    "wack_validated": false
+  },
+  "known_compatibility_debt": [
+    "Some inherited X-MFLL-* transport headers remain on legacy endpoints. They are not legal-authority identifiers and are scheduled for a later compatibility migration.",
+    "Original-source acquisition remains incomplete for the broad NH court-rule, form, agency-rule, and opinion corpus."
+  ]
+}

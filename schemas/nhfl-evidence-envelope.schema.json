@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.nh-family-law-llm.local/evidence/v1.json",
+  "title": "NH Family Law LLM Evidence Envelope",
+  "type": "object",
+  "required": [
+    "protocol",
+    "version",
+    "jurisdiction",
+    "kind",
+    "payload"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "nhfl"
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "jurisdiction": {
+      "const": "NH"
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority_as_of": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

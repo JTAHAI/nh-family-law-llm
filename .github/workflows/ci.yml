@@ -1,0 +1,51 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  hygiene-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Local doctor
+        run: python scripts/doctor-local-repo.py --repo-root . --json
+      - name: Public source pre-push gate
+        run: python scripts/run-public-source-preflight.py --repo-root . --require-ready --output docs/external-evidence/public_source_pre_push_gate_ci.json
+      - name: Install
+        run: python -m pip install ".[api,dev]"
+      - name: Remove package build artifacts
+        run: python scripts/clean-local-artifacts.py --repo-root . --json
+      - name: Offline dependency floor gate
+        run: python scripts/check-dependency-security.py --strict-optional
+      - name: Current advisory audit
+        run: python -m pip_audit .
+      - name: Quality-check command contract
+        run: python -m py_compile scripts/run-quality-checks.py
+      - name: Chat library evidence
+        run: python scripts/run-chat-library-evidence.py --require-ready --output docs/external-evidence/chat_library_workbench_evidence_ci.json
+      - name: Targeted tests
+        run: >-
+          python -m pytest -q
+          tests/test_answering_pipeline_guardrails.py
+          tests/test_canonical_document_model.py
+          tests/test_retrieval_stack_pass5.py
+          tests/test_matter_ingestion_pass9.py
+          tests/test_chat_library_v187_input_clear_and_routing.py
+          tests/test_pass48_51_launch_evidence_gates.py
+          tests/test_pass48_51_launch_evidence_starter_kit.py
+          tests/test_enterprise_release_control_v206.py
+          tests/test_attorney_sandbox_review_kit_v193.py
+          tests/test_public_source_pre_push_gate_v191.py
+          tests/test_git_safe_push_v192.py
+          tests/test_v510_dependency_security.py
+          tests/test_v510_workflow_skill_registry.py
+          tests/test_v510_matter_inventory_and_classification.py
+          tests/test_v510_cross_document_consistency.py
+          tests/test_v510_independent_qc_contract.py
+          tests/test_v510_knowledge_bundle.py
+          tests/test_v510_docx_media_and_skill_package.py
+          tests/test_v510_ingestion_integration.py

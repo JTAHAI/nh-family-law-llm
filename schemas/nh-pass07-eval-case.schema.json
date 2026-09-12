@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.nh-family-law-llm.local/evals/pass07-case-v1.json",
+  "title": "NH Pass 7 Engineering Evaluation Case",
+  "type": "object",
+  "required": [
+    "case_id", "category", "jurisdiction", "review_mode", "synthetic",
+    "private_data_allowed_for_training", "safety_critical", "payload", "expected"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^p07-[a-z0-9-]+$"},
+    "category": {"type": "string", "minLength": 1},
+    "jurisdiction": {"const": "NH"},
+    "review_mode": {"const": "operator_source_backed"},
+    "synthetic": {"const": true},
+    "private_data_allowed_for_training": {"const": false},
+    "safety_critical": {"type": "boolean"},
+    "payload": {"type": "object"},
+    "expected": {"type": "object"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "project": "New Hampshire Family Law LLM",
+  "version": "8.0.10",
+  "pass": 8,
+  "branch": "pass-08-desktop-release",
+  "baseline_import_commit": "9080347c821c98347c21e0bdd3bc3f7c6db42427",
+  "release_claim": "development_checkpoint_not_production_or_windows_qualified",
+  "report": "artifacts/pass-08/validation-report.json",
+  "planned_passes_remaining": 4,
+  "production_ready": false,
+  "github_published": false,
+  "authority_promotions": 0,
+  "private_case_material_included": false
+}

@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "version": "8.0.9",
+  "package_version": "8.0.9.0",
+  "build_number": 70,
+  "case_count": 34,
+  "passed": 34,
+  "failed": 0,
+  "safety_critical_failure_count": 0,
+  "dataset_sha256": "5c8e8e0bb85d9a178ce6673ad5c2e48727a221d4aebe840d956b9d48a9205c4a",
+  "result_sha256": "0cdc30b849706e056944cee9ba4d66b0e50ff10e7a2553283f22058e1ace18c6"
+}

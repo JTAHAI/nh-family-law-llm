@@ -1,0 +1,63 @@
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+from legal.production.ga_pass_tracker import GAPassTracker
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_true_ga_pass_tracker_counts_pass_19_through_51() -> None:
+    report = GAPassTracker(project_root=ROOT).report().as_dict()
+    assert report["status"] == "pass"
+    assert report["total_true_ga_passes"] == 33
+    assert report["true_ga_completed"] == 29
+    assert report["true_ga_remaining"] == 4
+    assert report["completed_passes"] == [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+    assert report["remaining_passes"][0] == 48
+    assert report["remaining_passes"][-1] == 51
+    assert report["next_true_ga_pass"] == 48
+    assert "configured exit evidence" in report["counting_rule"]
+
+
+def test_tracker_config_marks_only_repo_evidence_backed_passes_complete() -> None:
+    payload = json.loads((ROOT / "configs" / "nh_true_ga_pass_tracker.json").read_text(encoding="utf-8"))
+    assert payload["current_true_ga_completed_passes"] == [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+    complete = [row["pass"] for row in payload["passes"] if row["status"] == "complete"]
+    assert complete == [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+
+
+def test_report_ga_pass_count_script_summary() -> None:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "report-ga-pass-count.py"), "--summary"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert "true_ga_remaining=4" in completed.stdout
+    assert "true_ga_completed=29" in completed.stdout
+    assert "next_pass=48" in completed.stdout
+    assert "internal_conversation_pilot_readiness=pass" in completed.stdout
+
+
+def test_report_ga_pass_count_script_json_includes_internal_conversation_status_without_changing_true_ga_counts() -> None:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "report-ga-pass-count.py")],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    payload = json.loads(completed.stdout)
+    assert payload["true_ga_remaining"] == 4
+    assert payload["next_true_ga_pass"] == 48
+    assert payload["internal_conversation_pilot_readiness"]["status"] == "pass"
+    assert payload["internal_conversation_pilot_readiness"]["does_not_reduce_true_ga_count"] is True

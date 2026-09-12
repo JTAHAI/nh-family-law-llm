@@ -1,0 +1,41 @@
+title: New Hampshire Family Law LLM
+description: Open-source, local-first New Hampshire family-law legal-information and record-organization workbench.
+url: "https://jtahai.github.io"
+baseurl: "/nh-family-law-llm"
+repository: JTAHAI/nh-family-law-llm
+
+markdown: kramdown
+permalink: pretty
+
+lang: en-US
+timezone: America/New_York
+
+brand:
+  name: For Our Children & Families
+  short_name: FOCaF
+  url: https://focaf.jtforme.com/
+
+github_url: https://github.com/JTAHAI/nh-family-law-llm
+
+header_pages:
+  - index.md
+  - features.md
+  - RELEASE_STATUS_v7.0.0.md
+  - safety.md
+  - fork-your-state.md
+  - privacy.md
+
+exclude:
+  - README.md
+  - "*.py"
+  - "*.ps1"
+  - "*.cmd"
+  - "*.sh"
+  - tests
+  - runtime
+  - uploads
+  - vectorstores
+  - corpora
+  - dist
+  - .venv
+  - node_modules

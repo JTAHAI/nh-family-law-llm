@@ -1,0 +1,8 @@
+param(
+    [string]$DataRoot = "C:\dev\NH_FAMILY_LAW_LLM_data",
+    [string]$Output = "docs/sample-evidence/operator_handoff_bundle.json"
+)
+$ErrorActionPreference = "Stop"
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+Set-Location $RepoRoot
+python scripts\build-operator-handoff-bundle.py --data-root $DataRoot --output $Output

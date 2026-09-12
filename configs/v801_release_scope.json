@@ -1,0 +1,37 @@
+{
+  "schema_version": "v801_release_scope_v1",
+  "release": "8.0.1",
+  "package_version": "8.0.1.0",
+  "decision": "PACKAGE_CANDIDATE_PENDING_VERIFICATION",
+  "release_type": "maintenance",
+  "existing_feature_scope_reference": "configs/v800_release_scope.json",
+  "canonical_feature_truth_manifest": "configs/release_feature_truth.json",
+  "public_feature_claims_status": "pending_current_package_verification",
+  "new_public_feature_ids": [],
+  "new_bundled_legal_model_ids": [],
+  "model_import_requires_production_admission": true,
+  "excluded_model_candidates": [
+    {
+      "id": "nhfl-evidence-review-research-r0003",
+      "reason": "Research-only artifact; latest fresh evaluation reports 6/12; production admission and RC completion are false."
+    },
+    {
+      "id": "nhfl-fast-interchange-workflow-r0004",
+      "reason": "Fictional workflow adapter candidate; no substantive legal evaluation or production admission."
+    },
+    {
+      "id": "nhfl-evidence-review-research-r0013",
+      "reason": "Frozen unfamiliar-wording quality gate did not pass; production admission remains false."
+    },
+    {
+      "id": "nhfl-drafting-research-r0003",
+      "reason": "Frozen quality gate did not pass; production admission remains false."
+    }
+  ],
+  "storage_schema_change": false,
+  "automatic_downloads": false,
+  "review_required": true,
+  "attorney_approval_claimed": false,
+  "enterprise_organizational_validation_claimed": false,
+  "store_certification_claimed": false
+}

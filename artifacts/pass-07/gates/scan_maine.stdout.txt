@@ -1,0 +1,1 @@
+PASS: no active Maine legal-authority markers found outside approved provenance/history files.

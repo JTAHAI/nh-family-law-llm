@@ -1,0 +1,16 @@
+{
+  "status": "blocked",
+  "mode": "offline_fixture_only",
+  "live_browser_qualified": false,
+  "authority_promotions": 0,
+  "as_of_date": "2026-09-11",
+  "checks": [],
+  "errors": [
+    "Error: Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/nh-pass08/nh-family-law-llm/dist/pass08-offline-ui/offline-review-fixture.html\nCall log:\n  - navigating to \"file:///mnt/data/nh-pass08/nh-family-law-llm/dist/pass08-offline-ui/offline-review-fixture.html\", waiting until \"load\"\n"
+  ],
+  "source_asset_sha256": {
+    "nh-review.html": "0e1f90444ae5498f743496439c6459a580efcddaea59bc51711eee0a7ec520f2",
+    "nh-review.css": "bda744b238584c606cd4006f728035a21ac2ba3ea971bfc68290d4bd40dcd3d7",
+    "nh-review.js": "484974c12a1d23602122a9e969175771e1f71a3e3fbccbfbafebda1bba4e704d"
+  }
+}

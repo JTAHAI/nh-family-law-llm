@@ -1,0 +1,1 @@
+PASS: no inherited runtime identifiers outside compatibility lane

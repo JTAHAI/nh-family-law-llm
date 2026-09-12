@@ -1,0 +1,22 @@
+{
+  "schema": "nh_family_law_llm.responsive_ui_evidence.v1",
+  "product": "New Hampshire Family Law LLM",
+  "version": "8.0.4",
+  "build": 57,
+  "status": "source_contract_verified",
+  "surfaces": [
+    "desktop_full",
+    "desktop_drawer_closed",
+    "tablet_compact",
+    "mobile_single_column"
+  ],
+  "checks": {
+    "responsive_breakpoints_present": true,
+    "evidence_drawer_collapsible": true,
+    "keyboard_focus_visible": true,
+    "reduced_motion_supported": true,
+    "forced_colors_supported": true,
+    "nh_brand_assets_local": true
+  },
+  "limitations": "Source-level responsive evidence only; clean-machine visual qualification remains a later release pass."
+}

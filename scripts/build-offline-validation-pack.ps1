@@ -1,0 +1,7 @@
+param(
+  [string]$DataRoot = "C:\dev\NH_FAMILY_LAW_LLM_data",
+  [string]$Output = "docs/sample-evidence/offline_validation_pack_report.json"
+)
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+python "scripts\build-offline-validation-pack.py" --data-root $DataRoot --output $Output

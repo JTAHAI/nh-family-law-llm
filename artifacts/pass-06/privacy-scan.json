@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "patterns": [
+    "screenshot_filename",
+    "phone_digits",
+    "phone_formatted",
+    "private_file_id"
+  ],
+  "hits": {
+    "screenshot_filename": [],
+    "phone_digits": [],
+    "phone_formatted": [],
+    "private_file_id": []
+  }
+}

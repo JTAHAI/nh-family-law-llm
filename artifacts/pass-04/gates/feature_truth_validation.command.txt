@@ -1,0 +1,1 @@
+python scripts/validate-release-feature-truth.py

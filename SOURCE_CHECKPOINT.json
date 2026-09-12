@@ -1,0 +1,16 @@
+{
+  "version": "8.0.10",
+  "pass": 8,
+  "branch": "pass-08-desktop-release",
+  "feature_commit": "25e814999df5be692e31a54b14e86a89f0f1f9ab",
+  "input_archive": "NH-Family-Law-LLM-pass-07-evaluation-hardening.zip",
+  "github_published": false,
+  "git_history": "local import plus this checkpoint; no upstream-history claim",
+  "qualification": "development checkpoint; full release gates remain blocked",
+  "remaining_planned_passes": 4,
+  "archive_source_commit": "443da9783c747e7b46ede1d51881cf9b23a3d63c",
+  "archive_additions": [
+    "installables/",
+    "regenerated complete-archive MANIFEST.SHA256"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "annotator_or_generation_method": {
+      "type": "string"
+    },
+    "citation": {},
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "expected_status": {},
+    "hash": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "label": {},
+    "private_data_allowed_for_training": {
+      "type": "boolean"
+    },
+    "query": {},
+    "quote": {},
+    "relevant_source_ids": {},
+    "review_status": {
+      "type": "string"
+    },
+    "source_class": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "text_span": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_class",
+    "jurisdiction",
+    "text_span",
+    "label",
+    "annotator_or_generation_method",
+    "confidence",
+    "hash",
+    "created_at",
+    "review_status",
+    "private_data_allowed_for_training",
+    "quote",
+    "expected_status"
+  ],
+  "title": "nh_quote_span_gold",
+  "type": "object"
+}

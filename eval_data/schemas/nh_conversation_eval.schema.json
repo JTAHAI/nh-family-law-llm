@@ -1,0 +1,31 @@
+{
+  "allowed_audiences": [
+    "attorney",
+    "paralegal",
+    "advocate",
+    "self_represented",
+    "admin",
+    "unknown"
+  ],
+  "allowed_task_types": [
+    "query",
+    "research",
+    "draft",
+    "review",
+    "citation_verification",
+    "quote_verification",
+    "evidence_map",
+    "timeline",
+    "filing_ready_check",
+    "appellate_issue_spotting",
+    "form_guidance"
+  ],
+  "required_fields": [
+    "case_id",
+    "audience",
+    "task_type",
+    "input_text",
+    "expected"
+  ],
+  "schema": "nh_family_law_llm.conversation_eval_case.v1"
+}

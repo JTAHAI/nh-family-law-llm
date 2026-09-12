@@ -1,0 +1,1 @@
+python scripts/rebuild_nh_authority_manifests.py

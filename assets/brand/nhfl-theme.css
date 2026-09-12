@@ -1,0 +1,44 @@
+:root {
+  --nhfl-navy: #102a43;
+  --nhfl-granite: #5b6770;
+  --nhfl-paper: #f7f9fb;
+  --nhfl-white: #ffffff;
+  --nhfl-red: #a61b29;
+  --nhfl-focus: #2f6fa3;
+  --nhfl-shadow: 0 14px 34px rgba(16, 42, 67, 0.14);
+  --nhfl-radius: 14px;
+}
+html { accent-color: var(--nhfl-red); }
+body {
+  background: var(--nhfl-paper);
+  color: var(--nhfl-navy);
+}
+a { color: var(--nhfl-focus); }
+:focus-visible { outline: 3px solid var(--nhfl-focus); outline-offset: 3px; }
+.nhfl-brand-rail {
+  box-sizing: border-box;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  background: linear-gradient(90deg, var(--nhfl-navy), #173f61);
+  color: var(--nhfl-white);
+  border-bottom: 3px solid var(--nhfl-red);
+  font: 600 14px/1.25 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.nhfl-brand-rail img { width: 28px; height: 28px; }
+.nhfl-brand-rail strong { letter-spacing: .01em; }
+.nhfl-brand-rail small { margin-left: auto; color: #dce7ef; }
+.nhfl-card {
+  background: var(--nhfl-white);
+  border: 1px solid #d7e0e7;
+  border-radius: var(--nhfl-radius);
+  box-shadow: var(--nhfl-shadow);
+}
+@media (max-width: 700px) {
+  .nhfl-brand-rail small { display: none; }
+}
+@media print {
+  .nhfl-brand-rail { background: white !important; color: #102a43 !important; border-bottom: 2px solid #102a43; }
+}

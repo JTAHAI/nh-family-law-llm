@@ -1,0 +1,20 @@
+{
+  "displayName": "New Hampshire Family Law LLM",
+  "publisherDisplayName": "JTAHAI",
+  "identityName": "NHFamilyLawLLM.LocalQA",
+  "applicationId": "NHFamilyLawLLM",
+  "aumid": "JTAHAI.NHFamilyLawLLM",
+  "executable": "NHFamilyLawLLM.exe",
+  "protocol": "nhfl",
+  "icon": "assets/brand/nh-family-law-llm-mark.svg",
+  "theme": {
+    "background": "#F7F9FB",
+    "foreground": "#102A43",
+    "accent": "#A61B29"
+  },
+  "version": "8.0.10.0",
+  "status": "source candidate; no Windows binary, signing, WACK, or Store identity verification",
+  "publisher": "CN=NHFamilyLawLLM-LocalQA",
+  "aumid_kind": "unpackaged_explicit_identity",
+  "msix_identity_status": "development_example_not_store_registered"
+}

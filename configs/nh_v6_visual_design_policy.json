@@ -1,0 +1,36 @@
+{
+  "schema_version": "nh_v6_visual_design_policy_v1",
+  "product_version": "8.0.10",
+  "ui_build": 80,
+  "scope": "visual_refresh_without_workflow_rearchitecture",
+  "principles": [
+    "source_and_review_status_remain_visually_prominent",
+    "local_privacy_state_remains_visible",
+    "no_external_font_or_asset_dependency",
+    "keyboard_focus_is_always_visible",
+    "reduced_motion_and_forced_colors_are_supported",
+    "historical_workflow_selectors_remain_compatible"
+  ],
+  "palette": {
+    "accent_red": "#b4233b",
+    "atlantic_700": "#284b63",
+    "atlantic_900": "#102a43",
+    "granite_200": "#d9e2ec",
+    "ink_950": "#07182f",
+    "paper_100": "#ffffff",
+    "paper_50": "#f7f9fc",
+    "pine_700": "#4d6272"
+  },
+  "minimums": {
+    "focus_outline_px": 3,
+    "primary_text_contrast_ratio": 7.0,
+    "interactive_target_height_px": 32,
+    "default_panel_radius_px": 18
+  },
+  "deferred": [
+    "navigation_rearchitecture",
+    "workflow_removal_or_renaming",
+    "remote_font_loading",
+    "automatic_theme_telemetry"
+  ]
+}

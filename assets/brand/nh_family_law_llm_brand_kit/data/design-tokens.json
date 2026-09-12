@@ -1,0 +1,13 @@
+{
+  "tokens": {
+    "accent_red": "#b4233b",
+    "atlantic_700": "#284b63",
+    "atlantic_900": "#102a43",
+    "granite_200": "#d9e2ec",
+    "ink_950": "#07182f",
+    "paper_100": "#ffffff",
+    "paper_50": "#f7f9fc",
+    "pine_700": "#526777"
+  },
+  "version": "8.0.4"
+}

@@ -1,0 +1,169 @@
+{
+  "schema": "nhfl.pass08.desktop-qualification.v1",
+  "status": "pass",
+  "version": "8.0.10",
+  "mode": "installed_wheel",
+  "import_probe": {
+    "module": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/__init__.py",
+    "manifest": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/data/authority_snapshot/manifest/nh_authorities.json",
+    "version": "8.0.10"
+  },
+  "launches": [
+    {
+      "cycle": 0,
+      "instance_id": "6726d183b5c80a7aec7e8f1420279f7c05728432eedda374e3c4df02bfc1c8ff",
+      "pid": 2976,
+      "startup_seconds": 1.9
+    },
+    {
+      "cycle": 1,
+      "instance_id": "f93413b619369709838430ffecad2c71d4a638c69cab1eee3530a90a53dc1204",
+      "pid": 2980,
+      "startup_seconds": 1.945
+    }
+  ],
+  "checks": [
+    {
+      "cycle": 0,
+      "path": "/",
+      "status": 200,
+      "bytes": 223955,
+      "sha256": "b18f3a4527bde759c35a7060bd901155cef72e1662c74239b24e2b9335f4ef1a"
+    },
+    {
+      "cycle": 0,
+      "path": "/nh-review",
+      "status": 200,
+      "bytes": 5038,
+      "sha256": "e85f352dfa459ef0601d2f2ff36a0d4b79a460e579b6d46e11f518b698206167"
+    },
+    {
+      "cycle": 0,
+      "path": "/api/runtime/ui-manifest",
+      "status": 200,
+      "bytes": 15856,
+      "sha256": "6193219251ae0ea4493e3bd2efa50f0dac823fbfbaeb8845c37429dbe3b9b737"
+    },
+    {
+      "cycle": 0,
+      "path": "/api/runtime/release-scope",
+      "status": 200,
+      "bytes": 31211,
+      "sha256": "574afd25fc5849f1e2f09934c58c9d921cd773b827b091d269b2fd71b1257ab3"
+    },
+    {
+      "cycle": 0,
+      "path": "/ui-assets/nh-review.js",
+      "status": 200,
+      "bytes": 10401,
+      "sha256": "484974c12a1d23602122a9e969175771e1f71a3e3fbccbfbafebda1bba4e704d"
+    },
+    {
+      "cycle": 0,
+      "path": "/ui-assets/nh-review.css",
+      "status": 200,
+      "bytes": 5698,
+      "sha256": "bda744b238584c606cd4006f728035a21ac2ba3ea971bfc68290d4bd40dcd3d7"
+    },
+    {
+      "cycle": 0,
+      "path": "/ui-assets/brand/nh-banner.png",
+      "status": 200,
+      "bytes": 1719969,
+      "sha256": "ed9658a9f1cf0d55a5aaa5b0c427da826008b34bd0669f3b6326f06fccb2aa22"
+    },
+    {
+      "cycle": 0,
+      "path": "/brand-assets/assets/favicon/favicon.svg",
+      "status": 200,
+      "bytes": 224,
+      "sha256": "5b7f13b3c08a1be502c8efcbcc018daeb3349d776f7a29d6dd0583f22949aa37"
+    },
+    {
+      "cycle": 0,
+      "path": "/api/nh-review/status?as_of_date=2026-09-11",
+      "status": 200,
+      "bytes": 7486,
+      "sha256": "d9456e4111e324db27fa593ed9561251cbf976b8ff40d91d1db875915a3fd77d"
+    },
+    {
+      "cycle": 0,
+      "check": "analysis_source_hash_origin_and_invalid_input",
+      "status": "pass"
+    },
+    {
+      "cycle": 1,
+      "path": "/",
+      "status": 200,
+      "bytes": 223955,
+      "sha256": "b18f3a4527bde759c35a7060bd901155cef72e1662c74239b24e2b9335f4ef1a"
+    },
+    {
+      "cycle": 1,
+      "path": "/nh-review",
+      "status": 200,
+      "bytes": 5038,
+      "sha256": "e85f352dfa459ef0601d2f2ff36a0d4b79a460e579b6d46e11f518b698206167"
+    },
+    {
+      "cycle": 1,
+      "path": "/api/runtime/ui-manifest",
+      "status": 200,
+      "bytes": 15856,
+      "sha256": "6193219251ae0ea4493e3bd2efa50f0dac823fbfbaeb8845c37429dbe3b9b737"
+    },
+    {
+      "cycle": 1,
+      "path": "/api/runtime/release-scope",
+      "status": 200,
+      "bytes": 31211,
+      "sha256": "574afd25fc5849f1e2f09934c58c9d921cd773b827b091d269b2fd71b1257ab3"
+    },
+    {
+      "cycle": 1,
+      "path": "/ui-assets/nh-review.js",
+      "status": 200,
+      "bytes": 10401,
+      "sha256": "484974c12a1d23602122a9e969175771e1f71a3e3fbccbfbafebda1bba4e704d"
+    },
+    {
+      "cycle": 1,
+      "path": "/ui-assets/nh-review.css",
+      "status": 200,
+      "bytes": 5698,
+      "sha256": "bda744b238584c606cd4006f728035a21ac2ba3ea971bfc68290d4bd40dcd3d7"
+    },
+    {
+      "cycle": 1,
+      "path": "/ui-assets/brand/nh-banner.png",
+      "status": 200,
+      "bytes": 1719969,
+      "sha256": "ed9658a9f1cf0d55a5aaa5b0c427da826008b34bd0669f3b6326f06fccb2aa22"
+    },
+    {
+      "cycle": 1,
+      "path": "/brand-assets/assets/favicon/favicon.svg",
+      "status": 200,
+      "bytes": 224,
+      "sha256": "5b7f13b3c08a1be502c8efcbcc018daeb3349d776f7a29d6dd0583f22949aa37"
+    },
+    {
+      "cycle": 1,
+      "path": "/api/nh-review/status?as_of_date=2026-09-11",
+      "status": 200,
+      "bytes": 7486,
+      "sha256": "af9fa5662ad082d7c03472b73246ddc78dfcd2b7cf1cd7fc883a6537069aad64"
+    },
+    {
+      "cycle": 1,
+      "check": "analysis_source_hash_origin_and_invalid_input",
+      "status": "pass"
+    }
+  ],
+  "browser": {
+    "status": "not_run"
+  },
+  "errors": [],
+  "uses_synthetic_input_only": true,
+  "windows_binary_qualification": false
+}

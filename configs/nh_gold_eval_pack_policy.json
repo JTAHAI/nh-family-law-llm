@@ -1,0 +1,73 @@
+{
+  "accepted_review_modes": [
+    "attorney_reviewed",
+    "operator_source_backed"
+  ],
+  "annotation_queue_policy": {
+    "confidence_required_for_promotion": true,
+    "conflict_resolution_required_for_disagreement": true,
+    "default_double_review_required": true,
+    "queue_rows_are_not_gold": true,
+    "reviewer_identity_required_for_promotion": true,
+    "spreadsheet_export_allowed": true
+  },
+  "annotation_queue_task_types": [
+    "rag_retrieval",
+    "citation_validity",
+    "quote_span",
+    "hallucination_negative",
+    "forms_freshness",
+    "drafting_review",
+    "issue_classification",
+    "posture_classification",
+    "authority_ranking",
+    "fact_to_evidence",
+    "nh_supreme_court_holding",
+    "rule_52_gap"
+  ],
+  "attorney_review_required": true,
+  "operator_source_backed_policy": {
+    "allowed_for_engineering_verifier_gates": true,
+    "attorney_reviewed_label_forbidden": true,
+    "private_data_training_flag_must_be_false": true,
+    "requires_verified_source_lineage": true,
+    "seed_synthetic_fixture_rows_block": true
+  },
+  "private_data_training_allowed": false,
+  "purpose": "Gold evaluation pack policy for New Hampshire legal data-product release gates. Attorney-reviewed evidence remains distinct from operator-source-backed engineering evidence.",
+  "release_metrics_policy": {
+    "attorney_review_required_for_legal_quality_metrics": true,
+    "missing_metric_blocks_ga": true,
+    "private_data_training_flag_must_be_false": true,
+    "synthetic_seed_metrics_block_ga": true,
+    "undersized_metric_blocks_ga": true
+  },
+  "required_fields": [
+    "source_id",
+    "source_class",
+    "jurisdiction",
+    "text_span",
+    "label",
+    "annotator_or_generation_method",
+    "confidence",
+    "hash",
+    "created_at",
+    "review_status",
+    "private_data_allowed_for_training"
+  ],
+  "required_gold_dataset_minimums": {
+    "nh_authority_ranking_gold.jsonl": 250,
+    "nh_citation_validity_gold.jsonl": 500,
+    "nh_drafting_review_gold.jsonl": 100,
+    "nh_fact_to_evidence_gold.jsonl": 250,
+    "nh_forms_freshness_gold.jsonl": 100,
+    "nh_hallucination_negative_cases.jsonl": 250,
+    "nh_issue_classification_gold.jsonl": 250,
+    "nh_supreme_court_holding_gold.jsonl": 150,
+    "nh_posture_classification_gold.jsonl": 150,
+    "nh_quote_span_gold.jsonl": 500,
+    "nh_rag_retrieval_gold.jsonl": 500,
+    "nh_rule_52_gap_gold.jsonl": 100
+  },
+  "version": "2.1-pass27-pass30-operator-source-backed-lane"
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.nh-family-law-llm.local/legal-behavior-report-v1.json",
+  "title": "NH Legal Behavior Report",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "summary",
+    "as_of_date",
+    "issues",
+    "findings",
+    "routes",
+    "authority_references",
+    "review_required",
+    "filing_ready"
+  ],
+  "properties": {
+    "schema": {
+      "const": "nh_family_law_llm.legal_behavior_report.v1"
+    },
+    "status": {
+      "enum": [
+        "blocked",
+        "review_required"
+      ]
+    },
+    "summary": {
+      "type": "object"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "authority_references": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "authority_gaps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review_required": {
+      "const": true
+    },
+    "filing_ready": {
+      "const": false
+    },
+    "legal_advice": {
+      "const": false
+    }
+  },
+  "additionalProperties": true
+}

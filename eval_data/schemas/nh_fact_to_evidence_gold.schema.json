@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "annotator_or_generation_method": {
+      "type": "string"
+    },
+    "candidate_source_ids": {},
+    "citation": {},
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "type": "number"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "evidence_source_ids": {},
+    "expected_issue_labels": {},
+    "expected_posture_label": {},
+    "expected_status": {},
+    "expected_top_source_id": {},
+    "fact": {},
+    "hash": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string"
+    },
+    "label": {},
+    "private_data_allowed_for_training": {
+      "type": "boolean"
+    },
+    "query": {},
+    "quote": {},
+    "relevant_source_ids": {},
+    "review_status": {
+      "type": "string"
+    },
+    "source_class": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "text_span": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_class",
+    "jurisdiction",
+    "text_span",
+    "label",
+    "annotator_or_generation_method",
+    "confidence",
+    "hash",
+    "created_at",
+    "review_status",
+    "private_data_allowed_for_training",
+    "fact",
+    "evidence_source_ids"
+  ],
+  "title": "nh_fact_to_evidence_gold",
+  "type": "object"
+}

@@ -1,0 +1,16 @@
+{
+  "blocker_id": "NH-BLOCK-COURTS-20260911",
+  "source_family": "New Hampshire Judicial Branch rules, forms, self-help, and opinions",
+  "urls": [
+    "https://www.courts.nh.gov/rules-comment/rules-circuit-court-state-new-hampshire-family-division",
+    "https://www.courts.nh.gov/our-courts/circuit-court/family-division/forms",
+    "https://www.courts.nh.gov/self-help",
+    "https://www.courts.nh.gov/our-courts/supreme-court/orders-and-opinions"
+  ],
+  "observed_result": "Public page retrieval was blocked or unavailable from the acquisition runtime; no authoritative bytes were preserved.",
+  "status": "acquisition_blocked_pending_retry",
+  "retrieval_eligible": false,
+  "next_action": "Retry from an allowed network environment; capture original files, response metadata, checksums, and effective dates before promotion.",
+  "recorded_at": "2026-09-11T18:22:03Z",
+  "as_of": "2026-09-11"
+}

@@ -1,0 +1,26 @@
+{
+  "as_of_date": "2026-09-11",
+  "question": "Review a request for approximately equal parenting and a separate child-support modification.",
+  "parenting": {
+    "permanent_order": true,
+    "requested_change_scope": "eow_to_equal",
+    "work_schedule_change": true,
+    "decision_making_change": false,
+    "denied_or_interfered_parenting_time": false
+  },
+  "support": {
+    "order_issuer": "court",
+    "last_support_order_date": "2023-08-01",
+    "parenting_percent_obligor": 50,
+    "parenting_percent_obligee": 50,
+    "substantially_similar_incomes": true,
+    "each_pays_half_eligible_childcare": true,
+    "each_pays_half_uninsured_medical": true,
+    "each_pays_half_agreed_extracurricular": true,
+    "extraordinary_circumstances": false
+  },
+  "support_order": {
+    "has_signed_court_support_order": true,
+    "dhhs_only_collects_or_withholds": true
+  }
+}

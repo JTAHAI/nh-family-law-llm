@@ -1,0 +1,18 @@
+{
+  "dataset_id": "nh_pass07_operator_source_backed.jsonl",
+  "jurisdiction": "NH",
+  "case_count": 34,
+  "review_mode": "operator_source_backed",
+  "attorney_reviewed": false,
+  "synthetic": true,
+  "private_data_allowed_for_training": false,
+  "release_metric_eligible": false,
+  "purpose": "Engineering regression for legal behavior, stale-law blocking, citation closure, jurisdiction isolation, and unsupported-conclusion controls.",
+  "limitations": [
+    "Not attorney-reviewed gold",
+    "Not a legal accuracy metric",
+    "Does not authorize filing-ready output"
+  ],
+  "version": "8.0.9",
+  "generated_on": "2026-09-11"
+}

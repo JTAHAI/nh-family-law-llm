@@ -1,0 +1,49 @@
+{
+  "version": "1.0-pass16-enterprise-legal-data-product",
+  "readiness": "enterprise_data_product_gate_foundation_blocks_release_until_external_corpus_and_attorney_gold_sets_exist",
+  "data_product_principle": "The source repository is not the legal data product. The enterprise product is the external, versioned, hashable corpus + parsed authority + retrieval indexes + attorney-reviewed eval evidence + audit trails connected to this code.",
+  "required_external_stores": [
+    "official_authority_store",
+    "parsed_authority_store",
+    "eval_store",
+    "embedding_store",
+    "audit_store",
+    "matter_store",
+    "model_registry"
+  ],
+  "required_source_target_minimums": {
+    "statute_title_index": 8,
+    "statute_title_pdf": 8,
+    "court_rules_index": 4,
+    "court_forms_index": 1,
+    "supreme_court_opinion_index": 7
+  },
+  "required_gold_dataset_minimums": {
+    "nh_rag_retrieval_gold.jsonl": 500,
+    "nh_citation_validity_gold.jsonl": 500,
+    "nh_quote_span_gold.jsonl": 500,
+    "nh_hallucination_negative_cases.jsonl": 250,
+    "nh_forms_freshness_gold.jsonl": 100,
+    "nh_drafting_review_gold.jsonl": 100,
+    "nh_authority_ranking_gold.jsonl": 200,
+    "nh_issue_classification_gold.jsonl": 200,
+    "nh_posture_classification_gold.jsonl": 200,
+    "nh_fact_to_evidence_gold.jsonl": 200,
+    "nh_supreme_court_holding_gold.jsonl": 100,
+    "nh_rule_52_gap_gold.jsonl": 100
+  },
+  "attorney_review_required": true,
+  "runtime_artifacts_forbidden_in_repo": [
+    "official_authority_store/",
+    "parsed_authority_store/",
+    "matter_store/",
+    "embedding_store/",
+    "audit_store/",
+    "model_registry/",
+    "*.sqlite",
+    "*.db",
+    "*.faiss",
+    "*.safetensors",
+    "*.bin"
+  ]
+}

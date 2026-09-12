@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#102a43">
+  <title>NH Review Desk · New Hampshire Family Law LLM</title>
+  <link rel="icon" href="/ui-assets/brand/nh-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/ui-assets/nh-review.css">
+  <script src="/ui-assets/nh-review.js" defer></script>
+</head>
+<body data-version="{{PRODUCT_VERSION}}">
+<a class="skip" href="#review-form">Skip to the review form</a>
+<header class="topbar">
+  <a class="brand" href="/"><img src="/ui-assets/brand/nh-mark.svg" alt=""><span>New Hampshire<br><strong>Family Law LLM</strong></span></a>
+  <nav aria-label="Application"><a href="/">Full workbench</a><span class="chip">LOCAL · REVIEW REQUIRED</span></nav>
+</header>
+<main class="page">
+  <section class="intro" aria-labelledby="page-title">
+    <div><p class="eyebrow">NEW HAMPSHIRE REVIEW DESK</p><h1 id="page-title">Understand the next step.<br>Keep the sources in view.</h1><p class="lede">Review parenting and support questions against the bundled NH authority summaries. Identify missing facts, inspect the cited material, and prepare a review copy.</p></div>
+    <img class="hero" src="/ui-assets/brand/nh-banner.png" alt="New Hampshire Family Law LLM brand banner">
+  </section>
+  <aside class="notice"><strong>Research support, not a court decision.</strong> This tool does not change an order, calculate enforceable support, file papers, or replace a lawyer. The bundled sources are non-verbatim summaries—not an exhaustive collection of official law. All findings require human review.</aside>
+  <div class="layout">
+    <section class="card input-card" aria-labelledby="question-title">
+      <p class="eyebrow">01 / YOUR QUESTION</p><h2 id="question-title">Build a review</h2>
+      <form id="review-form">
+        <label for="as-of">Law as of</label>
+        <input id="as-of" name="as-of" type="date" required aria-describedby="date-hint">
+        <p id="date-hint" class="hint">The date controls authority checks. A later amendment may block an older summary until it has been reviewed.</p>
+        <label for="question">What needs attention?</label>
+        <textarea id="question" name="question" rows="7" maxlength="20000" required placeholder="For example: What should I gather to review my parenting schedule and child-support order?"></textarea>
+        <details><summary>Optional structured facts</summary>
+          <label for="facts">Additional facts as a JSON object</label>
+          <textarea id="facts" rows="8" spellcheck="false" aria-describedby="facts-hint" placeholder='{"parenting":{"permanent_order":true}}'></textarea>
+          <p id="facts-hint" class="hint">Use only known facts. Omit uncertain fields. Do not include names, phone numbers, or a full case file here. The question and date above take precedence.</p>
+        </details>
+        <div class="actions"><button id="analyze" type="submit">Review question <span aria-hidden="true">→</span></button><button id="clear" class="secondary" type="button">Clear</button></div>
+      </form>
+      <p class="privacy">No model or cloud connection is used by this review workflow. The review routes do not save the facts. Export only when ready, and keep the downloaded file private.</p>
+    </section>
+    <section class="card output-card" aria-labelledby="result-title">
+      <div class="result-heading"><div><p class="eyebrow">02 / FINDINGS & SOURCES</p><h2 id="result-title">Review workspace</h2></div><button id="export" type="button" class="secondary" disabled>Export review JSON</button></div>
+      <div id="status" class="status" role="status" aria-live="polite">Checking the local authority snapshot…</div>
+      <div id="error" role="alert" class="error" hidden></div>
+      <div id="results" aria-busy="false"><div class="empty"><span class="empty-mark" aria-hidden="true">§</span><h3>Start with what you know.</h3><p>Findings, missing facts, review routes, and source links will appear here. Unknown facts stay unknown.</p></div></div>
+    </section>
+  </div>
+  <section class="card corpus" aria-labelledby="corpus-title"><div class="result-heading"><div><p class="eyebrow">03 / COVERAGE</p><h2 id="corpus-title">Bundled source status</h2></div><button id="refresh" type="button" class="secondary">Refresh status</button></div><p id="coverage" class="hint">Checking source availability…</p><div id="source-list" class="source-list"></div></section>
+  <footer>New Hampshire Family Law LLM <span id="version">{{PRODUCT_VERSION}}</span> · Source engineering candidate · No filing-ready or Windows certification claim.</footer>
+</main>
+<dialog id="source-dialog" aria-labelledby="source-title"><div class="result-heading"><h2 id="source-title">Authority summary</h2><button id="close-source" type="button" class="secondary">Close</button></div><p id="source-notice" class="notice"></p><p id="source-metadata" class="hint"></p><pre id="source-text"></pre></dialog>
+</body></html>

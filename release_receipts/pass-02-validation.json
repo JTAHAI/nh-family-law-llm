@@ -1,0 +1,88 @@
+{
+  "authority_audit": {
+    "authority_records": 37,
+    "coverage_claim": "seed inventory only; exhaustive statewide coverage is not asserted",
+    "current_verified_records": 0,
+    "errors": [],
+    "legacy_authority_findings": 0,
+    "local_snapshot_records": 0,
+    "manifest": "corpus/manifest/nh_authorities.json",
+    "ok": true,
+    "retrieval_eligible_records": 0,
+    "warnings": [
+      "No authority record is yet marked current_verified; runtime retrieval must remain fail-closed.",
+      "No authority record is retrieval eligible; this is acceptable for a seed inventory but not a populated production corpus."
+    ]
+  },
+  "branch": "pass-02-nh-authority-elimination",
+  "checkpoint": "8.0.4-pass2",
+  "generated_at": "2026-09-11T16:19:01Z",
+  "legacy_scan": {
+    "allowed_provenance_paths": [
+      "CHANGELOG.md",
+      "LEGACY_AUTHORITY_SCAN.md",
+      "MIGRATION_REPORT.md",
+      "README.md",
+      "RELEASE_NOTES.md",
+      "docs/MAINE_TO_NH_CROSSWALK.md",
+      "docs/PASS_01_CODE_REPAIR.md",
+      "docs/PASS_02_NH_AUTHORITY_ELIMINATION.md",
+      "docs/v3/PASS_00_BASELINE_RECONCILIATION.md",
+      "scripts/audit_nh_authorities.py",
+      "scripts/scan_for_maine_authority.py"
+    ],
+    "finding_count": 0,
+    "findings": [],
+    "ok": true
+  },
+  "private_case_material_included": false,
+  "release_claim": "development_checkpoint_only",
+  "schema_version": "nh_family_law_llm.pass02_validation.v1",
+  "validation": {
+    "compileall": {
+      "roots": [
+        "app",
+        "legal",
+        "src",
+        "nh_family_law_llm",
+        "scripts"
+      ],
+      "status": "pass"
+    },
+    "full_pytest": {
+      "reason": "300_second_execution_window_exceeded",
+      "status": "not_completed"
+    },
+    "git_diff_check": {
+      "status": "pass"
+    },
+    "json_jsonl_parse": {
+      "status": "pass"
+    },
+    "pytest_collection": {
+      "collected": 2598,
+      "collection_errors": 0,
+      "status": "pass"
+    },
+    "ruff": {
+      "reason": "module_not_installed",
+      "status": "not_run"
+    },
+    "selected_regression": {
+      "failed": 0,
+      "passed": 209,
+      "skipped": 1,
+      "status": "pass",
+      "unique_tests": 210
+    },
+    "wheel": {
+      "isolated_import": "pass",
+      "status": "pass",
+      "version": "8.0.4"
+    },
+    "windows_frozen_package": {
+      "reason": "linux_execution_environment",
+      "status": "not_run"
+    }
+  }
+}

@@ -1,0 +1,629 @@
+{
+  "authority_status": "not_legal_authority",
+  "documents": [
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Case preparation",
+      "chunks": [
+        {
+          "character_end": 368,
+          "character_start": 0,
+          "chunk_id": "nh-before-you-file-or-call-p1-c1",
+          "page_number": 1,
+          "text": "Start with the signed documents\nFind the complete signed order, parenting plan, Uniform Support Order, child-support worksheet, and any later modifications.\nRecord the court location, docket number, date of the order, date you received any new papers, and every stated deadline.\nDo not rely on a text-message summary of an order. Work from the filed or certified copy."
+        },
+        {
+          "character_end": 794,
+          "character_start": 369,
+          "chunk_id": "nh-before-you-file-or-call-p1-c2",
+          "page_number": 1,
+          "text": "Build a one-page facts sheet\nList each child, the current weekly schedule, school or childcare logistics, transportation responsibilities, and important medical needs.\nList both parents' known income sources without guessing. Separate facts you can document from questions that still need answers.\nWrite the exact change you are asking for and how it would work on ordinary school weeks, holidays, vacations, and emergencies."
+        },
+        {
+          "character_end": 1153,
+          "character_start": 795,
+          "chunk_id": "nh-before-you-file-or-call-p1-c3",
+          "page_number": 1,
+          "text": "Documents to gather\nRecent pay records, tax returns, health-insurance cost information, childcare invoices, and proof of other support obligations.\nA neutral calendar of actual parenting time, exchanges, school events, appointments, and missed or changed periods.\nRelevant communications in complete context. Preserve originals and avoid editing screenshots."
+        },
+        {
+          "character_end": 1461,
+          "character_start": 1154,
+          "chunk_id": "nh-before-you-file-or-call-p1-c4",
+          "page_number": 1,
+          "text": "Questions to verify\nWhich official New Hampshire form and filing path apply to this case?\nIs service required, and who may complete it?\nAre mediation, financial affidavits, or updated child-support worksheets required?\nDoes the present order remain fully enforceable while a modification request is pending?"
+        }
+      ],
+      "county": "",
+      "description": "A first-step organizer for court papers, deadlines, current orders, financial records, and questions for legal help.",
+      "display_title": "Before You File or Call: New Hampshire Family Case Preparation",
+      "document_id": "nh-before-you-file-or-call",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "Before You File or Call: New Hampshire Family Case Preparation\nA first-step organizer for court papers, deadlines, current orders, financial records, and questions for legal help.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nStart with the signed documents\nFind the complete signed order, parenting plan, Uniform Support Order, child-support worksheet, and any later modifications.\nRecord the court location, docket number, date of the order, date you received any new papers, and every stated deadline.\nDo not rely on a text-message summary of an order. Work from the filed or certified copy.\nBuild a one-page facts sheet\nList each child, the current weekly schedule, school or childcare logistics, transportation responsibilities, and important medical needs.\nList both parents' known income sources without guessing. Separate facts you can document from questions that still need answers.\nWrite the exact change you are asking for and how it would work on ordinary school weeks, holidays, vacations, and emergencies.\nDocuments to gather\nRecent pay records, tax returns, health-insurance cost information, childcare invoices, and proof of other support obligations.\nA neutral calendar of actual parenting time, exchanges, school events, appointments, and missed or changed periods.\nRelevant communications in complete context. Preserve originals and avoid editing screenshots.\nQuestions to verify\nWhich official New Hampshire form and filing path apply to this case?\nIs service required, and who may complete it?\nAre mediation, financial affidavits, or updated child-support worksheets required?\nDoes the present order remain fully enforceable while a modification request is pending?",
+      "headings": [
+        "Start with the signed documents",
+        "Build a one-page facts sheet",
+        "Documents to gather",
+        "Questions to verify"
+      ],
+      "intended_audience": "New Hampshire parents and self-represented litigants",
+      "keywords": [
+        "a",
+        "aid",
+        "case",
+        "family",
+        "for",
+        "intake",
+        "legal",
+        "organizing",
+        "papers",
+        "preparing",
+        "records",
+        "served",
+        "starting"
+      ],
+      "likely_use_cases": [
+        "served papers",
+        "starting a family case",
+        "organizing records",
+        "preparing for legal aid intake"
+      ],
+      "manifest_hash": "3c49c209adbccabfbae308a6c2ccdacfc58d457f57f181752f39d253d7d64874",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-before-you-file-or-call.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "Before You File or Call: New Hampshire Family Case Preparation\nA first-step organizer for court papers, deadlines, current orders, financial records, and questions for legal help.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nStart with the signed documents\nFind the complete signed order, parenting plan, Uniform Support Order, child-support worksheet, and any later modifications.\nRecord the court location, docket number, date of the order, date you received any new papers, and every stated deadline.\nDo not rely on a text-message summary of an order. Work from the filed or certified copy.\nBuild a one-page facts sheet\nList each child, the current weekly schedule, school or childcare logistics, transportation responsibilities, and important medical needs.\nList both parents' known income sources without guessing. Separate facts you can document from questions that still need answers.\nWrite the exact change you are asking for and how it would work on ordinary school weeks, holidays, vacations, and emergencies.\nDocuments to gather\nRecent pay records, tax returns, health-insurance cost information, childcare invoices, and proof of other support obligations.\nA neutral calendar of actual parenting time, exchanges, school events, appointments, and missed or changed periods.\nRelevant communications in complete context. Preserve originals and avoid editing screenshots.\nQuestions to verify\nWhich official New Hampshire form and filing path apply to this case?\nIs service required, and who may complete it?\nAre mediation, financial affidavits, or updated child-support worksheets required?\nDoes the present order remain fully enforceable while a modification request is pending?"
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "case_preparation",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "3c49c209adbccabfbae308a6c2ccdacfc58d457f57f181752f39d253d7d64874",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Hearing preparation",
+      "chunks": [
+        {
+          "character_end": 401,
+          "character_start": 0,
+          "chunk_id": "nh-court-day-preparation-p1-c1",
+          "page_number": 1,
+          "text": "Before the hearing\nRead the hearing notice and current court rules. Confirm date, time, location, remote-access instructions, and allotted hearing time.\nPrepare a short issue list: what is agreed, what is disputed, what order is requested, and what evidence supports each request.\nMake a clean exhibit index. Bring only relevant, authentic records and enough copies if the court requires paper copies."
+        },
+        {
+          "character_end": 785,
+          "character_start": 402,
+          "chunk_id": "nh-court-day-preparation-p1-c2",
+          "page_number": 1,
+          "text": "What to bring\nPhoto identification, hearing notice, current orders, filed pleadings, proposed parenting schedule, financial affidavit, and support worksheet if required.\nA dated chronology, witness list, exhibit list, notebook, pen, and a backup plan for transportation and childcare.\nContact information for any attorney, mediator, guardian ad litem, or agency involved in the case."
+        },
+        {
+          "character_end": 1150,
+          "character_start": 786,
+          "chunk_id": "nh-court-day-preparation-p1-c3",
+          "page_number": 1,
+          "text": "Presenting clearly\nAnswer the question asked. Distinguish personal knowledge from assumptions or statements made by others.\nFocus on the children's needs, logistics, stability, safety, and the requested workable order rather than insults or character attacks.\nAsk to clarify any ruling or deadline you do not understand before leaving or ending the remote session."
+        },
+        {
+          "character_end": 1450,
+          "character_start": 1151,
+          "chunk_id": "nh-court-day-preparation-p1-c4",
+          "page_number": 1,
+          "text": "After the hearing\nWrite down the ruling and deadlines, then compare your notes with the written order when it arrives.\nContinue following the existing written order unless and until the court changes it.\nCalendar compliance tasks and preserve proof of filings, service, payments, and communications."
+        }
+      ],
+      "county": "",
+      "description": "A practical checklist for documents, exhibits, testimony preparation, logistics, and post-hearing follow-up.",
+      "display_title": "New Hampshire Family Court Day Preparation Checklist",
+      "document_id": "nh-court-day-preparation",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "New Hampshire Family Court Day Preparation Checklist\nA practical checklist for documents, exhibits, testimony preparation, logistics, and post-hearing follow-up.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nBefore the hearing\nRead the hearing notice and current court rules. Confirm date, time, location, remote-access instructions, and allotted hearing time.\nPrepare a short issue list: what is agreed, what is disputed, what order is requested, and what evidence supports each request.\nMake a clean exhibit index. Bring only relevant, authentic records and enough copies if the court requires paper copies.\nWhat to bring\nPhoto identification, hearing notice, current orders, filed pleadings, proposed parenting schedule, financial affidavit, and support worksheet if required.\nA dated chronology, witness list, exhibit list, notebook, pen, and a backup plan for transportation and childcare.\nContact information for any attorney, mediator, guardian ad litem, or agency involved in the case.\nPresenting clearly\nAnswer the question asked. Distinguish personal knowledge from assumptions or statements made by others.\nFocus on the children's needs, logistics, stability, safety, and the requested workable order rather than insults or character attacks.\nAsk to clarify any ruling or deadline you do not understand before leaving or ending the remote session.\nAfter the hearing\nWrite down the ruling and deadlines, then compare your notes with the written order when it arrives.\nContinue following the existing written order unless and until the court changes it.\nCalendar compliance tasks and preserve proof of filings, service, payments, and communications.",
+      "headings": [
+        "Before the hearing",
+        "What to bring",
+        "Presenting clearly",
+        "After the hearing"
+      ],
+      "intended_audience": "Self-represented litigants and support persons",
+      "keywords": [
+        "clerk",
+        "court",
+        "day",
+        "exhibit",
+        "for",
+        "hearing",
+        "organization",
+        "preparation",
+        "questions",
+        "the"
+      ],
+      "likely_use_cases": [
+        "hearing preparation",
+        "court day",
+        "exhibit organization",
+        "questions for the clerk"
+      ],
+      "manifest_hash": "747dbbc228f82cb706bd72a958fd959d9e561900bfa88dd42c368e7996b4dfa1",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-court-day-preparation.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "New Hampshire Family Court Day Preparation Checklist\nA practical checklist for documents, exhibits, testimony preparation, logistics, and post-hearing follow-up.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nBefore the hearing\nRead the hearing notice and current court rules. Confirm date, time, location, remote-access instructions, and allotted hearing time.\nPrepare a short issue list: what is agreed, what is disputed, what order is requested, and what evidence supports each request.\nMake a clean exhibit index. Bring only relevant, authentic records and enough copies if the court requires paper copies.\nWhat to bring\nPhoto identification, hearing notice, current orders, filed pleadings, proposed parenting schedule, financial affidavit, and support worksheet if required.\nA dated chronology, witness list, exhibit list, notebook, pen, and a backup plan for transportation and childcare.\nContact information for any attorney, mediator, guardian ad litem, or agency involved in the case.\nPresenting clearly\nAnswer the question asked. Distinguish personal knowledge from assumptions or statements made by others.\nFocus on the children's needs, logistics, stability, safety, and the requested workable order rather than insults or character attacks.\nAsk to clarify any ruling or deadline you do not understand before leaving or ending the remote session.\nAfter the hearing\nWrite down the ruling and deadlines, then compare your notes with the written order when it arrives.\nContinue following the existing written order unless and until the court changes it.\nCalendar compliance tasks and preserve proof of filings, service, payments, and communications."
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "hearing_preparation",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "747dbbc228f82cb706bd72a958fd959d9e561900bfa88dd42c368e7996b4dfa1",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Parenting logistics",
+      "chunks": [
+        {
+          "character_end": 262,
+          "character_start": 0,
+          "chunk_id": "nh-parenting-exchange-medication-transfer-p1-c1",
+          "page_number": 1,
+          "text": "Exchange details\nDate and scheduled time: ____________________   Actual time: ____________________\nExchange location: __________________________   Transportation by: ______________\nSchedule change agreed in writing?  Yes / No   Where preserved: _________________"
+        },
+        {
+          "character_end": 620,
+          "character_start": 263,
+          "chunk_id": "nh-parenting-exchange-medication-transfer-p1-c2",
+          "page_number": 1,
+          "text": "Medication and health items\nMedication name / dose / written instructions: __________________________________\nQuantity transferred and next dose time: ________________________________________\nMedical equipment, insurance card, or provider note transferred: _________________\nUrgent symptoms or recent care to communicate factually: _________________________"
+        },
+        {
+          "character_end": 860,
+          "character_start": 621,
+          "chunk_id": "nh-parenting-exchange-medication-transfer-p1-c3",
+          "page_number": 1,
+          "text": "School and personal items\nBackpack, assignments, device, charger, sports gear, clothing, comfort item, and special-event materials.\nAvoid using the child as the messenger for adult disputes. Keep the note brief, factual, and child-focused."
+        },
+        {
+          "character_end": 1034,
+          "character_start": 861,
+          "chunk_id": "nh-parenting-exchange-medication-transfer-p1-c4",
+          "page_number": 1,
+          "text": "Follow-up\nUnresolved item: ____________________________  Proposed neutral follow-up: ________\nSave only what is reasonably needed for coordination or accurate recordkeeping."
+        }
+      ],
+      "county": "",
+      "description": "A neutral handoff worksheet for exchanges, school items, medication, equipment, and time-sensitive information.",
+      "display_title": "Parenting Exchange, Belongings, and Medication Transfer Log",
+      "document_id": "nh-parenting-exchange-medication-transfer",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "Parenting Exchange, Belongings, and Medication Transfer Log\nA neutral handoff worksheet for exchanges, school items, medication, equipment, and time-sensitive information.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nExchange details\nDate and scheduled time: ____________________   Actual time: ____________________\nExchange location: __________________________   Transportation by: ______________\nSchedule change agreed in writing?  Yes / No   Where preserved: _________________\nMedication and health items\nMedication name / dose / written instructions: __________________________________\nQuantity transferred and next dose time: ________________________________________\nMedical equipment, insurance card, or provider note transferred: _________________\nUrgent symptoms or recent care to communicate factually: _________________________\nSchool and personal items\nBackpack, assignments, device, charger, sports gear, clothing, comfort item, and special-event materials.\nAvoid using the child as the messenger for adult disputes. Keep the note brief, factual, and child-focused.\nFollow-up\nUnresolved item: ____________________________  Proposed neutral follow-up: ________\nSave only what is reasonably needed for coordination or accurate recordkeeping.",
+      "headings": [
+        "Exchange details",
+        "Medication and health items",
+        "School and personal items",
+        "Follow-up"
+      ],
+      "intended_audience": "Parents using two-home schedules",
+      "keywords": [
+        "belongings",
+        "coordination",
+        "exchange",
+        "handoff",
+        "medication",
+        "notes",
+        "transfer",
+        "two-home"
+      ],
+      "likely_use_cases": [
+        "exchange medication",
+        "belongings transfer",
+        "handoff notes",
+        "two-home coordination"
+      ],
+      "manifest_hash": "03e9e00b6388f2170bd264939491c78797798128e62528c442c79f2cf4a02cf6",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-parenting-exchange-medication-transfer.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "Parenting Exchange, Belongings, and Medication Transfer Log\nA neutral handoff worksheet for exchanges, school items, medication, equipment, and time-sensitive information.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nExchange details\nDate and scheduled time: ____________________   Actual time: ____________________\nExchange location: __________________________   Transportation by: ______________\nSchedule change agreed in writing?  Yes / No   Where preserved: _________________\nMedication and health items\nMedication name / dose / written instructions: __________________________________\nQuantity transferred and next dose time: ________________________________________\nMedical equipment, insurance card, or provider note transferred: _________________\nUrgent symptoms or recent care to communicate factually: _________________________\nSchool and personal items\nBackpack, assignments, device, charger, sports gear, clothing, comfort item, and special-event materials.\nAvoid using the child as the messenger for adult disputes. Keep the note brief, factual, and child-focused.\nFollow-up\nUnresolved item: ____________________________  Proposed neutral follow-up: ________\nSave only what is reasonably needed for coordination or accurate recordkeeping."
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "parenting_logistics",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "03e9e00b6388f2170bd264939491c78797798128e62528c442c79f2cf4a02cf6",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Local help preparation",
+      "chunks": [
+        {
+          "character_end": 420,
+          "character_start": 0,
+          "chunk_id": "nh-manchester-family-help-preparation-p1-c1",
+          "page_number": 1,
+          "text": "Before contacting a program\nHave the docket number, court location, upcoming dates, names of all parties, and a short conflict-check list ready.\nState whether the issue concerns parenting, child support, enforcement, domestic violence, relocation, parentage, or another family matter.\nExplain any immediate deadline, safety issue, language-access need, disability accommodation, or limited ability to use online systems."
+        },
+        {
+          "character_end": 699,
+          "character_start": 421,
+          "chunk_id": "nh-manchester-family-help-preparation-p1-c2",
+          "page_number": 1,
+          "text": "Financial eligibility information\nHousehold size, approximate income, major necessary expenses, public benefits, and whether the other party has counsel.\nAsk whether the program offers full representation, advice only, document review, a clinic, or limited-scope representation."
+        },
+        {
+          "character_end": 1037,
+          "character_start": 700,
+          "chunk_id": "nh-manchester-family-help-preparation-p1-c3",
+          "page_number": 1,
+          "text": "Official places to verify\nNew Hampshire Judicial Branch self-help and forms pages.\n603 Legal Aid and New Hampshire Legal Assistance eligibility and intake information.\nNew Hampshire Bar Association lawyer-referral or reduced-fee information.\nThe clerk for procedural information about the assigned Circuit Court Family Division location."
+        },
+        {
+          "character_end": 1297,
+          "character_start": 1038,
+          "chunk_id": "nh-manchester-family-help-preparation-p1-c4",
+          "page_number": 1,
+          "text": "Call notes\nProgram / office: __________________________  Date: __________  Person: ___________\nEligibility result: ________________________  Next step / deadline: _______________\nDocuments requested: ___________________________________________________________"
+        }
+      ],
+      "county": "Hillsborough",
+      "description": "An intake-preparation sheet for legal aid, lawyer-referral, limited-scope counsel, mediation, or courthouse assistance.",
+      "display_title": "Manchester-Area Family-Law Help Preparation Sheet",
+      "document_id": "nh-manchester-family-help-preparation",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "Manchester-Area Family-Law Help Preparation Sheet\nAn intake-preparation sheet for legal aid, lawyer-referral, limited-scope counsel, mediation, or courthouse assistance.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nBefore contacting a program\nHave the docket number, court location, upcoming dates, names of all parties, and a short conflict-check list ready.\nState whether the issue concerns parenting, child support, enforcement, domestic violence, relocation, parentage, or another family matter.\nExplain any immediate deadline, safety issue, language-access need, disability accommodation, or limited ability to use online systems.\nFinancial eligibility information\nHousehold size, approximate income, major necessary expenses, public benefits, and whether the other party has counsel.\nAsk whether the program offers full representation, advice only, document review, a clinic, or limited-scope representation.\nOfficial places to verify\nNew Hampshire Judicial Branch self-help and forms pages.\n603 Legal Aid and New Hampshire Legal Assistance eligibility and intake information.\nNew Hampshire Bar Association lawyer-referral or reduced-fee information.\nThe clerk for procedural information about the assigned Circuit Court Family Division location.\nCall notes\nProgram / office: __________________________  Date: __________  Person: ___________\nEligibility result: ________________________  Next step / deadline: _______________\nDocuments requested: ___________________________________________________________",
+      "headings": [
+        "Before contacting a program",
+        "Financial eligibility information",
+        "Official places to verify",
+        "Call notes"
+      ],
+      "intended_audience": "Manchester and Hillsborough County residents seeking legal help",
+      "keywords": [
+        "aid",
+        "family",
+        "intake",
+        "lawyer",
+        "legal",
+        "low-cost",
+        "manchester",
+        "preparation",
+        "resources",
+        "self-help"
+      ],
+      "likely_use_cases": [
+        "Manchester family resources",
+        "legal aid intake",
+        "low-cost lawyer preparation",
+        "self-help preparation"
+      ],
+      "manifest_hash": "61e29024c9014e18d591e2fa20b80f6d67074b19a41083c477c3f361a15e699e",
+      "manifest_hash_matches": true,
+      "municipality": "Manchester",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-manchester-family-help-preparation.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "Manchester-Area Family-Law Help Preparation Sheet\nAn intake-preparation sheet for legal aid, lawyer-referral, limited-scope counsel, mediation, or courthouse assistance.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nBefore contacting a program\nHave the docket number, court location, upcoming dates, names of all parties, and a short conflict-check list ready.\nState whether the issue concerns parenting, child support, enforcement, domestic violence, relocation, parentage, or another family matter.\nExplain any immediate deadline, safety issue, language-access need, disability accommodation, or limited ability to use online systems.\nFinancial eligibility information\nHousehold size, approximate income, major necessary expenses, public benefits, and whether the other party has counsel.\nAsk whether the program offers full representation, advice only, document review, a clinic, or limited-scope representation.\nOfficial places to verify\nNew Hampshire Judicial Branch self-help and forms pages.\n603 Legal Aid and New Hampshire Legal Assistance eligibility and intake information.\nNew Hampshire Bar Association lawyer-referral or reduced-fee information.\nThe clerk for procedural information about the assigned Circuit Court Family Division location.\nCall notes\nProgram / office: __________________________  Date: __________  Person: ___________\nEligibility result: ________________________  Next step / deadline: _______________\nDocuments requested: ___________________________________________________________"
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "local_help_preparation",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "61e29024c9014e18d591e2fa20b80f6d67074b19a41083c477c3f361a15e699e",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Parenting-plan preparation",
+      "chunks": [
+        {
+          "character_end": 285,
+          "character_start": 0,
+          "chunk_id": "nh-two-home-parenting-schedule-planner-p1-c1",
+          "page_number": 1,
+          "text": "Ordinary school week\nMonday: __________________ Tuesday: _________________ Wednesday: ________________\nThursday: ________________ Friday: __________________ Weekend: __________________\nIdentify exact exchange times and whether exchanges occur at school, childcare, or another location."
+        },
+        {
+          "character_end": 687,
+          "character_start": 286,
+          "chunk_id": "nh-two-home-parenting-schedule-planner-p1-c2",
+          "page_number": 1,
+          "text": "Test the schedule against real life\nSchool start and dismissal, childcare hours, work schedules, commuting time, transportation reliability, homework, activities, and bedtime routines.\nHow will snow days, teacher-workshop days, illness, late activities, and missed transportation be handled?\nDoes the proposal minimize unnecessary transitions while preserving meaningful time and predictable routines?"
+        },
+        {
+          "character_end": 962,
+          "character_start": 688,
+          "chunk_id": "nh-two-home-parenting-schedule-planner-p1-c3",
+          "page_number": 1,
+          "text": "Holiday and vacation rules\nDefine priority when a holiday conflicts with the ordinary schedule.\nSet notice deadlines for vacations, travel information, passports, and make-up time.\nAddress birthdays, school breaks, summer weeks, and culturally or religiously important days."
+        },
+        {
+          "character_end": 1267,
+          "character_start": 963,
+          "chunk_id": "nh-two-home-parenting-schedule-planner-p1-c4",
+          "page_number": 1,
+          "text": "Decision-making and information sharing\nSchool, medical, mental-health, extracurricular, emergency, and routine decisions.\nDirect access to providers and records where authorized; a neutral method for timely updates.\nA defined method for schedule-change requests that does not put children in the middle."
+        }
+      ],
+      "county": "",
+      "description": "A logistics-first planner for ordinary weeks, exchanges, holidays, school, transportation, and communication.",
+      "display_title": "Two-Home Parenting Schedule Planner",
+      "document_id": "nh-two-home-parenting-schedule-planner",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "Two-Home Parenting Schedule Planner\nA logistics-first planner for ordinary weeks, exchanges, holidays, school, transportation, and communication.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nOrdinary school week\nMonday: __________________ Tuesday: _________________ Wednesday: ________________\nThursday: ________________ Friday: __________________ Weekend: __________________\nIdentify exact exchange times and whether exchanges occur at school, childcare, or another location.\nTest the schedule against real life\nSchool start and dismissal, childcare hours, work schedules, commuting time, transportation reliability, homework, activities, and bedtime routines.\nHow will snow days, teacher-workshop days, illness, late activities, and missed transportation be handled?\nDoes the proposal minimize unnecessary transitions while preserving meaningful time and predictable routines?\nHoliday and vacation rules\nDefine priority when a holiday conflicts with the ordinary schedule.\nSet notice deadlines for vacations, travel information, passports, and make-up time.\nAddress birthdays, school breaks, summer weeks, and culturally or religiously important days.\nDecision-making and information sharing\nSchool, medical, mental-health, extracurricular, emergency, and routine decisions.\nDirect access to providers and records where authorized; a neutral method for timely updates.\nA defined method for schedule-change requests that does not put children in the middle.",
+      "headings": [
+        "Ordinary school week",
+        "Test the schedule against real life",
+        "Holiday and vacation rules",
+        "Decision-making and information sharing"
+      ],
+      "intended_audience": "Parents evaluating a detailed residential schedule",
+      "keywords": [
+        "50",
+        "homes",
+        "parenting",
+        "plan",
+        "schedule",
+        "school-week",
+        "shared",
+        "two"
+      ],
+      "likely_use_cases": [
+        "two homes",
+        "50/50 schedule",
+        "shared parenting",
+        "parenting plan",
+        "school-week schedule"
+      ],
+      "manifest_hash": "e08c666ccc0fc88dcd876a095c4957d8bcc2e50afdea7cc44808bf5c3a70ed66",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-two-home-parenting-schedule-planner.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "Two-Home Parenting Schedule Planner\nA logistics-first planner for ordinary weeks, exchanges, holidays, school, transportation, and communication.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nOrdinary school week\nMonday: __________________ Tuesday: _________________ Wednesday: ________________\nThursday: ________________ Friday: __________________ Weekend: __________________\nIdentify exact exchange times and whether exchanges occur at school, childcare, or another location.\nTest the schedule against real life\nSchool start and dismissal, childcare hours, work schedules, commuting time, transportation reliability, homework, activities, and bedtime routines.\nHow will snow days, teacher-workshop days, illness, late activities, and missed transportation be handled?\nDoes the proposal minimize unnecessary transitions while preserving meaningful time and predictable routines?\nHoliday and vacation rules\nDefine priority when a holiday conflicts with the ordinary schedule.\nSet notice deadlines for vacations, travel information, passports, and make-up time.\nAddress birthdays, school breaks, summer weeks, and culturally or religiously important days.\nDecision-making and information sharing\nSchool, medical, mental-health, extracurricular, emergency, and routine decisions.\nDirect access to providers and records where authorized; a neutral method for timely updates.\nA defined method for schedule-change requests that does not put children in the middle."
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "parenting-plan_preparation",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "e08c666ccc0fc88dcd876a095c4957d8bcc2e50afdea7cc44808bf5c3a70ed66",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Parenting-plan evidence organization",
+      "chunks": [
+        {
+          "character_end": 270,
+          "character_start": 0,
+          "chunk_id": "nh-best-interest-fact-organizer-p1-c1",
+          "page_number": 1,
+          "text": "Child-specific needs\nAge, developmental needs, school needs, health care, routines, activities, relationships, and any accommodations.\nFor each point, identify the source: personal knowledge, school record, provider record, calendar, order, or other admissible evidence."
+        },
+        {
+          "character_end": 538,
+          "character_start": 271,
+          "chunk_id": "nh-best-interest-fact-organizer-p1-c2",
+          "page_number": 1,
+          "text": "Each parent's practical plan\nHousing, sleeping arrangements, work schedule, childcare, transportation, homework support, appointments, and emergency backup.\nHistorical caregiving can be relevant, but the requested future schedule should also be detailed and workable."
+        },
+        {
+          "character_end": 822,
+          "character_start": 539,
+          "chunk_id": "nh-best-interest-fact-organizer-p1-c3",
+          "page_number": 1,
+          "text": "Co-parenting and safety\nAbility to exchange necessary information, support the child's relationship with the other parent where safe, and follow orders.\nDocument legitimate safety concerns accurately. Do not minimize abuse, stalking, coercive control, substance concerns, or threats."
+        },
+        {
+          "character_end": 1173,
+          "character_start": 823,
+          "chunk_id": "nh-best-interest-fact-organizer-p1-c4",
+          "page_number": 1,
+          "text": "Proposed findings worksheet\nRequested schedule: ____________________________________________________________\nChild-centered reason: _________________________________________________________\nSupporting fact and source: ____________________________________________________\nKnown downside and practical mitigation: ______________________________________"
+        }
+      ],
+      "county": "",
+      "description": "A neutral organizer for child-specific facts relevant to a proposed parenting plan; not a substitute for reading current RSA 461-A.",
+      "display_title": "New Hampshire Best-Interest Fact Organizer",
+      "document_id": "nh-best-interest-fact-organizer",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "New Hampshire Best-Interest Fact Organizer\nA neutral organizer for child-specific facts relevant to a proposed parenting plan; not a substitute for reading current RSA 461-A.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nChild-specific needs\nAge, developmental needs, school needs, health care, routines, activities, relationships, and any accommodations.\nFor each point, identify the source: personal knowledge, school record, provider record, calendar, order, or other admissible evidence.\nEach parent's practical plan\nHousing, sleeping arrangements, work schedule, childcare, transportation, homework support, appointments, and emergency backup.\nHistorical caregiving can be relevant, but the requested future schedule should also be detailed and workable.\nCo-parenting and safety\nAbility to exchange necessary information, support the child's relationship with the other parent where safe, and follow orders.\nDocument legitimate safety concerns accurately. Do not minimize abuse, stalking, coercive control, substance concerns, or threats.\nProposed findings worksheet\nRequested schedule: ____________________________________________________________\nChild-centered reason: _________________________________________________________\nSupporting fact and source: ____________________________________________________\nKnown downside and practical mitigation: ______________________________________",
+      "headings": [
+        "Child-specific needs",
+        "Each parent's practical plan",
+        "Co-parenting and safety",
+        "Proposed findings worksheet"
+      ],
+      "intended_audience": "Parents and reviewers preparing a child-focused parenting proposal",
+      "keywords": [
+        "461-a:6",
+        "best",
+        "child-focused",
+        "evidence",
+        "interest",
+        "modification",
+        "parenting",
+        "rsa"
+      ],
+      "likely_use_cases": [
+        "best interest",
+        "RSA 461-A:6",
+        "parenting modification",
+        "child-focused evidence"
+      ],
+      "manifest_hash": "4c6c806a26d432a58ac6f50666c8f909a1f3b3cbb9d69df619b4994fa2d71f13",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-best-interest-fact-organizer.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "New Hampshire Best-Interest Fact Organizer\nA neutral organizer for child-specific facts relevant to a proposed parenting plan; not a substitute for reading current RSA 461-A.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nChild-specific needs\nAge, developmental needs, school needs, health care, routines, activities, relationships, and any accommodations.\nFor each point, identify the source: personal knowledge, school record, provider record, calendar, order, or other admissible evidence.\nEach parent's practical plan\nHousing, sleeping arrangements, work schedule, childcare, transportation, homework support, appointments, and emergency backup.\nHistorical caregiving can be relevant, but the requested future schedule should also be detailed and workable.\nCo-parenting and safety\nAbility to exchange necessary information, support the child's relationship with the other parent where safe, and follow orders.\nDocument legitimate safety concerns accurately. Do not minimize abuse, stalking, coercive control, substance concerns, or threats.\nProposed findings worksheet\nRequested schedule: ____________________________________________________________\nChild-centered reason: _________________________________________________________\nSupporting fact and source: ____________________________________________________\nKnown downside and practical mitigation: ______________________________________"
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "parenting-plan_evidence_organization",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "4c6c806a26d432a58ac6f50666c8f909a1f3b3cbb9d69df619b4994fa2d71f13",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    },
+    {
+      "authority_status": "not_legal_authority",
+      "category": "Case organization",
+      "chunks": [
+        {
+          "character_end": 179,
+          "character_start": 0,
+          "chunk_id": "nh-orders-dates-deadlines-tracker-p1-c1",
+          "page_number": 1,
+          "text": "Court and case\nCourt location: ___________________________  Docket number: ______________________\nCurrent controlling order date: ___________  Later modification date: ___________"
+        },
+        {
+          "character_end": 542,
+          "character_start": 180,
+          "chunk_id": "nh-orders-dates-deadlines-tracker-p1-c2",
+          "page_number": 1,
+          "text": "Deadline table\nItem / source document | Due date | Filing or service method | Completed | Proof saved\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________"
+        },
+        {
+          "character_end": 820,
+          "character_start": 543,
+          "chunk_id": "nh-orders-dates-deadlines-tracker-p1-c3",
+          "page_number": 1,
+          "text": "Support and financial records\nPayment date / amount / method / confirmation: __________________________________\nFinancial affidavit or worksheet date and source figures: ________________________\nInsurance, childcare, or income-document update due: _____________________________"
+        },
+        {
+          "character_end": 1011,
+          "character_start": 821,
+          "chunk_id": "nh-orders-dates-deadlines-tracker-p1-c4",
+          "page_number": 1,
+          "text": "Verification rule\nA planning calendar is not the legal source of a deadline. Trace every deadline to the signed order, hearing notice, statute, rule, or official instruction that creates it."
+        }
+      ],
+      "county": "",
+      "description": "A planning worksheet for orders, filings, service, hearings, payments, mediation, and follow-up tasks.",
+      "display_title": "Orders, Dates, and Deadlines Tracker",
+      "document_id": "nh-orders-dates-deadlines-tracker",
+      "document_kind": "local_public_planning_pdf",
+      "extraction_date": "2026-09-11",
+      "family_situation": [],
+      "full_text": "Orders, Dates, and Deadlines Tracker\nA planning worksheet for orders, filings, service, hearings, payments, mediation, and follow-up tasks.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nCourt and case\nCourt location: ___________________________  Docket number: ______________________\nCurrent controlling order date: ___________  Later modification date: ___________\nDeadline table\nItem / source document | Due date | Filing or service method | Completed | Proof saved\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________\nSupport and financial records\nPayment date / amount / method / confirmation: __________________________________\nFinancial affidavit or worksheet date and source figures: ________________________\nInsurance, childcare, or income-document update due: _____________________________\nVerification rule\nA planning calendar is not the legal source of a deadline. Trace every deadline to the signed order, hearing notice, statute, rule, or official instruction that creates it.",
+      "headings": [
+        "Court and case",
+        "Deadline table",
+        "Support and financial records",
+        "Verification rule"
+      ],
+      "intended_audience": "Parents and self-represented litigants",
+      "keywords": [
+        "court",
+        "dates",
+        "deadlines",
+        "hearing",
+        "orders",
+        "preparation",
+        "service",
+        "track"
+      ],
+      "likely_use_cases": [
+        "track deadlines",
+        "orders dates",
+        "court dates",
+        "service",
+        "hearing preparation"
+      ],
+      "manifest_hash": "edaeaf1a65236fdbd5207ca0c7cb7fb14026055fc601dc5326491a663f29035b",
+      "manifest_hash_matches": true,
+      "municipality": "",
+      "native_text_status": "available",
+      "ocr_status": "not_needed",
+      "original_filename": "nh-orders-dates-deadlines-tracker.pdf",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text": "Orders, Dates, and Deadlines Tracker\nA planning worksheet for orders, filings, service, hearings, payments, mediation, and follow-up tasks.\nPlanning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it.\nCourt and case\nCourt location: ___________________________  Docket number: ______________________\nCurrent controlling order date: ___________  Later modification date: ___________\nDeadline table\nItem / source document | Due date | Filing or service method | Completed | Proof saved\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________\n_______________________ | ________ | ________________________ | _________ | __________\nSupport and financial records\nPayment date / amount / method / confirmation: __________________________________\nFinancial affidavit or worksheet date and source figures: ________________________\nInsurance, childcare, or income-document update due: _____________________________\nVerification rule\nA planning calendar is not the legal source of a deadline. Trace every deadline to the signed order, hearing notice, statute, rule, or official instruction that creates it."
+        }
+      ],
+      "parser": "curated_text_manifest_v1",
+      "printability_status": "printable",
+      "related_document_family": "case_organization",
+      "resource_lane": "nh_family_toolkit_secondary_resource",
+      "source_hash": "edaeaf1a65236fdbd5207ca0c7cb7fb14026055fc601dc5326491a663f29035b",
+      "source_url": "",
+      "warnings": [
+        "Planning aid only. Not legal advice, not legal authority, and not an official court form. Court rules, forms, filing requirements, and agency information can change. Verify every legal or procedural step against a current official New Hampshire source before relying on it."
+      ]
+    }
+  ],
+  "generated_at": "2026-09-11",
+  "library": "New Hampshire Family Toolkit",
+  "resource_lane": "nh_family_toolkit_secondary_resource",
+  "schema": "nh_family_law_llm.family_toolkit_inventory.v1"
+}

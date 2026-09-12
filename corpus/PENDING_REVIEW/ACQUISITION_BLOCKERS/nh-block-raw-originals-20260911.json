@@ -1,0 +1,13 @@
+{
+  "blocker_id": "NH-BLOCK-RAW-ORIGINALS-20260911",
+  "source_family": "Byte-for-byte preservation of official General Court online source responses",
+  "urls": [
+    "https://gc.nh.gov/rsa/html/XLIII/458-C/458-C-2.htm"
+  ],
+  "observed_result": "The acquisition environment could inspect parsed official government page content, but the raw-file download channel did not return the original response body. No page was represented as a raw archival copy.",
+  "status": "raw_original_acquisition_blocked_pending_retry",
+  "retrieval_eligible": false,
+  "next_action": "Retry raw HTML/PDF acquisition in a network environment that can preserve the original response body, response headers, final URL, retrieval timestamp, size, and SHA-256. Keep normalized capsules explicitly non-verbatim until then.",
+  "recorded_at": "2026-09-11T18:22:03Z",
+  "as_of": "2026-09-11"
+}

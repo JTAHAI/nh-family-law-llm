@@ -1,0 +1,1 @@
+python scripts/verify_pass_04.py

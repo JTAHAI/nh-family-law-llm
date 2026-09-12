@@ -1,0 +1,26 @@
+{
+  "priority_order": [
+    "verified_official_nh",
+    "verified_nh_supreme_court",
+    "verified_federal",
+    "verified_public_api",
+    "user_provided_only",
+    "stale_unknown",
+    "not_found"
+  ],
+  "schema_version": "1.1",
+  "as_of_date": "2026-09-11",
+  "eligibility_requirements": {
+    "required_status": "current_verified",
+    "retrieval_eligible": true,
+    "effective_date_not_after_query_date": true,
+    "checksum_match": true,
+    "official_source_required": true
+  },
+  "capsule_rules": {
+    "normalized_authority_capsule": "eligible only within retrieval_scope and snapshot_completeness",
+    "future_effective_pending": "never eligible without explicit promotion",
+    "source_currentness_only": "cannot support substantive legal answer",
+    "raw_source_bytes_preserved_false": "display preservation warning and official link"
+  }
+}

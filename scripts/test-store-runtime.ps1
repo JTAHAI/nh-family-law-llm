@@ -1,0 +1,163 @@
+param(
+  [string]$RepoRoot = "",
+  [string]$RuntimeRoot = "",
+  [string]$EvidenceRoot = "",
+  [int]$SmokeTimeoutMs = 600000
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+$env:PYTHONDONTWRITEBYTECODE = "1"
+$env:PYTHONPYCACHEPREFIX = Join-Path $env:TEMP "nhfl-pycache-disabled"
+
+if (-not $RepoRoot) {
+  $RepoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+}
+. (Join-Path $PSScriptRoot "store-build-workspace.ps1")
+$null = Initialize-RepoBuildEnvironment $RepoRoot
+if (-not $RuntimeRoot) {
+  $RuntimeRoot = Join-Path $RepoRoot "dist\store\runtime"
+}
+if (-not $EvidenceRoot) {
+  $EvidenceRoot = Join-Path $RepoRoot "dist\store\evidence"
+}
+
+$runtimeExe = Join-Path $RuntimeRoot "NHFamilyLawLLM.exe"
+if (-not (Test-Path -LiteralPath $runtimeExe)) {
+  throw "Store runtime executable missing at $runtimeExe. Build explicitly; qualification never downloads or rebuilds a missing candidate."
+}
+if ($SmokeTimeoutMs -lt 120000) {
+  $SmokeTimeoutMs = 120000
+}
+
+New-Item -ItemType Directory -Force -Path $EvidenceRoot | Out-Null
+$smokeJson = Join-Path $EvidenceRoot "store-build-smoke.json"
+$smokeArguments = @(
+    "--smoke-test"
+    "--smoke-json"
+    $smokeJson
+)
+
+# Never attach qualification to the user's real Store profile or API state.
+# Only this newly created child receives the fictional QA profile.
+$qaLocalAppData = Join-Path ([System.IO.Path]::GetTempPath()) ("nhfl-frozen-smoke-" + [Guid]::NewGuid().ToString("N"))
+New-Item -ItemType Directory -Path $qaLocalAppData | Out-Null
+$priorLocalAppData = $env:LOCALAPPDATA
+try {
+  $env:LOCALAPPDATA = $qaLocalAppData
+  $smokeProcess = Start-Process `
+      -FilePath $runtimeExe `
+      -ArgumentList $smokeArguments `
+      -WindowStyle Hidden `
+      -PassThru
+} finally {
+  $env:LOCALAPPDATA = $priorLocalAppData
+}
+
+try {
+if (-not $smokeProcess.WaitForExit($SmokeTimeoutMs)) {
+    Stop-Process `
+        -Id $smokeProcess.Id `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+    $timeoutSeconds = [math]::Round($SmokeTimeoutMs / 1000, 0)
+    throw "Store runtime smoke timed out after $timeoutSeconds seconds."
+}
+
+if ($smokeProcess.ExitCode -ne 0) {
+    throw "Store runtime smoke exited with code $($smokeProcess.ExitCode)."
+}
+
+if (-not (Test-Path -LiteralPath $smokeJson)) {
+  throw "Smoke evidence was not written to $smokeJson"
+}
+
+$payload = Get-Content -Path $smokeJson -Raw | ConvertFrom-Json
+$answerGrounded = $payload.answer_grounded -and $payload.answer_failure_class -eq "none"
+$answerFailedClosed = (-not $payload.answer_grounded) -and $payload.answer_failure_class -eq "official_authority_product_unavailable"
+if ($payload.launch_result -ne "pass" -or -not $payload.api_health_result -or -not $payload.fictional_sample_workflow_result -or (-not $answerGrounded -and -not $answerFailedClosed)) {
+  throw "Store runtime smoke test did not produce a passing payload."
+}
+if ($payload.bundled_ocr_available -ne $true) {
+  throw "Store runtime cannot resolve its bundled OCR engine. Do not package this runtime."
+}
+
+# New Hampshire release blocker: verify every family-toolkit inventory row resolves to actual
+# packaged PDF bytes from the frozen runtime, including the exact item that
+# returned printable_not_found in v3.1.1.
+$runtimeInternal = Join-Path $RuntimeRoot "_internal"
+$runtimeSource = Join-Path $runtimeInternal "src"
+$assetAuditScript = Join-Path $EvidenceRoot "verify-nh-family-toolkit-runtime-assets.py"
+$assetAuditJson = Join-Path $EvidenceRoot "nh-family-toolkit-runtime-asset-audit.json"
+$assetAuditPython = @'
+from __future__ import annotations
+import json
+import sys
+from pathlib import Path
+
+runtime_internal = Path(sys.argv[1]).resolve()
+output_path = Path(sys.argv[2]).resolve()
+sys.path.insert(0, str(runtime_internal / "src"))
+sys._MEIPASS = str(runtime_internal)
+
+from nh_family_law_llm.family_toolkit import audit_packaged_printables, printable_pdf_path
+
+broken_id = "nh-two-home-parenting-schedule-planner"
+audit = audit_packaged_printables(verify_hashes=True)
+path = printable_pdf_path(broken_id, verify_hash=True)
+audit["exact_regression_id"] = broken_id
+audit["exact_regression_resolved"] = bool(path and path.is_file())
+audit["exact_regression_pdf_header"] = bool(path and path.read_bytes()[:4] == b"%PDF")
+output_path.write_text(json.dumps(audit, indent=2, sort_keys=True), encoding="utf-8")
+if audit["status"] != "pass" or not audit["exact_regression_resolved"] or not audit["exact_regression_pdf_header"]:
+    raise SystemExit(2)
+'@
+Set-Content -Path $assetAuditScript -Value $assetAuditPython -Encoding UTF8
+$storeBuildPython = Join-Path $RepoRoot "dist\build-env\store\Scripts\python.exe"
+$pythonExe = if (Test-Path -LiteralPath $storeBuildPython) { $storeBuildPython } else { "python" }
+& $pythonExe -B $assetAuditScript $runtimeInternal $assetAuditJson
+if ($LASTEXITCODE -ne 0) {
+  throw "New Hampshire family-toolkit packaged-runtime asset audit failed. See $assetAuditJson"
+}
+Remove-Item -LiteralPath $assetAuditScript -Force -ErrorAction SilentlyContinue
+
+$assetAudit = Get-Content -Path $assetAuditJson -Raw | ConvertFrom-Json
+if ($assetAudit.status -ne "pass" -or -not $assetAudit.exact_regression_resolved) {
+  throw "New Hampshire family-toolkit assets did not pass the fail-closed audit."
+}
+
+$summary = @(
+  "Store runtime smoke: PASS",
+  "Application version: $($payload.application_version)",
+  "Local service URL: $($payload.local_service_url)",
+  "Sample workflow: $($payload.fictional_sample_workflow_result)",
+  "Authority answer: $(if ($answerGrounded) { 'grounded' } else { 'fail-closed until approved external authority is configured' })",
+  "NH family-toolkit assets resolved: $($assetAudit.resolved)/$($assetAudit.expected)",
+  "NH family-toolkit exact regression: $($assetAudit.exact_regression_resolved)",
+  "Fork guide exists: $($payload.fork_guide_exists)",
+  "Privacy policy exists: $($payload.privacy_policy_exists)"
+) -join "`r`n"
+Set-Content -Path (Join-Path $EvidenceRoot "test-summary.txt") -Value $summary -Encoding UTF8
+
+Write-Host "Store runtime smoke passed. Evidence: $smokeJson"
+} finally {
+  if ($smokeProcess -and -not $smokeProcess.HasExited) {
+    $smokeProcess.Kill()
+    $smokeProcess.WaitForExit(10000) | Out-Null
+  }
+  # Delete only the unique fictional profile created by this invocation. The
+  # user's installed Store profile and all preserved evidence are out of scope.
+  $ownedQaRoot = [System.IO.Path]::GetFullPath($qaLocalAppData)
+  $allowedQaParent = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+  if (-not $ownedQaRoot.StartsWith($allowedQaParent, [StringComparison]::OrdinalIgnoreCase) -or
+      [System.IO.Path]::GetFileName($ownedQaRoot) -notmatch '^nhfl-frozen-smoke-[0-9a-f]{32}$') {
+    throw "Owned smoke profile containment validation failed."
+  }
+  if (Test-Path -LiteralPath $ownedQaRoot) {
+    if ((Get-Item -LiteralPath $ownedQaRoot -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+      throw "Owned smoke profile must not be a reparse point."
+    }
+    Remove-Item -LiteralPath $ownedQaRoot -Recurse -Force
+  }
+}

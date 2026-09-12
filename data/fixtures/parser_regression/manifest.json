@@ -1,0 +1,99 @@
+{
+  "corpus_id": "nh-official-source-parser-regression",
+  "corpus_version": "2.0.0-pass2",
+  "fixtures": [
+    {
+      "content_file": "rsa_chapter_index_v1.html",
+      "content_sha256": "c84908aa43d961ba9c4f299a2f695bf67f9978e74f3eb7d8d2babcc764323b3a",
+      "expected": {
+        "minimum_extracted_count": 2,
+        "required_metadata": {
+          "chapter_number": "461-A",
+          "section_link_count": 2
+        },
+        "status": "parsed"
+      },
+      "fixture_id": "general-court-layout-table-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_general_court_chapter_index",
+      "scenario": "chapter_index_markup"
+    },
+    {
+      "content_file": "rsa_section_v1.html",
+      "content_sha256": "f06c8bd639e61414413bc11985c963b8f183e06534718627bfb7db4d01c5b2b1",
+      "expected": {
+        "minimum_extracted_count": 1,
+        "required_metadata": {
+          "chapter_number": "461-A",
+          "citation": "RSA 461-A:6",
+          "section_number": "6"
+        },
+        "status": "parsed"
+      },
+      "fixture_id": "rsa-section-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_general_court_section",
+      "scenario": "section_markup"
+    },
+    {
+      "content_file": "forms_table_v1.html",
+      "content_sha256": "3ff1734ef5e678b05f97e3a83da97393475f1766c9d51bb8e4fa7fb2452a0288",
+      "expected": {
+        "minimum_extracted_count": 1,
+        "required_metadata": {
+          "form_count": 1
+        },
+        "status": "parsed"
+      },
+      "fixture_id": "forms-table-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_forms_index",
+      "scenario": "forms_index_markup"
+    },
+    {
+      "content_file": "rules_footnote_v1.txt",
+      "content_sha256": "c3735c9bc62d8244ab47682e4671270cccbd494b2ee7813282d51357d90e465d",
+      "expected": {
+        "minimum_extracted_count": 2,
+        "required_metadata": {
+          "rule_set": "New Hampshire Rules of Civil Procedure"
+        },
+        "status": "parsed"
+      },
+      "fixture_id": "rules-footnote-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_rules_text",
+      "scenario": "rules_text_with_footnote"
+    },
+    {
+      "content_file": "opinions_table_v1.html",
+      "content_sha256": "3ef1a662bf1a37212136b6dff21819991e452a2d7aca292abce4f279bb1b0bfd",
+      "expected": {
+        "minimum_extracted_count": 1,
+        "required_metadata": {
+          "opinion_count": 1
+        },
+        "status": "parsed"
+      },
+      "fixture_id": "opinions-table-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_supreme_court_opinion_index",
+      "scenario": "opinion_index_markup"
+    },
+    {
+      "content_file": "malformed_download_v1.bin",
+      "content_sha256": "a19154a63842ec7679ab58d8da06f1f564a57ea5061f0b6e2c013a35acaeb2c7",
+      "expected": {
+        "minimum_extracted_count": 0,
+        "required_metadata": {},
+        "status": "quarantined"
+      },
+      "fixture_id": "malformed-download-v1",
+      "fixture_version": "1.0.0",
+      "parser_name": "nh_general_court_section",
+      "scenario": "malformed_download"
+    }
+  ],
+  "notice": "Synthetic parser fixtures only. They are not legal authority and cannot support legal claims.",
+  "schema_version": "parser_regression_corpus_v1"
+}

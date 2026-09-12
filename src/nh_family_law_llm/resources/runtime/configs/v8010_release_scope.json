@@ -1,0 +1,39 @@
+{
+  "release": "8.0.10",
+  "build_number": 80,
+  "pass": 8,
+  "stage": "desktop_source_candidate",
+  "production_ready": false,
+  "attorney_reviewed": false,
+  "filing_ready": false,
+  "authority_promotions": 0,
+  "windows_frozen_verified": false,
+  "msix_verified": false,
+  "signing_verified": false,
+  "wack_verified": false,
+  "clean_machine_verified": false,
+  "dependency_resolved_environment_verified": false,
+  "remaining_planned_passes": 4,
+  "remaining_gates": [
+    "full RSA and agency coverage audit",
+    "case-law expansion and later-treatment review",
+    "attorney/editor validation",
+    "Windows clean-machine, security, accessibility and release qualification"
+  ],
+  "package_version": "8.0.10.0",
+  "ui_version": "8.0.10-pass8-b80",
+  "ui_pass_marker": "v8.0.10-pass8",
+  "release_qualification": "blocked_on_remaining_host_and_review_gates",
+  "schema_version": "v8010_release_scope_v1",
+  "new_public_feature_ids": [],
+  "windows_package_validation_claimed": false,
+  "existing_feature_scope_reference": "configs/v809_release_scope.json",
+  "source_reachable_feature_ids": [
+    "capability_75_nh_legal_behavior_engine",
+    "capability_76_nh_legal_evaluation_harness",
+    "capability_77_nhfl_transport_header_namespace",
+    "capability_78_nh_review_desk"
+  ],
+  "review_required": true,
+  "automatic_downloads": false
+}

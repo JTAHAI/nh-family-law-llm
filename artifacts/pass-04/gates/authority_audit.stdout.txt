@@ -1,0 +1,12 @@
+{
+  "authority_records": 76,
+  "coverage_claim": "section-verified core capsule snapshot; exhaustive statewide coverage is not asserted",
+  "current_verified_records": 37,
+  "errors": [],
+  "legacy_authority_findings": 0,
+  "local_snapshot_records": 39,
+  "manifest": "corpus/manifest/nh_authorities.json",
+  "ok": true,
+  "retrieval_eligible_records": 37,
+  "warnings": []
+}

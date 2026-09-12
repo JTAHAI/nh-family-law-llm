@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "nh_legal_behavior_v1",
+  "jurisdiction": "NH",
+  "effective_as_of": "2026-09-11",
+  "review_required": true,
+  "filing_ready": false,
+  "authority_gate": {
+    "required_status": "current_verified",
+    "retrieval_eligible_required": true,
+    "local_hash_required": true,
+    "future_effective_disabled_until_repromotion": true
+  },
+  "behavior_lanes": {
+    "parenting_modification": {
+      "sequence": [
+        "identify_order_posture",
+        "identify_RSA_461-A:11_gate",
+        "analyze_best_interests",
+        "build_evidence_plan"
+      ],
+      "prohibited_shortcut": "approximately_equal_policy_does_not_bypass_modification_gate"
+    },
+    "child_support": {
+      "sequence": [
+        "identify_issuer",
+        "identify_modification_route",
+        "audit_income_and_deductions",
+        "audit_schedule_deviation",
+        "verify_notice_date"
+      ],
+      "calculator_mode": "disabled_without_current_official_table_and_complete_inputs"
+    },
+    "interstate": {
+      "uccjea": "enabled_for_promoted_RSA_458-A_capsules",
+      "uifsa": "fail_closed_until_section_level_RSA_546-B_authority_is_promoted"
+    }
+  },
+  "prohibited_outputs": [
+    "guaranteed_outcome",
+    "automatic_equal_parenting_claim",
+    "unilateral_support_reduction",
+    "unilateral_parenting_order_noncompliance",
+    "invented_form_number",
+    "support_amount_without_current_verified_inputs"
+  ]
+}

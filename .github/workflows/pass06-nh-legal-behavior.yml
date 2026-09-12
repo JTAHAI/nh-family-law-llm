@@ -1,0 +1,21 @@
+name: Pass 6 NH legal behavior
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  legal-behavior-source-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[api,dev]"
+      - run: python -m compileall -q legal app src nh_family_law_llm tests
+      - run: python scripts/verify_pass_04.py
+      - run: python scripts/verify_pass_06.py
+      - run: python scripts/scan_for_maine_authority.py
+      - run: python scripts/scan_legacy_runtime_identifiers.py
+      - run: python -m pytest -q tests/test_pass04_authority_snapshot.py tests/test_nh_authority_manifest.py tests/test_pass06_nh_legal_behavior.py

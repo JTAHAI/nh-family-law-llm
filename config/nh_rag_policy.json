@@ -1,0 +1,42 @@
+{
+  "jurisdiction": "NH",
+  "primary_source_priority": [
+    "current_statute",
+    "current_court_rule",
+    "current_administrative_rule",
+    "controlling_nh_supreme_court_opinion",
+    "official_form_or_order",
+    "official_agency_guidance",
+    "credible_secondary_source"
+  ],
+  "status_ranking": {
+    "current": 100,
+    "current_source_seed": 60,
+    "unknown": 20,
+    "pending_verification": 10,
+    "superseded": -100,
+    "repealed": -120,
+    "source_seed_unverified": -80,
+    "acquired_pending_effective_date_review": -40,
+    "current_verified": 120
+  },
+  "fail_closed_on": [
+    "missing_citation",
+    "unverified_quote_span",
+    "unresolved_effective_date",
+    "conflicting_current_authorities",
+    "jurisdiction_mismatch"
+  ],
+  "required_metadata": [
+    "jurisdiction",
+    "authority_type",
+    "citation",
+    "issuing_body",
+    "source_url",
+    "status",
+    "retrieval_date"
+  ],
+  "citation_style": "Use the authority citation plus section/rule/page/paragraph pinpoint and official source URL metadata.",
+  "disclaimer": "Legal information only; human review required.",
+  "retrieval_gate": "Only records with retrieval_eligible=true may support a definitive current-law proposition."
+}

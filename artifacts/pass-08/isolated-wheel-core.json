@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "version": "8.0.10",
+  "module": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/__init__.py",
+  "manifest": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/data/authority_snapshot/manifest/nh_authorities.json",
+  "review_required": true,
+  "filing_ready": false,
+  "api_dependencies_present": false,
+  "dependency_mode": "no-deps isolated wheel (stdlib engine and activation only)"
+}

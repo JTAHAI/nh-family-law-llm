@@ -1,0 +1,9 @@
+{
+  "identity_name": "NHFamilyLawLLM.LocalQA",
+  "publisher": "CN=NHFamilyLawLLM-LocalQA",
+  "publisher_display_name": "New Hampshire Family Law LLM Local QA",
+  "package_display_name": "New Hampshire Family Law LLM (Local QA)",
+  "package_version": "8.0.10.0",
+  "identity_status": "development_example_not_store_registered",
+  "production_identity_confirmed": false
+}

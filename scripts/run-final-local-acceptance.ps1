@@ -1,0 +1,21 @@
+param(
+  [string]$RepoRoot = "C:\dev\NH_FAMILY_LAW_LLM",
+  [string]$DataRoot = "C:\dev\NH_FAMILY_LAW_LLM_data",
+  [string]$Output = "docs/sample-evidence/final_local_acceptance_evidence.json"
+)
+
+$ErrorActionPreference = "Stop"
+Set-Location $RepoRoot
+
+if (-not (Test-Path $DataRoot)) {
+  New-Item -ItemType Directory -Force -Path $DataRoot | Out-Null
+}
+
+python -m pytest -q
+python scripts\run-quality-checks.py
+python scripts\build-release-lockfile.py docs/sample-evidence/source_release_lock.json
+python scripts\audit-release-lockfile.py docs/sample-evidence/source_release_lock.json
+python scripts\build-enterprise-acceptance-evidence.py docs/sample-evidence/enterprise_acceptance_evidence.json
+python scripts\run-final-local-acceptance.py $Output
+
+Write-Host "Final local source acceptance complete. Production legal readiness still requires external evidence and signoffs."

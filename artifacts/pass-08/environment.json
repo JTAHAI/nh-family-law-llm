@@ -1,0 +1,25 @@
+{
+  "host_platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "declared_dependency_resolution": "blocked: package index name resolution unavailable; see dependency-install.log",
+  "requirements_modified_to_match_host": false,
+  "core_wheel_mode": "installed --no-index --no-deps; isolated stdlib behavior engine and embedded manifest verified before any host-dependency link",
+  "api_wheel_mode": "installed package isolated from source via -I; API dependencies borrowed from /opt/pyvenv through a controlled venv .pth file",
+  "pinned_API_dependency_install_verified": false,
+  "host_versions": {
+    "setuptools": "82.0.1",
+    "pytest": "9.0.2",
+    "fastapi": "0.128.2",
+    "starlette": "0.50.0",
+    "uvicorn": "0.48.0",
+    "httpx": "0.28.1",
+    "pydantic": "2.13.4",
+    "playwright": "1.57.0"
+  },
+  "clean_machine_install_verified": false,
+  "browser_live_navigation": "blocked by environment administrator policy, not bypassed",
+  "browser_offline_file_navigation": "blocked by environment administrator policy, not bypassed",
+  "screenshots_created": false,
+  "windows_exe_msix_signing_wack": "not_run: Linux host only",
+  "workflow_added_but_executed_on_github": false
+}

@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "current_verified": 37,
+  "future_pending": 2,
+  "total": 76,
+  "embedded_package_copies": 2,
+  "as_of": "2026-09-11"
+}

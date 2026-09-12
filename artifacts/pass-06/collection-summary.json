@@ -1,0 +1,2134 @@
+{
+  "files": 532,
+  "tests": 2643,
+  "by_file": [
+    {
+      "file": "tests/test_adaptive_local_runtime.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_addon_studio.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_answer_builder.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_answer_composer_draft_v1.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_answer_safety_v1.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_answering_pipeline_guardrails.py",
+      "tests": 17
+    },
+    {
+      "file": "tests/test_answering_smoke_script.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_api_ui_completion_pass14.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_appeals_routing_runtime_v184.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_appellate_review.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_attorney_sandbox_review_kit_v193.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_audience_router.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_authority_build_pass17.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_authority_gap_detector.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_authority_graph.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_authority_graph_pass4.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_authority_pdf_paragraph_pinpoints.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_brand_kit_ui_assets_v185.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_bundled_engine_inventory_feature_tier.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_calendar_review.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_case_corpus_intake.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_case_library_switching.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_chat_library_expansion_and_error_recovery.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_chat_library_ui_hardening_v180.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_chat_library_v187_input_clear_and_routing.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_chat_missing_info_handoff_v182.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_chat_prompt_packs_source_drilldown_v181.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_chat_question_library_and_workbench_ux.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_chat_streaming.py",
+      "tests": 30
+    },
+    {
+      "file": "tests/test_child_continuity_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_chunking_citations_v1.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_classic_desktop_ui_v186.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_cli_api_local_v1.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_command_palette_search_normalization.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_communications_parenting_time_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_compound_claim_filing_boundary.py",
+      "tests": 28
+    },
+    {
+      "file": "tests/test_conversation_api_contract.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_conversation_eval_schema.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_internal_passes.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_modes.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_product_polish_passes.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_quality_metrics.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_quality_regression.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_conversation_regression_cases.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_session_state.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_conversation_state_machine.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_current_authority_acceptance.py",
+      "tests": 29
+    },
+    {
+      "file": "tests/test_data_boundaries.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_deliberation_workspace.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_discovery_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_doc_unsafe_claims.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_docker_containerization.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_docket_reconciliation.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_document_findings.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_document_instruction_filter.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_document_review_conversation.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_document_review_report.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_draft_blockers.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_draft_intake.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_draft_review_checklist.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_drafting_conversation.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_drafting_output_boundary.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_drafting_workflow_pass10.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_email_parsing.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_enterprise_acceptance_lockdown.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_enterprise_data_product_pass16.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_enterprise_release_control_v206.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_enterprise_resource_collection.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_enterprise_ux_interaction_boundaries.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_evaluation_orchestrator.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_evidence_packet_builder.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_evidence_review_output_boundary.py",
+      "tests": 26
+    },
+    {
+      "file": "tests/test_exhibit_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_external_audit_cli_fail_closed.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_family_justice_workbench_v205.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_fast_interchange_artifact_registry.py",
+      "tests": 43
+    },
+    {
+      "file": "tests/test_fast_interchange_bundled_pack.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_fast_interchange_completion_boundary.py",
+      "tests": 21
+    },
+    {
+      "file": "tests/test_fast_interchange_hardware_readiness.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_fast_interchange_host_lifecycle.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_fast_interchange_host_source_binding.py",
+      "tests": 52
+    },
+    {
+      "file": "tests/test_fast_interchange_lifecycle.py",
+      "tests": 14
+    },
+    {
+      "file": "tests/test_fast_interchange_managed_worker.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_fast_interchange_model_pack_ui.py",
+      "tests": 18
+    },
+    {
+      "file": "tests/test_fast_interchange_model_packs.py",
+      "tests": 26
+    },
+    {
+      "file": "tests/test_fast_interchange_pack_recovery.py",
+      "tests": 25
+    },
+    {
+      "file": "tests/test_fast_interchange_pack_recovery_http.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_fast_interchange_protocol_r0002_builder.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_fast_interchange_protocol_r0003_repack.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_fast_interchange_public_base_acquisition.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_fast_interchange_real_library.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_fast_interchange_specialist_tasks.py",
+      "tests": 40
+    },
+    {
+      "file": "tests/test_fast_interchange_ui_lifecycle.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_fast_interchange_worker.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_fast_interchange_worker_device_policy.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_fast_interchange_workflow_training.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_feature_tiers.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_feature_truth_acceptance.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_fetch_normalize_v1.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_filing_ready_gate.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_frozen_corpus_ocr_resolution.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_frozen_ocr_resources.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_full_corpus_registry.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_full_ga_workbench.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_full_ux_hardening_v700.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_ga_authority_acceptance_slice.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_ga_e2e_evidence_slice.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_ga_e2e_writer_retirement.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_ga_gateway_closure.py",
+      "tests": 29
+    },
+    {
+      "file": "tests/test_ga_pass_evidence_gate.py",
+      "tests": 15
+    },
+    {
+      "file": "tests/test_ga_pass_tracker.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_ga_release_pipeline_safety.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_ga_security_privacy_audit_slice.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_ga_tracker_integrity_hardening.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_ga_ux_accessibility_polish.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_ga_workbench_source_availability.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_git_safe_push_v192.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_glossary.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_gold_eval_foundation_pass6.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_gold_eval_pack_pass18.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_gold_release_gates_pass.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_governance_policy_center.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_hardware_gpu_probe.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_hearing_media_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_hearing_preparation.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_human_grounded_evals.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_human_review_queue.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_icwa_review.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_ingest_script_policy.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_install_lifecycle_qualification.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_installed_app_certification.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_installed_offline_qualification_slice.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_installer_launchers.py",
+      "tests": 13
+    },
+    {
+      "file": "tests/test_intake_schema.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_isolated_release_regression.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_late_slice_safety_contracts.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_legal_matter_classifier.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_legal_uncertainty.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_llm_grounding.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_local_chat_workbench_ui.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_local_only_boundary_concurrency.py",
+      "tests": 16
+    },
+    {
+      "file": "tests/test_local_operator_scripts.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_local_test_readiness.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_local_workbench_control_plane.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_local_workbench_live_ui_v183.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_matter_golden_path.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_matter_ingestion_pass9.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_matter_intake_workbench.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_matter_vault_encryption.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_missing_information.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_model_orchestration_pass11.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_networked_source_gate.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_next_question.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_next_steps.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_nh_authority_manifest.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_nh_filing_ready_gate.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_nh_issue_classifier.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_nh_supreme_court_intelligence_pass8.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_nh_supreme_court_opinion_parser.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_nhfl_boundary_v4.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_nhfl_boundary_v5.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_nhfl_compact_prompt_research.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_nhfl_correction_lane.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_nhfl_counterfactual_pilot.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_nhfl_diverse_counterfactual.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_nhfl_drafting_generalization_training.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_nhfl_explanation_keywords.py",
+      "tests": 16
+    },
+    {
+      "file": "tests/test_nhfl_generalization_pilot.py",
+      "tests": 19
+    },
+    {
+      "file": "tests/test_nhfl_native_pilot.py",
+      "tests": 19
+    },
+    {
+      "file": "tests/test_nhfl_pilot_resource_policy.py",
+      "tests": 14
+    },
+    {
+      "file": "tests/test_nhfl_prompt_framing_diagnostic.py",
+      "tests": 20
+    },
+    {
+      "file": "tests/test_nhfl_research_device.py",
+      "tests": 18
+    },
+    {
+      "file": "tests/test_nhfl_source_boundary_corpus.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_nhfl_specialist_quality_gate.py",
+      "tests": 23
+    },
+    {
+      "file": "tests/test_nhfl_specialist_regression_runner.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_no_cloud_calls_default.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_no_personal_dump_external.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_official_ingest_pipeline.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_offline_qualification_provenance.py",
+      "tests": 27
+    },
+    {
+      "file": "tests/test_operator_handoff_bundle.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_operator_test_battery.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_order_intelligence.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_output_renderer.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_outreach_docs.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_outreach_truthfulness.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_package_optimization.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass01_nh_code_repair.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass02_nh_authority_elimination.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_pass04_authority_snapshot.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_pass06_nh_legal_behavior.py",
+      "tests": 28
+    },
+    {
+      "file": "tests/test_pass100_compliance_log_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass101_hardware_benchmark_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass102_model_admission_benchmark_acceptance.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_pass104_warm_model_pool_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass105_context_cache_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass106_speculative_retrieval_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass107_context_budget_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass108_batch_scheduler_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass109_low_memory_mode_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass110_crash_recovery_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass111_command_bar_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass112_unified_matter_search_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass113_smart_views_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass114_recent_work_continuity_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass115_workspace_tabs_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass116_command_history_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass117_bulk_review_queue_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass118_favorites_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass119_user_labels_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass120_daily_matter_brief_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass121_design_tokens_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass122_componentized_ui_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass123_virtualized_long_lists_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass124_responsive_workspace_rules_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass125_screen_reader_workflow_audit_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass126_keyboard_command_system_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass127_focus_dialog_manager_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass128_density_text_size_controls_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass129_user_facing_error_center_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass130_visual_regression_matrix_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass131_matter_key_hierarchy_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass132_windows_hello_matter_unlock_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass133_sensitive_clipboard_controls_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass134_secure_temp_broker_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass135_parser_sandbox_acceptance.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_pass136_content_disarm_derivatives_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass137_artifact_capability_context_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass137_fine_grained_capability_tokens_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass137_record_capability_context_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass138_local_api_abuse_resistance_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass139_privacy_safe_diagnostics_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass140_continuous_adversarial_corpus_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass141_structured_local_telemetry_optin_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass142_health_dependency_dashboard_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass143_runtime_job_journal_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass144_idempotency_everywhere_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass145_database_integrity_monitor_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass146_power_loss_resilience_acceptance.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass147_storage_pressure_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass148_clock_skew_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass149_performance_regression_gates_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass150_failure_replay_harness_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass151_incremental_encrypted_backups_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass152_point_in_time_restore_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass153_cross_device_transfer_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass154_schema_migration_lab_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass155_msix_upgrade_qualification_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass156_wack_qualification_acceptance.py",
+      "tests": 11
+    },
+    {
+      "file": "tests/test_pass157_store_asset_validator_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass158_package_size_budget_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass159_rollback_preparation_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass160_signed_update_metadata_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass161_admin_console_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass162_role_policy_simulator_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass163_separation_of_duties_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass164_signed_policy_pack_lifecycle_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass165_legal_hold_controls_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass166_retention_policy_engine_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass167_audit_verification_console_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass168_configuration_export_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass169_offline_entitlement_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass170_organization_readiness_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass171_reviewer_bundle_roundtrip_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass172_structured_comment_threads_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass173_review_assignment_queue_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass174_bundle_merge_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass175_calendar_ics_v2_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass176_email_handoff_package_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass177_archival_pdf_review_export_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass178_structured_evidence_export_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass179_print_review_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass180_external_tool_boundary_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass181_attorney_gold_task_preparation_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass182_strict_retrieval_benchmark_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass183_claim_verifier_benchmark_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass185_procedural_safety_evaluation_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass186_accessibility_bias_evaluation_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass187_longitudinal_matter_evaluation_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass188_189_production_pilot_boundary_acceptance.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_pass190_release_metric_eligibility_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass191_jurisdiction_pack_interface_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass192_fictional_second_state_reference_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass193_extension_sdk_sandbox_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass194_extension_certification_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass195_public_api_stability_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass196_200_enterprise_release_closure_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass19_authority_execution_harness.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_pass26_27_28_gold_release_metrics.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass27_gold_promotion_workbench.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass28_pinpoint_resolver_vertical.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass28_release_metrics_measurement_workbench.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass30_authority_gap_vertical.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass30_claim_support_metric_gate.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass31_atomic_authority_update_center.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass31_staleness_jurisdiction_metric_gate.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass32_38_engineering_closure.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass33_freshness_dashboard.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass35_parser_regression_corpus.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_pass37_forms_catalog_synchronizer.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_pass39_pass40_api_ui_completion.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass39_pass40_true_ga_closure.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass40_offline_authority_portability.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass41_pass42_model_governance_injection_defense.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_pass41_timeline_correction_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass42_claim_disposition_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass43_command_center_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass43_pass44_pass45_security_compliance_sre.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass43_pass45_ga_evidence_closure.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass44_attachment_coverage_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass45_fact_graph_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass46_issue_proof_matrix_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass46_operator_source_backed_release_eval.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass46_pass47_release_eval_red_team.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass47_engineering_closure.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass47_matter_change_digest_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass48_51_launch_evidence_gates.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass48_51_launch_evidence_starter_kit.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass48_pass49_pilot_operations.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass48_record_lineage_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass49_entity_resolution_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass50_matter_completeness_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass50_pass51_ga_release.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass51_incremental_ingest_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass52_watch_folder_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass53_scanner_review_acceptance.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_pass54_handwriting_review_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass55_document_type_review_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass56_page_quality_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass57_table_lineage_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass58_document_comparison_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass59_batch_metadata_review_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass60_import_policy_profiles_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass61_audio_transcript_correction_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass62_speaker_label_review_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass63_video_keyframe_review_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass64_media_redaction_derivatives_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass65_screenshot_conversation_reconstruction_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass66_media_metadata_inspector_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass67_evidence_relationship_graph_v2_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass68_exhibit_admission_checklist_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass69_chain_of_custody_event_capture_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass70_courtroom_media_player_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass71_tracked_docx_workflow_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass74_citation_insertion_acceptance.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_pass75_quote_safe_drafting_acceptance.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass76_draft_requirement_profiles_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass77_revision_rationale_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass78_plain_language_dual_view_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass79_argument_counterargument_matrix_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass80_export_provenance_footer_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass81_guided_forms_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass82_procedure_pathway_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass83_deadline_dependency_graph_acceptance.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_pass84_service_method_matrix_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass85_business_day_review_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass86_hearing_countdown_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass87_filing_preflight_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass88_fee_waiver_workspace_acceptance.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_pass89_venue_location_navigator_acceptance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_pass90_post_filing_reconciliation_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass91_parenting_schedule_simulation_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass92_order_calendar_extraction_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass93_child_support_worksheet_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass94_financial_affidavit_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass95_asset_tracing_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass96_debt_reconciliation_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass97_settlement_scenarios_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass98_implementation_feasibility_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass99_communication_plan_acceptance.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_pass_03_ui_runtime_protocol.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_pdf_ocr_mapping.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_pdf_raster_preview.py",
+      "tests": 36
+    },
+    {
+      "file": "tests/test_pilot_launch_pass15.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_plain_language.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_post_ga_enterprise_hardening.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_post_ga_repo_review.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_posture_classifier.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_privacy_classifier.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_private_data_scanner.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_production_api_gateway.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_production_authority_lane_boundary.py",
+      "tests": 11
+    },
+    {
+      "file": "tests/test_production_chat_accessible_metadata.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_production_promotion_gate.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_production_release_gates_pass13.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_production_ui_manifest.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_productivity_studio.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_provider_connections.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_public_repo_integrity.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_public_source_pre_push_gate_v191.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_public_supply_chain_hardening.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_public_workbench_ux_upgrades_v209.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_question_coverage.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_quote_span_verifier.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_readability.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_reboot_recovery_hardening.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_record_drilldown.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_record_inspector_media_boundary.py",
+      "tests": 34
+    },
+    {
+      "file": "tests/test_red_flag_classifier.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_red_flag_presenter.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_release_artifact_hygiene_pass.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_release_audits_read_only.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_release_feature_truth.py",
+      "tests": 11
+    },
+    {
+      "file": "tests/test_release_manifest.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_release_manifest_pass1.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_release_metrics_measurement_integrity.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_release_source_scan_pruning.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_release_unattended_build.py",
+      "tests": 18
+    },
+    {
+      "file": "tests/test_repo_hygiene_recovery_v188.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_reranker.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_response_contract.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_retention_policy.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_retrieval_index_audit_pass.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_retrieval_v1.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_review_status_presenter.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_reviewer_adapter.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_reviewer_feedback.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_reviewer_packet.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_role_package_builder.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_runtime_kernel.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_runtime_log_hardening_v700.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_safe_summary.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_sample_evidence_output_hygiene.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_saved_evidence_specialist_boundary.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_security_governance_pass12.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_security_privacy_fortress.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_signed_authority_updates.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_source_card_presenter.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_source_hash_no_mutation.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_source_manifest_v1.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_source_registry.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_specialist_protected_spans.py",
+      "tests": 39
+    },
+    {
+      "file": "tests/test_specialized_workbenches_32_34_e2e.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_specialized_workbenches_35_44_e2e.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_start_here.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_startup_hardening_v700.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_static_portal_relative_links.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_storage_layout.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_store_build_workspace.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_store_packaging.py",
+      "tests": 41
+    },
+    {
+      "file": "tests/test_store_preflight.py",
+      "tests": 28
+    },
+    {
+      "file": "tests/test_store_qa_harness_safety.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_store_runtime_residue_prune.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_tone_policy.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_uccjea_review.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_usb_export.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_user_journey_adapter.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_user_journey_eval_schema.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_user_journey_evals.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v312_printables_ocr_hotfix.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v320_chat_intake_upgrade.py",
+      "tests": 18
+    },
+    {
+      "file": "tests/test_v330_conversation_reliability.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_v340_conversation_continuity_and_security.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v350_grounding_integrity.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v380_three_pass_hardening.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v3_pass00_requirements.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v3_pass01_ui_foundation.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_v3_pass02_constitutional_bar.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v440_windows_ocr_and_corpus_commands.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v450_record_drilldown_chat_cards.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_v500_premium_workbench_ui.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v500_responsive_ux_hardening.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v500_source_flyout_and_open_ux.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v501_universal_local_source_inspector.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_v5100_evidence_work_product.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v5100_evidence_work_product_ui.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_v510_cross_document_consistency.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v510_dependency_security.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v510_docx_media_and_skill_package.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_v510_independent_qc_contract.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v510_ingestion_integration.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_v510_matter_inventory_and_classification.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v510_workflow_skill_registry.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v5110_nh_findings_forms_workbench.py",
+      "tests": 14
+    },
+    {
+      "file": "tests/test_v5120_promptfoo_ci_contract.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_v5120_retrieval_workbench_api_ui.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v5130_release_pilot_hardening.py",
+      "tests": 15
+    },
+    {
+      "file": "tests/test_v5140_reviewed_filing_packet.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v5160_attorney_sandbox_operations.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_v5170_limited_real_matter_pilot.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v5180_ga_release_candidate.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v5190_ga_shipment_readiness.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v520_answer_first_evidence.py",
+      "tests": 7
+    },
+    {
+      "file": "tests/test_v520_document_workspace.py",
+      "tests": 11
+    },
+    {
+      "file": "tests/test_v520_document_workspace_api.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v520_document_workspace_ui.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v520_local_request_hardening.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v530_hyphen_search_and_evidence.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v540_draft_provenance.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v540_local_agent_api_ui.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v540_local_agent_http_adapters.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v540_local_agent_runtime.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v55_immutable_authority_product.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_v570_review_workbench_ui_api.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v580_reviewer_queue_procedure_forms_annotations.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v590_document_intelligence.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_v600_visual_design_refresh.py",
+      "tests": 9
+    },
+    {
+      "file": "tests/test_v601_bug_hunt.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v602_final_hardening.py",
+      "tests": 12
+    },
+    {
+      "file": "tests/test_v603_extended_hardening.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_v603_release_control_center.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v604_guided_workflow_navigation.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_v604_release_maintenance_center.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v604_store_runtime_inventory.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_v620_evidence_review_workbench.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_v630_matter_command_center.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v640_eval_review_studio.py",
+      "tests": 4
+    },
+    {
+      "file": "tests/test_v650_local_intelligence_control_center.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_v651_attorney_review_evaluation_studio.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v652_local_intelligence_governance.py",
+      "tests": 8
+    },
+    {
+      "file": "tests/test_v700_adaptive_chat_layout.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v700_release_freeze.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v800_addon_release_freeze.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v800_control_strip_layout.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v802_private_chat_authority_boundary.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v806_nh_authority_release.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_v8_core_e2e_evidence.py",
+      "tests": 14
+    },
+    {
+      "file": "tests/test_v8_courtroom_media_e2e.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v8_durable_restart_e2e.py",
+      "tests": 6
+    },
+    {
+      "file": "tests/test_v8_exhibit_workbench_e2e.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_v8_sentence_support_map_e2e.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_v8_structured_draft_outline_e2e.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v8_tracked_docx_e2e.py",
+      "tests": 3
+    },
+    {
+      "file": "tests/test_v900_prose_legal_ops_and_sentinel.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_validate_bundled_nhfl_specialists.py",
+      "tests": 10
+    },
+    {
+      "file": "tests/test_validate_evidence_research_model.py",
+      "tests": 1
+    },
+    {
+      "file": "tests/test_verify_evidence_review_in_app.py",
+      "tests": 5
+    },
+    {
+      "file": "tests/test_windows_vbs_launcher.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_witness_statements.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_workbench_ui_copy.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_workflow_adapter.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_workflow_router.py",
+      "tests": 2
+    },
+    {
+      "file": "tests/test_workflow_steps.py",
+      "tests": 1
+    }
+  ]
+}

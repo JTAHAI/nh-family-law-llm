@@ -1,0 +1,93 @@
+# Python/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+build/
+dist/
+.eggs/
+.coverage
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local runtime / legal data products: keep outside repo
+.nhfl_work/
+# Transitional upstream cache path retained during namespace migration.
+.mfl_work/
+NH_FAMILY_LAW_LLM_data/
+# Transitional upstream paths remain ignored until Pass 2 removes them.
+ME_FM_LLM_data/
+official_authority_store/
+parsed_authority_store/
+embedding_store/
+eval_store/
+audit_store/
+model_registry/
+vector_store/
+vector_stores/
+models/
+weights/
+*.db
+*.sqlite
+*.sqlite3
+*.gguf
+*.safetensors
+
+# Local environment
+.venv/
+.venv-store-build/
+venv/
+env/
+ME_FM_LLM_venv/
+.local_server.pid
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+screenshots/
+local-screenshots/
+/proof/
+/enterprise_acceptance_evidence.json
+/source_release_lock.json
+/source_sbom.json
+docs/outreach/sent/
+docs/outreach/private/
+docs/outreach/*live*.csv
+docs/outreach/*real*.csv
+docs/outreach/*sent*.eml
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Microsoft Store / MSIX local signing and identity
+store/msix/identity.local.json
+store/msix/*.pfx
+store/msix/*.cer
+store/msix/*.pvk
+store/msix/*.snk
+store/msix/dev-cert-password.txt
+dist/store/
+
+# Prevent accidental nested full-repository snapshots
+ME_FM_LLM/
+
+# New Hampshire authority acquisition and private legal data
+private/
+case_files/
+client_data/
+*.pfx
+*.p12
+.env
+.env.local
+
+# Pass 8 local build products
+/.ruff_cache/
+/build/
+/*.egg-info/
+/src/*.egg-info/
+/dist/

@@ -1,0 +1,99 @@
+{
+  "pass": 4,
+  "version": "8.0.6",
+  "as_of_date": "2026-09-11",
+  "generated_at": "2026-09-11T18:22:03Z",
+  "seed_records_retained": 37,
+  "current_capsules": 37,
+  "future_capsules": 2,
+  "acquisition_blockers": 3,
+  "raw_source_bytes_preserved": false,
+  "current_ids": [
+    "NH-V0001",
+    "NH-V0002",
+    "NH-V0003",
+    "NH-V0004",
+    "NH-V0005",
+    "NH-V0006",
+    "NH-V0007",
+    "NH-V0008",
+    "NH-V0009",
+    "NH-V0010",
+    "NH-V0011",
+    "NH-V0012",
+    "NH-V0013",
+    "NH-V0014",
+    "NH-V0015",
+    "NH-V0016",
+    "NH-V0017",
+    "NH-V0018",
+    "NH-V0019",
+    "NH-V0020",
+    "NH-V0021",
+    "NH-V0022",
+    "NH-V0023",
+    "NH-V0024",
+    "NH-V0025",
+    "NH-V0026",
+    "NH-V0027",
+    "NH-V0028",
+    "NH-V0029",
+    "NH-V0030",
+    "NH-V0031",
+    "NH-V0032",
+    "NH-V0033",
+    "NH-V0034",
+    "NH-V0035",
+    "NH-V0036",
+    "NH-V0037"
+  ],
+  "validation_status": "pass",
+  "manifest_records": 76,
+  "retrieval_eligible_records": 37,
+  "embedded_snapshot_records": 39,
+  "test_batches": {
+    "authority_migration": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "pass"
+    },
+    "nhfl_specialist_renames": {
+      "tests": 174,
+      "passed": 172,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "status": "pass"
+    },
+    "privacy_and_runtime": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "pass"
+    },
+    "release_metadata": {
+      "tests": 19,
+      "passed": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "pass"
+    }
+  },
+  "collection": {
+    "test_files": 531,
+    "tests_collected": 2615,
+    "module_level_skips_reported": 1
+  },
+  "runtime_repairs": [
+    "NH jurisdiction alias normalization in lexical claim-support verification",
+    "NHFL response-header aliases added while retaining upstream compatibility headers",
+    "release metadata advanced to 8.0.6 / build 58 / pass4",
+    "fictional localization fixtures moved from Maine area code/geography to New Hampshire examples"
+  ]
+}

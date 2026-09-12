@@ -1,0 +1,44 @@
+{
+  "name": "transport_security_tests",
+  "exit_code": 0,
+  "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+  "components": [
+    {
+      "name": "transport_host_lifecycle",
+      "started_at": "2026-09-11T22:52:50Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    },
+    {
+      "name": "transport_source_binding",
+      "started_at": "2026-09-11T22:53:07Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    },
+    {
+      "name": "offline_qualification_provenance",
+      "started_at": "2026-09-11T22:53:33Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    },
+    {
+      "name": "security_privacy_fortress",
+      "started_at": "2026-09-11T22:53:40Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    },
+    {
+      "name": "production_api_gateway",
+      "started_at": "2026-09-11T22:53:51Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    },
+    {
+      "name": "idempotency_everywhere",
+      "started_at": "2026-09-11T22:54:07Z",
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56"
+    }
+  ],
+  "test_count": 101
+}

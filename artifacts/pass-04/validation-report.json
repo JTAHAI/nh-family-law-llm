@@ -1,0 +1,175 @@
+{
+  "schema_version": "nhfl_pass04_validation_v1",
+  "pass": 4,
+  "version": "8.0.6",
+  "as_of_date": "2026-09-11",
+  "status": "pass",
+  "coverage_claim": "section-verified core capsule snapshot; exhaustive statewide coverage is not asserted",
+  "authority_snapshot": {
+    "total_manifest_records": 76,
+    "status_counts": {
+      "source_seed_unverified": 37,
+      "current_verified": 37,
+      "future_effective_pending": 2
+    },
+    "current_verified_records": 37,
+    "retrieval_eligible_records": 37,
+    "future_effective_inactive_records": 2,
+    "unverified_source_seed_records": 37,
+    "local_snapshot_records": 39,
+    "embedded_snapshot_records": 39,
+    "raw_source_bytes_preserved_records": 0,
+    "acquisition_blockers": 3
+  },
+  "gates": {
+    "authority_audit": {
+      "name": "authority_audit",
+      "returncode": 0,
+      "duration_seconds": 7,
+      "command": "python scripts/audit_nh_authorities.py",
+      "stdout_tail": "{\n  \"authority_records\": 76,\n  \"coverage_claim\": \"section-verified core capsule snapshot; exhaustive statewide coverage is not asserted\",\n  \"current_verified_records\": 37,\n  \"errors\": [],\n  \"legacy_authority_findings\": 0,\n  \"local_snapshot_records\": 39,\n  \"manifest\": \"corpus/manifest/nh_authorities.json\",\n  \"ok\": true,\n  \"retrieval_eligible_records\": 37,\n  \"warnings\": []\n}\n",
+      "stderr_tail": ""
+    },
+    "feature_truth_validation": {
+      "name": "feature_truth_validation",
+      "returncode": 0,
+      "duration_seconds": 1,
+      "command": "python scripts/validate-release-feature-truth.py",
+      "stdout_tail": ", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}, {\"feature_id\": \"capability_70_conflict_entity_resolver\", \"release_claim_status\": \"pending_current_package_verification\", \"required_evidence\": [\"canonical_api_route_and_matter_scope\", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}, {\"feature_id\": \"capability_71_desktop_notification_center\", \"release_claim_status\": \"pending_current_package_verification\", \"required_evidence\": [\"canonical_api_route_and_matter_scope\", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}, {\"feature_id\": \"capability_72_courtroom_bundle_exporter\", \"release_claim_status\": \"pending_current_package_verification\", \"required_evidence\": [\"canonical_api_route_and_matter_scope\", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}, {\"feature_id\": \"capability_73_voice_drafting_commands\", \"release_claim_status\": \"pending_current_package_verification\", \"required_evidence\": [\"canonical_api_route_and_matter_scope\", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}, {\"feature_id\": \"capability_74_extension_sdk_permission_center\", \"release_claim_status\": \"pending_current_package_verification\", \"required_evidence\": [\"canonical_api_route_and_matter_scope\", \"production_desktop_ui_entry_and_meaningful_action\", \"source_or_artifact_drilldown\", \"visible_review_required_status\", \"focused_and_adversarial_tests\", \"current_frozen_runtime_reachability\", \"exact_msix_asset_and_privacy_qualification\"], \"review_required\": true, \"source_reachable\": true}], \"legacy_reachable_feature_ids\": [\"slice_21_matter_intake\", \"slice_22_operative_order\", \"slice_23_service_notice_deadlines\", \"slice_24_docket_mrecs\", \"slice_25_discovery_disclosure\", \"slice_26_exhibit_binder\", \"slice_27_witness_statements\", \"slice_28_hearing_preparation\", \"slice_29_appellate_preservation\", \"slice_30_uccjea_review\", \"slice_31_icwa_review\", \"slice_32_guardianship_adoption_probate\", \"slice_33_protection_safety_resources\", \"slice_34_parenting_schedule_logistics\", \"slice_35_mediation_negotiation\", \"slice_36_property_debt_valuation\", \"slice_37_modification_circumstances\", \"slice_38_foaa_requests\", \"slice_39_filing_mrecs_readiness\", \"slice_40_image_evidence\", \"slice_41_email_integrity\", \"slice_42_reviewer_handoff\", \"slice_43_language_access\", \"slice_44_resource_navigator\", \"capability_45_smart_matter_inbox\", \"capability_46_saved_workflow_recipes\", \"capability_47_local_media_transcription\", \"capability_48_calendar_interoperability\", \"capability_49_hardware_optimizer\", \"capability_50_research_pinboard\", \"capability_51_redaction_studio\", \"capability_52_matter_next_actions\", \"capability_53_courtroom_presentation\", \"capability_54_encrypted_automatic_backup\", \"capability_55_native_whisper_transcription\", \"capability_56_ocr_correction_studio\", \"capability_57_universal_communications_importer\", \"capability_58_evidence_relationship_graph\", \"capability_59_local_model_manager\", \"capability_60_court_form_autofill\", \"capability_61_advanced_table_extraction\", \"capability_62_financial_document_intelligence\", \"capability_63_semantic_order_comparison\", \"capability_64_authority_update_center\", \"capability_65_guided_legal_research_builder\", \"capability_66_evidence_annotation_studio\", \"capability_67_local_automation_scheduler\", \"capability_68_secure_reviewer_collaboration\", \"capability_69_matter_template_library\", \"capability_70_conflict_entity_resolver\", \"capability_71_desktop_notification_center\", \"capability_72_courtroom_bundle_exporter\", \"capability_73_voice_drafting_commands\", \"capability_74_extension_sdk_permission_center\"], \"manifest_path\": \"configs/release_feature_truth.json\", \"manifest_sha256\": \"1bcbd67df8b1fef88cfe06ce0caa04e1554987f166f1419a495797e613d06dee\", \"release\": {\"local_only\": true, \"package_version\": \"8.0.6.0\", \"product_version\": \"8.0.6\", \"release_scope\": \"configs/v806_release_scope.json\", \"review_required\": true, \"status\": \"pending_current_package_verification\"}, \"release_blockers\": [\"current_source_regression_required\", \"exact_frozen_runtime_qualification_required\", \"exact_msix_build_and_private_data_audit_required\", \"isolated_install_offline_upgrade_and_wack_qualification_required\"], \"review_required\": true, \"schema_version\": \"runtime_feature_truth_inventory_v1\", \"store_claim_feature_ids\": [], \"store_feature_claim_eligible\": false, \"unavailable_features\": [{\"id\": \"nhfl-evidence-review-research-r0013\", \"reason\": \"Frozen unfamiliar-wording quality gate did not pass; the candidate is not production-admitted.\", \"status\": \"blocked\"}, {\"id\": \"nhfl-drafting-research-r0003\", \"reason\": \"Frozen quality gate did not pass; the candidate is not production-admitted.\", \"status\": \"blocked\"}, {\"id\": \"nhfl-fast-interchange-workflow-r0004\", \"reason\": \"Fictional workflow adapter; no substantive legal evaluation or production admission.\", \"status\": \"blocked\"}]}, \"status\": \"pass\"}\n",
+      "stderr_tail": ""
+    },
+    "git_diff_check": {
+      "name": "git_diff_check",
+      "returncode": 0,
+      "duration_seconds": 0,
+      "command": "git diff --check",
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    "legacy_runtime_scan": {
+      "name": "legacy_runtime_scan",
+      "returncode": 0,
+      "duration_seconds": 0,
+      "command": "python scripts/scan_legacy_runtime_identifiers.py",
+      "stdout_tail": "PASS: no inherited runtime identifiers outside compatibility lane\n",
+      "stderr_tail": ""
+    },
+    "pytest_collection": {
+      "name": "pytest_collection",
+      "returncode": 0,
+      "duration_seconds": 9,
+      "command": "python -m pytest --collect-only -q",
+      "stdout_tail": ": 2\ntests/test_quote_span_verifier.py: 1\ntests/test_readability.py: 1\ntests/test_reboot_recovery_hardening.py: 3\ntests/test_record_drilldown.py: 9\ntests/test_record_inspector_media_boundary.py: 34\ntests/test_red_flag_classifier.py: 1\ntests/test_red_flag_presenter.py: 1\ntests/test_release_artifact_hygiene_pass.py: 9\ntests/test_release_audits_read_only.py: 2\ntests/test_release_feature_truth.py: 11\ntests/test_release_manifest.py: 1\ntests/test_release_manifest_pass1.py: 2\ntests/test_release_metrics_measurement_integrity.py: 3\ntests/test_release_source_scan_pruning.py: 2\ntests/test_release_unattended_build.py: 18\ntests/test_repo_hygiene_recovery_v188.py: 2\ntests/test_reranker.py: 1\ntests/test_response_contract.py: 1\ntests/test_retention_policy.py: 2\ntests/test_retrieval_index_audit_pass.py: 4\ntests/test_retrieval_v1.py: 3\ntests/test_review_status_presenter.py: 1\ntests/test_reviewer_adapter.py: 1\ntests/test_reviewer_feedback.py: 1\ntests/test_reviewer_packet.py: 1\ntests/test_role_package_builder.py: 1\ntests/test_runtime_kernel.py: 4\ntests/test_runtime_log_hardening_v700.py: 3\ntests/test_safe_summary.py: 1\ntests/test_sample_evidence_output_hygiene.py: 2\ntests/test_saved_evidence_specialist_boundary.py: 2\ntests/test_security_governance_pass12.py: 5\ntests/test_security_privacy_fortress.py: 5\ntests/test_signed_authority_updates.py: 3\ntests/test_source_card_presenter.py: 2\ntests/test_source_hash_no_mutation.py: 1\ntests/test_source_manifest_v1.py: 4\ntests/test_source_registry.py: 2\ntests/test_specialist_protected_spans.py: 39\ntests/test_specialized_workbenches_32_34_e2e.py: 2\ntests/test_specialized_workbenches_35_44_e2e.py: 2\ntests/test_start_here.py: 1\ntests/test_startup_hardening_v700.py: 4\ntests/test_static_portal_relative_links.py: 1\ntests/test_storage_layout.py: 2\ntests/test_store_build_workspace.py: 10\ntests/test_store_packaging.py: 41\ntests/test_store_preflight.py: 28\ntests/test_store_qa_harness_safety.py: 9\ntests/test_store_runtime_residue_prune.py: 2\ntests/test_tone_policy.py: 2\ntests/test_uccjea_review.py: 2\ntests/test_usb_export.py: 1\ntests/test_user_journey_adapter.py: 1\ntests/test_user_journey_eval_schema.py: 2\ntests/test_user_journey_evals.py: 2\ntests/test_v312_printables_ocr_hotfix.py: 6\ntests/test_v320_chat_intake_upgrade.py: 18\ntests/test_v330_conversation_reliability.py: 10\ntests/test_v340_conversation_continuity_and_security.py: 9\ntests/test_v350_grounding_integrity.py: 9\ntests/test_v380_three_pass_hardening.py: 9\ntests/test_v3_pass00_requirements.py: 2\ntests/test_v3_pass01_ui_foundation.py: 7\ntests/test_v3_pass02_constitutional_bar.py: 8\ntests/test_v440_windows_ocr_and_corpus_commands.py: 9\ntests/test_v450_record_drilldown_chat_cards.py: 12\ntests/test_v500_premium_workbench_ui.py: 5\ntests/test_v500_responsive_ux_hardening.py: 5\ntests/test_v500_source_flyout_and_open_ux.py: 6\ntests/test_v501_universal_local_source_inspector.py: 7\ntests/test_v5100_evidence_work_product.py: 6\ntests/test_v5100_evidence_work_product_ui.py: 1\ntests/test_v510_cross_document_consistency.py: 3\ntests/test_v510_dependency_security.py: 5\ntests/test_v510_docx_media_and_skill_package.py: 4\ntests/test_v510_independent_qc_contract.py: 2\ntests/test_v510_ingestion_integration.py: 1\ntests/test_v510_matter_inventory_and_classification.py: 3\ntests/test_v510_workflow_skill_registry.py: 5\ntests/test_v5110_nh_findings_forms_workbench.py: 14\ntests/test_v5120_promptfoo_ci_contract.py: 1\ntests/test_v5120_retrieval_workbench_api_ui.py: 3\ntests/test_v5130_release_pilot_hardening.py: 15\ntests/test_v5140_reviewed_filing_packet.py: 5\ntests/test_v5160_attorney_sandbox_operations.py: 12\ntests/test_v5170_limited_real_matter_pilot.py: 9\ntests/test_v5180_ga_release_candidate.py: 8\ntests/test_v5190_ga_shipment_readiness.py: 8\ntests/test_v520_answer_first_evidence.py: 7\ntests/test_v520_document_workspace.py: 11\ntests/test_v520_document_workspace_api.py: 3\ntests/test_v520_document_workspace_ui.py: 6\ntests/test_v520_local_request_hardening.py: 9\ntests/test_v530_hyphen_search_and_evidence.py: 6\ntests/test_v540_draft_provenance.py: 3\ntests/test_v540_local_agent_api_ui.py: 6\ntests/test_v540_local_agent_http_adapters.py: 5\ntests/test_v540_local_agent_runtime.py: 8\ntests/test_v55_immutable_authority_product.py: 12\ntests/test_v570_review_workbench_ui_api.py: 2\ntests/test_v580_reviewer_queue_procedure_forms_annotations.py: 8\ntests/test_v590_document_intelligence.py: 12\ntests/test_v600_visual_design_refresh.py: 9\ntests/test_v601_bug_hunt.py: 8\ntests/test_v602_final_hardening.py: 12\ntests/test_v603_extended_hardening.py: 10\ntests/test_v603_release_control_center.py: 3\ntests/test_v604_guided_workflow_navigation.py: 4\ntests/test_v604_release_maintenance_center.py: 2\ntests/test_v604_store_runtime_inventory.py: 4\ntests/test_v620_evidence_review_workbench.py: 4\ntests/test_v630_matter_command_center.py: 3\ntests/test_v640_eval_review_studio.py: 4\ntests/test_v650_local_intelligence_control_center.py: 5\ntests/test_v651_attorney_review_evaluation_studio.py: 3\ntests/test_v652_local_intelligence_governance.py: 8\ntests/test_v700_adaptive_chat_layout.py: 3\ntests/test_v700_release_freeze.py: 3\ntests/test_v800_addon_release_freeze.py: 3\ntests/test_v800_control_strip_layout.py: 2\ntests/test_v802_private_chat_authority_boundary.py: 3\ntests/test_v806_nh_authority_release.py: 1\ntests/test_v8_core_e2e_evidence.py: 14\ntests/test_v8_courtroom_media_e2e.py: 2\ntests/test_v8_durable_restart_e2e.py: 6\ntests/test_v8_exhibit_workbench_e2e.py: 2\ntests/test_v8_sentence_support_map_e2e.py: 1\ntests/test_v8_structured_draft_outline_e2e.py: 3\ntests/test_v8_tracked_docx_e2e.py: 3\ntests/test_v900_prose_legal_ops_and_sentinel.py: 5\ntests/test_validate_bundled_nhfl_specialists.py: 10\ntests/test_validate_evidence_research_model.py: 1\ntests/test_verify_evidence_review_in_app.py: 5\ntests/test_windows_vbs_launcher.py: 2\ntests/test_witness_statements.py: 2\ntests/test_workbench_ui_copy.py: 2\ntests/test_workflow_adapter.py: 2\ntests/test_workflow_router.py: 2\ntests/test_workflow_steps.py: 1\n\n",
+      "stderr_tail": ""
+    },
+    "python_compile": {
+      "name": "python_compile",
+      "returncode": 0,
+      "duration_seconds": 1,
+      "command": "python -m compileall -q src nh_family_law_llm legal tests scripts",
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    "rebuild_authority_manifests": {
+      "name": "rebuild_authority_manifests",
+      "returncode": 0,
+      "duration_seconds": 1,
+      "command": "python scripts/rebuild_nh_authority_manifests.py",
+      "stdout_tail": "{\n  \"embedded_records\": 39,\n  \"package_roots\": [\n    \"/mnt/data/nh-family-law-llm-pass-04-work/nh_family_law_llm\",\n    \"/mnt/data/nh-family-law-llm-pass-04-work/src/nh_family_law_llm\"\n  ]\n}\nwrote 76 authority records and rebuilt embedded snapshot\n",
+      "stderr_tail": ""
+    },
+    "ruff_availability": {
+      "name": "ruff_availability",
+      "returncode": 1,
+      "duration_seconds": 1,
+      "command": "python -m ruff --version",
+      "stdout_tail": "",
+      "stderr_tail": "/opt/pyvenv/bin/python: No module named ruff\n"
+    },
+    "verify_pass_03": {
+      "name": "verify_pass_03",
+      "returncode": 0,
+      "duration_seconds": 3,
+      "command": "python scripts/verify_pass_03.py",
+      "stdout_tail": "PASS: NH UI/runtime/protocol source gate\n",
+      "stderr_tail": ""
+    },
+    "verify_pass_04": {
+      "name": "verify_pass_04",
+      "returncode": 0,
+      "duration_seconds": 0,
+      "command": "python scripts/verify_pass_04.py",
+      "stdout_tail": "{\n  \"ok\": true,\n  \"current_verified\": 37,\n  \"future_pending\": 2,\n  \"total\": 76,\n  \"embedded_package_copies\": 2,\n  \"as_of\": \"2026-09-11\"\n}\n",
+      "stderr_tail": ""
+    }
+  },
+  "test_batches": {
+    "authority_migration": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 6.875,
+      "receipt": "artifacts/pass-04/test-results/authority_migration.xml",
+      "status": "pass"
+    },
+    "nhfl_specialist_renames": {
+      "tests": 174,
+      "passed": 172,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "duration_seconds": 4.657,
+      "receipt": "artifacts/pass-04/test-results/nhfl_specialist_renames.xml",
+      "status": "pass"
+    },
+    "privacy_and_runtime": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 6.318,
+      "receipt": "artifacts/pass-04/test-results/privacy_and_runtime.xml",
+      "status": "pass"
+    },
+    "release_metadata": {
+      "tests": 19,
+      "passed": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 3.302,
+      "receipt": "artifacts/pass-04/test-results/release_metadata.xml",
+      "status": "pass"
+    }
+  },
+  "collection": {
+    "test_files": 531,
+    "tests_collected": 2615,
+    "module_level_skips_reported": 1
+  },
+  "privacy_and_localization_scan": {
+    "status": "pass",
+    "hits": []
+  },
+  "full_suite_execution": {
+    "status": "not_claimed",
+    "reason": "All tests collected successfully. Pass-specific, renamed-specialist, privacy/runtime, and release-metadata batches were executed; a completed all-2,615-test run is not claimed."
+  },
+  "ruff": {
+    "status": "not_run",
+    "reason": "The ruff module is not installed in the validation runtime."
+  },
+  "windows_validation": {
+    "status": "not_run",
+    "reason": "Frozen executable, MSIX signing, WACK, protocol activation, clean-machine install, upgrade, and uninstall require a Windows host."
+  },
+  "limitations": [
+    "This is a section-verified core capsule snapshot, not exhaustive statewide authority coverage.",
+    "The 39 local current/future files are normalized, non-verbatim source-grounded capsules; zero remote raw response bodies were preserved.",
+    "Judicial Branch and DHHS/BCSS original-file acquisition remains blocked and is documented by explicit blocker receipts.",
+    "Future-effective overlays remain retrieval-ineligible until separately reviewed after their effective dates."
+  ]
+}

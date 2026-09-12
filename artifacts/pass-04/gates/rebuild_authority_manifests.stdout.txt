@@ -1,0 +1,8 @@
+{
+  "embedded_records": 39,
+  "package_roots": [
+    "/mnt/data/nh-family-law-llm-pass-04-work/nh_family_law_llm",
+    "/mnt/data/nh-family-law-llm-pass-04-work/src/nh_family_law_llm"
+  ]
+}
+wrote 76 authority records and rebuilt embedded snapshot

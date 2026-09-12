@@ -1,0 +1,138 @@
+{
+  "version": "1.0.0-pass11",
+  "policy": "Models are replaceable workers. Generators cannot self-certify legal correctness; source registry, verifiers, and human review gates control legal validity.",
+  "roles": {
+    "nh_issue_classifier": {
+      "allowed_tasks": ["issue_classification"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": false,
+      "may_generate_legal_prose": false
+    },
+    "nh_procedural_posture_classifier": {
+      "allowed_tasks": ["posture_classification"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": false,
+      "may_generate_legal_prose": false
+    },
+    "nh_authority_ranker": {
+      "allowed_tasks": ["authority_ranking"],
+      "prohibited_tasks": ["draft_generation", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_query_expander": {
+      "allowed_tasks": ["query_expansion"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_retrieval_reranker_assistant": {
+      "allowed_tasks": ["retrieval_reranking"],
+      "prohibited_tasks": ["draft_generation", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_citation_resolver_assistant": {
+      "allowed_tasks": ["citation_resolution_assist"],
+      "prohibited_tasks": ["citation_validity_certification", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_quote_verifier_assistant": {
+      "allowed_tasks": ["quote_verification_assist"],
+      "prohibited_tasks": ["quote_validity_certification", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_document_structure_assistant": {
+      "allowed_tasks": ["document_structure_analysis"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_event_extractor": {
+      "allowed_tasks": ["event_extraction"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_claim_extractor": {
+      "allowed_tasks": ["claim_extraction"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_claim_support_evaluator": {
+      "allowed_tasks": ["claim_support_evaluation"],
+      "prohibited_tasks": ["filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_contradiction_finder": {
+      "allowed_tasks": ["contradiction_detection"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_privacy_candidate_assistant": {
+      "allowed_tasks": ["privacy_candidate_identification"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_fact_to_evidence_mapper": {
+      "allowed_tasks": ["fact_to_evidence_mapping"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_rag_reranker": {
+      "allowed_tasks": ["retrieval_reranking"],
+      "prohibited_tasks": ["draft_generation", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_draft_reviewer": {
+      "allowed_tasks": ["draft_review"],
+      "prohibited_tasks": ["filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_challenger": {
+      "allowed_tasks": ["contrary_authority_search", "missing_issue_detection"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_summary_evaluator": {
+      "allowed_tasks": ["summary_evaluation"],
+      "prohibited_tasks": ["filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_plain_language_explainer": {
+      "allowed_tasks": ["plain_language_explanation"],
+      "prohibited_tasks": ["legal_advice", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": true
+    },
+    "nh_omission_hunter": {
+      "allowed_tasks": ["omission_detection"],
+      "prohibited_tasks": ["final_legal_answer", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": false
+    },
+    "nh_synthesis_worker": {
+      "allowed_tasks": ["synthesis_generation"],
+      "prohibited_tasks": ["citation_validity_certification", "quote_validity_certification", "authority_validity_certification", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": true
+    },
+    "nh_final_generator": {
+      "allowed_tasks": ["draft_generation", "answer_generation"],
+      "prohibited_tasks": ["citation_validity_certification", "quote_validity_certification", "authority_validity_certification", "filing_ready_certification"],
+      "requires_grounding": true,
+      "may_generate_legal_prose": true
+    }
+  }
+}

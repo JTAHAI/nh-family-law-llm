@@ -1,0 +1,286 @@
+{
+  "authority": {
+    "current_verified_records": 37,
+    "future_effective_pending_records": 2,
+    "manifest_records": 76,
+    "note": "Pass 7 did not promote or reclassify legal authority.",
+    "promotions_in_pass": 0
+  },
+  "build_number": 70,
+  "engineering_evaluation": {
+    "case_count": 34,
+    "category_totals": {
+      "child_support": {
+        "failed": 0,
+        "passed": 6,
+        "total": 6
+      },
+      "decision_making": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "interstate": {
+        "failed": 0,
+        "passed": 4,
+        "total": 4
+      },
+      "jurisdiction_contamination": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "parenting_enforcement": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "parenting_modification": {
+        "failed": 0,
+        "passed": 9,
+        "total": 9
+      },
+      "procedure": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "relocation": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "safety": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "stale_authority": {
+        "failed": 0,
+        "passed": 1,
+        "total": 1
+      },
+      "support_authority": {
+        "failed": 0,
+        "passed": 5,
+        "total": 5
+      },
+      "unsupported_conclusion": {
+        "failed": 0,
+        "passed": 3,
+        "total": 3
+      }
+    },
+    "dataset_id": "nh_pass07_operator_source_backed.jsonl",
+    "dataset_sha256": "5c8e8e0bb85d9a178ce6673ad5c2e48727a221d4aebe840d956b9d48a9205c4a",
+    "deterministic_result_sha256": "0cdc30b849706e056944cee9ba4d66b0e50ff10e7a2553283f22058e1ace18c6",
+    "failed": 0,
+    "pass_rate": 1.0,
+    "passed": 34,
+    "review_mode": "operator_source_backed",
+    "safety_critical_failure_count": 0,
+    "synthetic": true
+  },
+  "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+  "gates": [
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "compile",
+      "receipt": "artifacts/pass-07/gates/compile.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/compile.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/compile.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "verify_pass04",
+      "receipt": "artifacts/pass-07/gates/verify_pass04.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/verify_pass04.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/verify_pass04.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "verify_pass07",
+      "receipt": "artifacts/pass-07/gates/verify_pass07.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/verify_pass07.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/verify_pass07.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "scan_maine",
+      "receipt": "artifacts/pass-07/gates/scan_maine.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/scan_maine.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/scan_maine.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "scan_legacy_runtime",
+      "receipt": "artifacts/pass-07/gates/scan_legacy_runtime.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/scan_legacy_runtime.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/scan_legacy_runtime.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "pass07_tests",
+      "receipt": "artifacts/pass-07/gates/pass07_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/pass07_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/pass07_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "nh_behavior_authority_tests",
+      "receipt": "artifacts/pass-07/gates/nh_behavior_authority_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/nh_behavior_authority_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/nh_behavior_authority_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "transport_security_tests",
+      "receipt": "artifacts/pass-07/gates/transport_security_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/transport_security_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/transport_security_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "feature_truth_tests",
+      "receipt": "artifacts/pass-07/gates/feature_truth_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/feature_truth_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/feature_truth_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "adversarial_tests",
+      "receipt": "artifacts/pass-07/gates/adversarial_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/adversarial_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/adversarial_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "forms_sync_tests",
+      "receipt": "artifacts/pass-07/gates/forms_sync_tests.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/forms_sync_tests.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/forms_sync_tests.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "private_case_scan",
+      "receipt": "artifacts/pass-07/gates/private_case_scan.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/private_case_scan.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/private_case_scan.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "json_validation",
+      "receipt": "artifacts/pass-07/gates/json_validation.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/json_validation.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/json_validation.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "diff_check",
+      "receipt": "artifacts/pass-07/gates/diff_check.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/diff_check.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/diff_check.stdout.txt"
+    },
+    {
+      "exit_code": 0,
+      "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+      "name": "pytest_collection",
+      "receipt": "artifacts/pass-07/gates/pytest_collection.receipt.json",
+      "status": "pass",
+      "stderr": "artifacts/pass-07/gates/pytest_collection.stderr.txt",
+      "stdout": "artifacts/pass-07/gates/pytest_collection.stdout.txt"
+    }
+  ],
+  "generated_at": "2026-09-11T22:55:08Z",
+  "known_boundaries": [
+    "The engineering evaluation is synthetic and operator-source-backed, not attorney-reviewed gold.",
+    "A passing engineering suite is not a legal-accuracy metric or predicted case outcome.",
+    "The complete regression suite was not completed as one current-tree run.",
+    "A current frozen Windows executable and current MSIX were not built or qualified in this pass.",
+    "Signing, WACK, clean-machine install, upgrade, uninstall, and Store certification remain unverified.",
+    "The statewide New Hampshire authority corpus remains non-exhaustive."
+  ],
+  "package_version": "8.0.9.0",
+  "pass": 7,
+  "privacy": {
+    "private_attachment_included": false,
+    "private_case_scan": "pass",
+    "private_training_data_used": false
+  },
+  "release_posture": {
+    "attorney_reviewed": false,
+    "current_package_verified": false,
+    "filing_ready": false,
+    "legal_advice": false,
+    "msix_verified": false,
+    "release_metric_eligible": false,
+    "review_required": true,
+    "source_checkpoint": true,
+    "store_certified": false,
+    "windows_frozen_runtime_verified": false
+  },
+  "repository_manifest": {
+    "algorithm": "sha256",
+    "entry_count": 2310,
+    "path": "MANIFEST.SHA256",
+    "release_finalization_check": "pass",
+    "self_excluded": true,
+    "verified_entry_count": 2310
+  },
+  "schema": "nh_family_law_llm.pass07_validation.v1",
+  "scope": "New Hampshire legal-behavior evaluation hardening and NHFL transport namespace migration",
+  "status": "pass",
+  "test_evidence": {
+    "collected_test_files": 533,
+    "collected_tests": 2656,
+    "collection_status": "pass",
+    "full_suite_note": "The full suite was collected but was not completed as one current-tree run; no full-suite pass is asserted.",
+    "full_suite_status": "not_claimed",
+    "targeted_test_groups": {
+      "continuous_adversarial": 3,
+      "feature_truth": 16,
+      "forms_catalog_sync": 6,
+      "nh_behavior_authority": 44,
+      "pass07_regression": 13,
+      "transport_security": 101
+    },
+    "targeted_tests_failed": 0,
+    "targeted_tests_passed": 183
+  },
+  "transport": {
+    "active_legacy_scan": "pass",
+    "canonical_response_prefix": "X-NHFL-",
+    "canonical_value_precedence": true,
+    "legacy_request_bridge": "bounded_request_only",
+    "legacy_response_headers_emitted": false
+  },
+  "version": "8.0.9"
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Hampshire Family Law LLM</title>
+  <link rel="icon" href="../assets/favicon/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../css/nh-family-law-llm-theme.css" />
+
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/nh-theme.css">
+<meta name="theme-color" content="#102a43">
+</head>
+<body>
+  <main class="nhfl-shell">
+    <header class="nhfl-app-header">
+      <div class="nhfl-brand">
+        <img class="nhfl-brand__mark" src="../assets/logo/nh-family-law-llm-mark.svg" alt="New Hampshire Family Law LLM" />
+        <div>
+          <span class="nhfl-brand__eyebrow">New Hampshire Family Law LLM</span>
+          <h1 class="nhfl-brand__title">New Hampshire Family Law LLM</h1>
+          <p class="nhfl-brand__sub">Local source-backed research workbench. Review required. Not legal advice.</p>
+        </div>
+      </div>
+      <span class="nhfl-status">local AI online</span>
+    </header>
+
+    <section class="nhfl-grid">
+      <div class="nhfl-card">
+        <div class="nhfl-card__inner" style="display:grid;gap:1rem;">
+          <h2 class="nhfl-card__title">Ask New Hampshire Family Law</h2>
+          <div class="nhfl-legal-notice">
+            This tool provides New Hampshire family-law research from retrieved source snippets. It does not create an attorney-client relationship, does not replace review by a qualified professional, and does not accept private case intake.
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;">
+            <label><span class="nhfl-form-label">I am asking as a...</span><select class="nhfl-select"><option>Parent</option><option>Helper</option><option>Reviewer</option></select></label>
+            <label><span class="nhfl-form-label">Answer style</span><select class="nhfl-select"><option>Checklist</option><option>Plain explanation</option><option>Reviewer handoff</option></select></label>
+            <label><span class="nhfl-form-label">Topic filter</span><select class="nhfl-select"><option>Parent-child contact</option><option>Best interest factors</option><option>Child support</option></select></label>
+          </div>
+          <label><span class="nhfl-form-label">Question</span><textarea class="nhfl-textarea" placeholder="What should a parent/contact schedule include?"></textarea></label>
+          <div style="display:flex;gap:.55rem;flex-wrap:wrap;">
+            <button class="nhfl-button">Ask</button>
+            <button class="nhfl-button nhfl-button--secondary">Copy answer</button>
+            <button class="nhfl-button nhfl-button--secondary">Download transcript</button>
+            <button class="nhfl-button nhfl-button--ghost">Clear chat</button>
+          </div>
+          <section class="nhfl-answer">
+            <div class="nhfl-answer__meta">
+              <span class="nhfl-status nhfl-status--safe">source grounded</span>
+              <span class="nhfl-status nhfl-status--review">review required</span>
+            </div>
+            <h3>Checklist: what a parent/contact schedule should cover</h3>
+            <p>A useful parenting/contact schedule should be specific enough that both parents know regular time, exchanges, holidays, transportation, communication, and safety restrictions if any. The legal analysis still ties back to parental rights and responsibilities and the child’s best interest.</p>
+            <ul>
+              <li>Regular weekly schedule and exchange location.</li>
+              <li>Holiday and school-break schedule.</li>
+              <li>Transportation responsibilities and backup plan.</li>
+              <li>Communication method and emergency exceptions.</li>
+            </ul>
+          </section>
+          <section class="nhfl-handoff">
+            <h3>Reviewer handoff summary</h3>
+            <p>Review required. Verify source status, missing facts, jurisdiction, and whether this remains within research-only boundaries.</p>
+          </section>
+        </div>
+      </div>
+
+      <aside class="nhfl-card">
+        <div class="nhfl-card__inner" style="display:grid;gap:.85rem;">
+          <h2 class="nhfl-card__title">Sources, shortcuts & question library</h2>
+          <a class="nhfl-question-chip" href="#">Best-interest factors</a>
+          <a class="nhfl-question-chip" href="#">Parent contact schedule</a>
+          <a class="nhfl-question-chip" href="#">Child support checklist</a>
+          <a class="nhfl-question-chip" href="#">Organize evidence</a>
+          <article class="nhfl-source-card">
+            <span class="nhfl-source-card__type">official source</span>
+            <h3 class="nhfl-source-card__title">New Hampshire Revised Statutes Chapter 461-A</h3>
+            <p class="nhfl-source-card__excerpt">Source snippets should be clearly excerpted, dated where possible, and inspectable before reliance.</p>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;"><button class="nhfl-button nhfl-button--secondary">Copy source card</button><button class="nhfl-button nhfl-button--ghost">Inspect source</button></div>
+          </article>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

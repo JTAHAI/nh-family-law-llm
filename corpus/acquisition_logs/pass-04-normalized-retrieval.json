@@ -1,0 +1,101 @@
+{
+  "pass": 4,
+  "recorded_at": "2026-09-11T18:22:03Z",
+  "as_of_date": "2026-09-11",
+  "retrieval_method": "web_parsed_official_html_with_condensed_source_grounded_extraction",
+  "raw_source_bytes_preserved": false,
+  "current_capsules": 37,
+  "future_capsules": 2,
+  "current_authority_ids": [
+    "NH-V0001",
+    "NH-V0002",
+    "NH-V0003",
+    "NH-V0004",
+    "NH-V0005",
+    "NH-V0006",
+    "NH-V0007",
+    "NH-V0008",
+    "NH-V0009",
+    "NH-V0010",
+    "NH-V0011",
+    "NH-V0012",
+    "NH-V0013",
+    "NH-V0014",
+    "NH-V0015",
+    "NH-V0016",
+    "NH-V0017",
+    "NH-V0018",
+    "NH-V0019",
+    "NH-V0020",
+    "NH-V0021",
+    "NH-V0022",
+    "NH-V0023",
+    "NH-V0024",
+    "NH-V0025",
+    "NH-V0026",
+    "NH-V0027",
+    "NH-V0028",
+    "NH-V0029",
+    "NH-V0030",
+    "NH-V0031",
+    "NH-V0032",
+    "NH-V0033",
+    "NH-V0034",
+    "NH-V0035",
+    "NH-V0036",
+    "NH-V0037"
+  ],
+  "future_authority_ids": [
+    "NH-F0001",
+    "NH-F0002"
+  ],
+  "blockers": [
+    {
+      "blocker_id": "NH-BLOCK-COURTS-20260911",
+      "source_family": "New Hampshire Judicial Branch rules, forms, self-help, and opinions",
+      "urls": [
+        "https://www.courts.nh.gov/rules-comment/rules-circuit-court-state-new-hampshire-family-division",
+        "https://www.courts.nh.gov/our-courts/circuit-court/family-division/forms",
+        "https://www.courts.nh.gov/self-help",
+        "https://www.courts.nh.gov/our-courts/supreme-court/orders-and-opinions"
+      ],
+      "observed_result": "Public page retrieval was blocked or unavailable from the acquisition runtime; no authoritative bytes were preserved.",
+      "status": "acquisition_blocked_pending_retry",
+      "retrieval_eligible": false,
+      "next_action": "Retry from an allowed network environment; capture original files, response metadata, checksums, and effective dates before promotion.",
+      "receipt_filename": "corpus/PENDING_REVIEW/ACQUISITION_BLOCKERS/nh-block-courts-20260911.json",
+      "receipt_sha256": "193eeea2454c19c701e5460376ca3951aab204f6e561c6fa619974abe4e9f1ca"
+    },
+    {
+      "blocker_id": "NH-BLOCK-DHHS-20260911",
+      "source_family": "NH DHHS/BCSS official guidance, schedules, worksheets, and administrative materials",
+      "urls": [
+        "https://www.dhhs.nh.gov/programs-services/childcare-parenting-childbirth/child-support-services"
+      ],
+      "observed_result": "Public page retrieval was blocked or unavailable from the acquisition runtime; no authoritative bytes were preserved.",
+      "status": "acquisition_blocked_pending_retry",
+      "retrieval_eligible": false,
+      "next_action": "Retry and preserve official worksheet/schedule versions separately; do not infer current numbers from secondary calculators.",
+      "receipt_filename": "corpus/PENDING_REVIEW/ACQUISITION_BLOCKERS/nh-block-dhhs-20260911.json",
+      "receipt_sha256": "989d347d8a33de66db24cec6264ebbf751c1a2c6724b229dbc0eee1058962686"
+    },
+    {
+      "blocker_id": "NH-BLOCK-RAW-ORIGINALS-20260911",
+      "source_family": "Byte-for-byte preservation of official General Court online source responses",
+      "urls": [
+        "https://gc.nh.gov/rsa/html/XLIII/458-C/458-C-2.htm"
+      ],
+      "observed_result": "The acquisition environment could inspect parsed official government page content, but the raw-file download channel did not return the original response body. No page was represented as a raw archival copy.",
+      "status": "raw_original_acquisition_blocked_pending_retry",
+      "retrieval_eligible": false,
+      "next_action": "Retry raw HTML/PDF acquisition in a network environment that can preserve the original response body, response headers, final URL, retrieval timestamp, size, and SHA-256. Keep normalized capsules explicitly non-verbatim until then.",
+      "receipt_filename": "corpus/PENDING_REVIEW/ACQUISITION_BLOCKERS/nh-block-raw-originals-20260911.json",
+      "receipt_sha256": "d961785eb8443c55a11cb4cfaa94709957380c8b418371e147e9843d2aeb2691"
+    }
+  ],
+  "limitations": [
+    "Capsules contain short, condensed source-grounded extracts and structured summaries, not verbatim or byte-for-byte remote pages.",
+    "Court/DHHS materials remain pending until original files can be retrieved and checksummed.",
+    "Case law and comprehensive agency-rule coverage remain later passes."
+  ]
+}

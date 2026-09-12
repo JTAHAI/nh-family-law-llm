@@ -1,0 +1,17 @@
+{
+  "product_name": "New Hampshire Family Law LLM",
+  "short_name": "NH Family Law LLM",
+  "package_name": "nh-family-law-llm",
+  "python_package": "nh_family_law_llm",
+  "jurisdiction": {
+    "name": "New Hampshire",
+    "code": "NH"
+  },
+  "application_id": "com.jtahai.nh-family-law-llm",
+  "windows_aumid": "JTAHAI.NHFamilyLawLLM",
+  "uri_scheme": "nhfl",
+  "protocol_namespace": "urn:nhfl",
+  "visual_theme": "granite-navy",
+  "authority_policy": "fail-closed",
+  "updated": "2026-09-11"
+}

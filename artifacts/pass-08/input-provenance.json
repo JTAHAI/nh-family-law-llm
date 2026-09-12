@@ -1,0 +1,11 @@
+{
+  "input_archive": "NH-Family-Law-LLM-pass-07-evaluation-hardening.zip",
+  "sha256": "7200f808e569ea56a9925d94d79fd1a6bf211ea40f109a623c29f10a2b988cc0",
+  "members": 2473,
+  "missing_baseline_evaluation_files": {
+    "eval_data/conversation/nh_conversation_eval_cases.json": false,
+    "eval_data/user_journeys/nh_user_journey_eval_cases.json": false
+  },
+  "meaning": "False denotes file already absent from the supplied Pass 7 archive; these older evaluations remain blocked.",
+  "prior_git_history_present": false
+}

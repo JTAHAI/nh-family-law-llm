@@ -1,0 +1,78 @@
+{
+  "allowed_public_binary_roots": [
+    "src/nh_family_law_llm/resources/family_toolkit",
+    "nh_family_law_llm/resources/family_toolkit"
+  ],
+  "allowed_public_binary_suffixes": [
+    ".pdf"
+  ],
+  "allowed_text_files": [
+    "PASS_CHANGES.txt",
+    "store/listing/features.txt",
+    "store/listing/search-terms.txt",
+    "store/listing/short-description.txt",
+    "store/pyinstaller/requirements-store-build.txt"
+  ],
+  "blocked_paths": [
+    ".git",
+    ".env",
+    "runtime",
+    "uploads",
+    "corpora",
+    "vectorstores",
+    "official_authority_store",
+    "parsed_authority_store",
+    "embedding_store",
+    "eval_store",
+    "matter_store",
+    "model_store",
+    "model_registry",
+    "audit_store",
+    "NH_FAMILY_LAW_LLM_data",
+    "nh-family-law-llm-data"
+  ],
+  "blocked_suffixes": [
+    ".db",
+    ".sqlite",
+    ".sqlite3",
+    ".faiss",
+    ".pt",
+    ".pth",
+    ".safetensors",
+    ".onnx",
+    ".pdf",
+    ".doc",
+    ".docx"
+  ],
+  "public_binary_rule": "Only bundled public New Hampshire family-toolkit PDFs listed in family_toolkit_inventory.json with matching SHA-256 are allowed; private/user documents remain blocked.",
+  "public_release_status": "not_yet_published",
+  "public_repo_name": "NH_FAMILY_LAW_LLM",
+  "release_rule": "Public GitHub release can be source-code-ready while production legal-data readiness remains blocked until real external data, attorney-reviewed evals, live metrics, security/pilot evidence, and signoffs are attached.",
+  "required_docs": [
+    "docs/public-github-release-checklist.md",
+    "docs/attribution-license-options.md",
+    "docs/local-test-runbook.md",
+    "docs/public-release-hardening.md",
+    "docs/supply-chain-security.md",
+    "docs/enterprise-acceptance-and-github-publish.md"
+  ],
+  "required_github_workflows": [
+    ".github/workflows/ci.yml"
+  ],
+  "required_root_files": [
+    "README.md",
+    "PASS_CHANGES.txt",
+    "pyproject.toml",
+    ".gitignore",
+    "LICENSE.md",
+    "NOTICE.md",
+    "ATTRIBUTION.md",
+    "CITATION.cff",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SUPPORT.md"
+  ],
+  "single_text_file_allowed": "PASS_CHANGES.txt",
+  "version": "post-ga-public-release-4-store-text-assets"
+}

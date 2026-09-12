@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.nh-family-law-llm.local/legal-behavior-input-v1.json",
+  "title": "NH Legal Behavior Input",
+  "type": "object",
+  "properties": {
+    "as_of_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "question": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "parenting": {
+      "type": "object"
+    },
+    "support": {
+      "type": "object"
+    },
+    "support_order": {
+      "type": "object"
+    },
+    "interstate": {
+      "type": "object"
+    },
+    "safety": {
+      "type": [
+        "object",
+        "boolean"
+      ]
+    },
+    "draft_text": {
+      "type": "string",
+      "maxLength": 50000
+    }
+  },
+  "additionalProperties": true
+}

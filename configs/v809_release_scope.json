@@ -1,0 +1,31 @@
+{
+  "schema_version": "v809_release_scope_v1",
+  "release": "8.0.9",
+  "package_version": "8.0.9.0",
+  "decision": "SOURCE_ENGINEERING_EVAL_CHECKPOINT_PENDING_PACKAGE_VERIFICATION",
+  "release_type": "new_hampshire_evaluation_and_transport_hardening_checkpoint",
+  "existing_feature_scope_reference": "configs/v808_release_scope.json",
+  "canonical_feature_truth_manifest": "configs/release_feature_truth.json",
+  "new_public_feature_ids": [],
+  "source_reachable_feature_ids": [
+    "capability_75_nh_legal_behavior_engine",
+    "capability_76_nh_legal_evaluation_harness",
+    "capability_77_nhfl_transport_header_namespace"
+  ],
+  "interfaces": [
+    "nhfl behavior",
+    "nhfl legal-eval",
+    "POST /api/legal-behavior/analyze",
+    "POST /api/evals/nh-legal-behavior/run"
+  ],
+  "engineering_eval_case_count": 34,
+  "engineering_eval_review_mode": "operator_source_backed",
+  "engineering_eval_attorney_reviewed": false,
+  "legal_quality_metric_claimed": false,
+  "authority_promotions": 0,
+  "review_required": true,
+  "filing_ready_claimed": false,
+  "attorney_validation_claimed": false,
+  "windows_package_validation_claimed": false,
+  "store_certification_claimed": false
+}

@@ -1,0 +1,33 @@
+{
+  "project": "New Hampshire Family Law LLM",
+  "checkpoint": "8.0.4-pass2",
+  "generated_at": "2026-09-11T16:17:58Z",
+  "upstream_provenance": "JTAHAI/maine-family-law-llm",
+  "private_case_material_included": false,
+  "release_claim": "development_checkpoint_only",
+  "validation": {
+    "python_compileall": "pass",
+    "pytest_collected": 2598,
+    "selected_unique_tests_passed": 209,
+    "selected_unique_tests_skipped": 1,
+    "selected_unique_tests_failed": 0,
+    "pass02_tests_passed": 6,
+    "application_import_smoke": "pass",
+    "wheel_build": "pass",
+    "wheel_isolated_import": "pass",
+    "authority_inventory_records": 37,
+    "enterprise_source_inventory_records": 40,
+    "current_verified_records": 0,
+    "retrieval_eligible_records": 0,
+    "local_snapshot_records": 0,
+    "authority_audit": "pass_with_expected_fail_closed_warnings",
+    "legacy_marker_scan": "pass",
+    "legacy_marker_hits": 0,
+    "json_jsonl_parse": "pass",
+    "git_diff_check": "pass",
+    "full_test_execution": "not_completed_300_second_runtime_limit",
+    "ruff": "not_available_in_runtime",
+    "windows_frozen_package": "not_built_in_linux_runtime"
+  },
+  "next_gate": "Pass 3: full UI/runtime/protocol identifier integration and Windows source/frozen-runtime journey validation."
+}

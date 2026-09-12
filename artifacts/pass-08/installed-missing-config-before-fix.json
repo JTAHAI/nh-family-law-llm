@@ -1,0 +1,22 @@
+{
+  "schema": "nhfl.pass08.desktop-qualification.v1",
+  "status": "fail",
+  "version": "8.0.10",
+  "mode": "installed_wheel",
+  "import_probe": {
+    "module": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/__init__.py",
+    "manifest": "/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/nh_family_law_llm/data/authority_snapshot/manifest/nh_authorities.json",
+    "version": "8.0.10"
+  },
+  "launches": [],
+  "checks": [],
+  "browser": {
+    "status": "not_run"
+  },
+  "errors": [
+    "RuntimeError: Production server exited: rn/config.py\", line 481, in load\n    self.loaded_app = self.load_app()\n                      ~~~~~~~~~~~~~^^\n  File \"/opt/pyvenv/lib/python3.13/site-packages/uvicorn/config.py\", line 415, in load_app\n    return import_from_string(self.app)\n  File \"/opt/pyvenv/lib/python3.13/site-packages/uvicorn/importer.py\", line 19, in import_from_string\n    module = importlib.import_module(module_str)\n  File \"/usr/lib/python3.13/importlib/__init__.py\", line 88, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 1026, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/app/api/production.py\", line 26, in <module>\n    from app.api.main import app as enterprise_app\n  File \"/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/app/api/main.py\", line 3, in <module>\n    from app.api.routes.deliberation import router as deliberation_router\n  File \"/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/app/api/routes/deliberation.py\", line 16, in <module>\n    HOST = DeliberationHost(project_root=Path(__file__).resolve().parents[3])\n  File \"/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/legal/deliberation/host.py\", line 222, in __init__\n    self.state_machine = state_machine or DeliberationStateMachine()\n                                          ~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/legal/deliberation/state_machine.py\", line 21, in __init__\n    payload = json.loads(self.config_path.read_text(encoding=\"utf-8\"))\n                         ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/pathlib/_local.py\", line 548, in read_text\n    return PathBase.read_text(self, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/pathlib/_abc.py\", line 632, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/pathlib/_local.py\", line 539, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/mnt/data/nh-pass08/nh-family-law-llm/dist/venv/lib/python3.13/site-packages/configs/nh_deliberation_state_machine.json'\n",
+    "Restart journey not completed"
+  ],
+  "uses_synthetic_input_only": true,
+  "windows_binary_qualification": false
+}

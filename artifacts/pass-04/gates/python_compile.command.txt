@@ -1,0 +1,1 @@
+python -m compileall -q src nh_family_law_llm legal tests scripts

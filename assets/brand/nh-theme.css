@@ -1,0 +1,20 @@
+
+/* New Hampshire Family Law LLM visual system */
+:root {
+  --nh-navy-950:#07182f; --nh-navy-900:#102a43; --nh-navy-700:#284b63;
+  --nh-granite-600:#526777; --nh-granite-200:#d9e2ec; --nh-cloud:#f7f9fc;
+  --nh-white:#ffffff; --nh-red:#b4233b; --nh-red-dark:#8f1c30;
+  --nh-focus:#2563eb; --nh-shadow:0 18px 48px rgba(7,24,47,.14);
+  --background:var(--nh-cloud); --foreground:var(--nh-navy-950);
+  --primary:var(--nh-navy-900); --accent:var(--nh-red);
+}
+html { color-scheme:light; }
+body { background:linear-gradient(180deg,#fff 0%,var(--nh-cloud) 100%); color:var(--nh-navy-950); }
+a { color:var(--nh-navy-700); }
+a:hover { color:var(--nh-red); }
+button,[role="button"],.button,.btn-primary { border-radius:.65rem; }
+.btn-primary,button[data-variant="primary"] { background:var(--nh-navy-900); color:#fff; }
+.btn-primary:hover,button[data-variant="primary"]:hover { background:var(--nh-red-dark); }
+.nh-hero { background:#fff; border:1px solid var(--nh-granite-200); border-radius:1.25rem; box-shadow:var(--nh-shadow); overflow:hidden; }
+.nh-hero img { display:block; width:100%; height:auto; }
+:focus-visible { outline:3px solid var(--nh-focus); outline-offset:3px; }

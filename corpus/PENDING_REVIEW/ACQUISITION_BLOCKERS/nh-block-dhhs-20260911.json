@@ -1,0 +1,13 @@
+{
+  "blocker_id": "NH-BLOCK-DHHS-20260911",
+  "source_family": "NH DHHS/BCSS official guidance, schedules, worksheets, and administrative materials",
+  "urls": [
+    "https://www.dhhs.nh.gov/programs-services/childcare-parenting-childbirth/child-support-services"
+  ],
+  "observed_result": "Public page retrieval was blocked or unavailable from the acquisition runtime; no authoritative bytes were preserved.",
+  "status": "acquisition_blocked_pending_retry",
+  "retrieval_eligible": false,
+  "next_action": "Retry and preserve official worksheet/schedule versions separately; do not infer current numbers from secondary calculators.",
+  "recorded_at": "2026-09-11T18:22:03Z",
+  "as_of": "2026-09-11"
+}

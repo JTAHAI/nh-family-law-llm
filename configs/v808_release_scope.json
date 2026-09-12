@@ -1,0 +1,23 @@
+{
+  "schema_version": "v808_release_scope_v1",
+  "release": "8.0.8",
+  "package_version": "8.0.8.0",
+  "decision": "SOURCE_LEGAL_BEHAVIOR_CHECKPOINT_PENDING_PACKAGE_VERIFICATION",
+  "release_type": "new_hampshire_legal_behavior_checkpoint",
+  "existing_feature_scope_reference": "configs/v806_release_scope.json",
+  "canonical_feature_truth_manifest": "configs/release_feature_truth.json",
+  "new_public_feature_ids": [],
+  "source_reachable_feature_ids": [
+    "capability_75_nh_legal_behavior_engine"
+  ],
+  "interfaces": [
+    "nhfl behavior",
+    "POST /api/legal-behavior/analyze"
+  ],
+  "authority_promotions": 0,
+  "review_required": true,
+  "filing_ready_claimed": false,
+  "attorney_validation_claimed": false,
+  "windows_package_validation_claimed": false,
+  "store_certification_claimed": false
+}

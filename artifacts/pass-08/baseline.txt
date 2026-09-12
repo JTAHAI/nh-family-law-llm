@@ -1,0 +1,6 @@
+production import OK 2.7542686729999986
+/ 200 223773 text/html; charset=utf-8
+/ui-assets/workbench.css 200 248447 text/css; charset=utf-8
+/api/health 200 890 application/json
+/api/version 200 68 application/json
+behavior 403 {"detail":{"error":"rbac_role_required","allowed_roles":["admin","attorney","paralegal","reviewer"],"audit_event_id":"6ca1636ed4834ba997b5aedd5bd15ed2"}}

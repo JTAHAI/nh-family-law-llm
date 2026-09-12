@@ -1,0 +1,6 @@
+{
+  "name": "json_validation",
+  "exit_code": 0,
+  "feature_commit": "f2a35ecfc0757a89c89682128d54028fea715e56",
+  "scope": "changed and untracked JSON/JSONL parsed with duplicate-key rejection"
+}
