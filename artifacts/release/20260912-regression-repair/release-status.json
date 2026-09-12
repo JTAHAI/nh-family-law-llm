@@ -8,7 +8,8 @@
   "wheel_packaging_gate": {"status": "pass", "checks": 83, "sha256": "65230a31ac176d74be3ab5c0a9079c693374a8eae8896988588792153ac12395"},
   "synthetic_evaluations": true,
   "attorney_reviewed": false,
-  "official_original_sources_acquired": false,
+  "official_original_sources_acquired": "partial_unreviewed_29_of_37_seed_responses",
+  "frozen_executable_smoke": {"status": "pass", "artifact": "dist/windows-portable-v2/NHFamilyLawLLM/NHFamilyLawLLM.exe", "sha256": "E60394A48E478994DEB756088F79DC6CDFF24A38BA7DA964E34DA8F0488E8859"},
   "windows_package_qualified": false,
   "signing_qualified": false
 }

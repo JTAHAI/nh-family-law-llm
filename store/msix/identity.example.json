@@ -1,9 +1,9 @@
 {
-  "identity_name": "NHFamilyLawLLM.LocalQA",
-  "publisher": "CN=NHFamilyLawLLM-LocalQA",
-  "publisher_display_name": "New Hampshire Family Law LLM Local QA",
-  "package_display_name": "New Hampshire Family Law LLM (Local QA)",
+  "identity_name": "TAHAIWebServices.NHFamilyLawLLM",
+  "publisher": "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868",
+  "publisher_display_name": "TAHAI Web Services",
+  "package_display_name": "New Hampshire Family Law LLM",
   "package_version": "8.0.10.0",
-  "identity_status": "development_example_not_store_registered",
+  "identity_status": "reserved_partner_center_identity_submission_not_completed",
   "production_identity_confirmed": false
 }

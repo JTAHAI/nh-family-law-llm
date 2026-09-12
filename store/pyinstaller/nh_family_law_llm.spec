@@ -147,6 +147,30 @@ def collect_runtime_submodules(package_name: str) -> list[str]:
     return sorted(modules)
 
 
+def collect_source_submodules(package_root: Path, *, package_name: str) -> list[str]:
+    """Return canonical source modules without consulting the root-package shim.
+
+    The repository-root ``nh_family_law_llm`` package deliberately redirects
+    imports into ``src`` at runtime.  ``find_spec`` therefore sees the shim
+    during a build and cannot reliably enumerate its canonical modules.  The
+    frozen program does import several of those modules dynamically, including
+    the Store smoke workflow, so enumerate the explicit source tree instead.
+    """
+
+    modules: set[str] = {package_name}
+    for candidate in package_root.rglob("*.py"):
+        if "__pycache__" in candidate.parts:
+            continue
+        relative = candidate.relative_to(package_root).with_suffix("")
+        parts = list(relative.parts)
+        if parts and parts[-1] == "__init__":
+            parts.pop()
+        if any(part == "tests" or part.startswith("test") for part in parts):
+            continue
+        modules.add(".".join([package_name, *parts]) if parts else package_name)
+    return sorted(modules)
+
+
 def include_runtime_data(source: str, destination: str) -> bool:
     """Keep test and cache trees out of the sealed application payload.
 
@@ -251,11 +275,11 @@ hiddenimports += [
 if FULL_DOCUMENT_INTELLIGENCE:
     hiddenimports.append("en_core_web_lg")
 # The canonical ``src/nh_family_law_llm`` tree is deliberately bundled as
-# source data above. The repository-root package is only a runtime shim that
-# points at that tree; asking PyInstaller to collect submodules from the shim
-# produces false missing-hidden-import errors and contributes no frozen code.
-# Keep dynamic source modules as shipped runtime assets and let normal imports
-# resolve them through the shim's explicit ``__path__`` at runtime.
+# source data above. The repository-root package is only a runtime shim, so
+# discover frozen code from the canonical source root rather than the shim.
+hiddenimports += collect_source_submodules(
+    ROOT / "src" / "nh_family_law_llm", package_name="nh_family_law_llm"
+)
 for package_name in ("app", "legal", "fastapi", "starlette", "uvicorn", "httpx", "pydantic", "pypdfium2", "cryptography", "docx", "docx_editor"):
     hiddenimports += collect_runtime_submodules(package_name)
 if FULL_DOCUMENT_INTELLIGENCE:
