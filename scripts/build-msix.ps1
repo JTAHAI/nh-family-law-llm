@@ -145,7 +145,10 @@ $hygiene = Join-Path $RepoRoot "scripts\store_payload_hygiene.py"
 $stageRoot = Join-Path $packagingRoot "stage"
 $packageRoot = Join-Path $stageRoot "package"
 $shortOutRoot = Join-Path $packagingRoot "out"
-$assetsRoot = Join-Path $RepoRoot "store\msix\assets"
+# Asset rendering is a build operation.  Keep its generated PNGs and inventory
+# under the isolated packaging workspace; the tracked brand source files must
+# not be rewritten merely by assembling a release candidate.
+$assetsRoot = Join-Path $packagingRoot "assets"
 $msixFileName = "NHFamilyLawLLM_${PackageVersion}_x64.msix"
 $msixPath = Join-Path $msixRoot $msixFileName
 $shortMsixPath = Join-Path $shortOutRoot $msixFileName
