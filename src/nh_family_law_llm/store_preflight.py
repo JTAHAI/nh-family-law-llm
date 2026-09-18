@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 
-EXPECTED_PACKAGE_NAME = "TAHAIWebServices.NHFamilyLawLLM"
+EXPECTED_PACKAGE_NAME = "TAHAIWebServices.NewHampshireFamilyLawLLM"
 EXPECTED_PUBLISHER = "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868"
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MSIX_PATH = DEFAULT_REPO_ROOT / "dist" / "release" / "v8.0.0" / "msix" / "NHFamilyLawLLM_8.0.0.0_x64.msix"

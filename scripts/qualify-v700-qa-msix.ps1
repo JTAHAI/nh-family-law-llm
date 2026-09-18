@@ -4,9 +4,9 @@ param(
   [string]$FinalMsix = "",
   [string]$EvidenceRoot = "",
   [string]$WorkRoot = "",
-  [ValidateLength(38, 50)]
-  [ValidatePattern('^TAHAIWebServices\.NHFamilyLawLLM\.QA[A-Za-z0-9.-]{1,13}$')]
-  [string]$QaIdentity = ("TAHAIWebServices.NHFamilyLawLLM.QA" + [Guid]::NewGuid().ToString("N").Substring(0, 12))
+  [ValidateLength(45, 50)]
+  [ValidatePattern('^TAHAIWebServices\.NewHampshireFamilyLawLLM\.QA[A-Za-z0-9.-]{1,6}$')]
+  [string]$QaIdentity = ("TAHAIWebServices.NewHampshireFamilyLawLLM.QA" + [Guid]::NewGuid().ToString("N").Substring(0, 6))
 )
 
 $ErrorActionPreference = "Stop"
@@ -72,7 +72,7 @@ function Invoke-InstalledProbe([string]$Executable, [string]$InstallRoot, [int]$
 $unpacked = Join-Path $work "unpacked"
 New-Item -ItemType Directory -Force -Path $unpacked | Out-Null
 
-$realBefore = @(Get-AppxPackage -Name "TAHAIWebServices.NHFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
+$realBefore = @(Get-AppxPackage -Name "TAHAIWebServices.NewHampshireFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
 if (-not (Test-Path -LiteralPath (Join-Path $unpacked "AppxManifest.xml") -PathType Leaf)) {
   $makeAppx = Find-SdkTool "makeappx.exe"
   & $makeAppx unpack /o /p $final /d $unpacked | Out-Null
@@ -102,7 +102,7 @@ function Write-BlockedQualification([string]$Reason, [string]$Detail) {
     qa_registration = [ordered]@{ status = "blocked"; reason = $Reason; detail = $Detail }
     signing_classification = "unpacked isolated QA payload registration; this does not qualify the unsigned final MSIX for Partner Center signing"
     real_store_package_before = $realBefore
-    real_store_package_after = @(Get-AppxPackage -Name "TAHAIWebServices.NHFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
+    real_store_package_after = @(Get-AppxPackage -Name "TAHAIWebServices.NewHampshireFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
     cleanup_required = [ordered]@{ qa_package = "not_registered"; work_root = $work }
   }
   $blocked | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $evidence "install-report.json") -Encoding utf8
@@ -135,7 +135,7 @@ $uninstalled = -not [bool](Get-AppxPackage -Name $qaIdentity -ErrorAction Silent
 Add-AppxPackage -Register $qaManifest
 $reinstalled = Get-AppxPackage -Name $qaIdentity -ErrorAction Stop
 $reinstallProbe = Invoke-InstalledProbe (Join-Path $reinstalled.InstallLocation "NHFamilyLawLLM.exe") $reinstalled.InstallLocation 53473 $expectedProductVersion
-$realAfter = @(Get-AppxPackage -Name "TAHAIWebServices.NHFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
+$realAfter = @(Get-AppxPackage -Name "TAHAIWebServices.NewHampshireFamilyLawLLM" -ErrorAction SilentlyContinue | ForEach-Object { $_.PackageFullName })
 
 $report = [ordered]@{
   schema_version = "isolated_qa_package_payload_install_v2"

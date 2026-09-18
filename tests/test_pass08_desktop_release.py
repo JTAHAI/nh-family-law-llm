@@ -188,7 +188,7 @@ def test_packaging_has_one_template_and_reserved_identity_is_not_claimed_as_conf
     ns={'uap':'http://schemas.microsoft.com/appx/manifest/uap/windows10'}
     assert manifest.find('.//uap:Protocol',ns).attrib['Name']=='nhfl'
     identity=json.loads((ROOT/'store/msix/identity.example.json').read_text())
-    assert identity['identity_name'] == 'TAHAIWebServices.NHFamilyLawLLM'
+    assert identity['identity_name'] == 'TAHAIWebServices.NewHampshireFamilyLawLLM'
     assert identity['publisher'] == 'CN=D75EE668-B409-45ED-87E5-E37AA5FE3868'
     assert identity['identity_status'] == 'reserved_partner_center_identity_submission_not_completed'
     assert identity['production_identity_confirmed'] is False

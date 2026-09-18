@@ -183,7 +183,7 @@ def test_runtime_feature_dependency_matrix_covers_advertised_advanced_engines() 
 def test_manifest_template_is_valid_xml_after_placeholder_substitution() -> None:
     template = (REPO_ROOT / "store" / "msix" / "AppxManifest.xml.in").read_text(encoding="utf-8")
     rendered = (
-        template.replace("__IDENTITY_NAME__", "TAHAIWebServices.NHFamilyLawLLM")
+        template.replace("__IDENTITY_NAME__", "TAHAIWebServices.NewHampshireFamilyLawLLM")
         .replace("__PUBLISHER__", "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868")
         .replace("__PACKAGE_VERSION__", "2.9.0.0")
         .replace("__PACKAGE_DISPLAY_NAME__", "New Hampshire Family Law LLM")
@@ -200,7 +200,7 @@ def test_manifest_template_is_valid_xml_after_placeholder_substitution() -> None
 
 def test_store_identity_example_matches_reserved_partner_center_values() -> None:
     identity = json.loads((REPO_ROOT / "store" / "msix" / "identity.example.json").read_text(encoding="utf-8"))
-    assert identity["identity_name"] == "TAHAIWebServices.NHFamilyLawLLM"
+    assert identity["identity_name"] == "TAHAIWebServices.NewHampshireFamilyLawLLM"
     assert identity["publisher"] == "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868"
     assert identity["publisher_display_name"] == "TAHAI Web Services"
     assert identity["package_display_name"] == "New Hampshire Family Law LLM"
@@ -622,7 +622,7 @@ def test_build_msix_script_normalizes_package_versions_without_leading_zero_segm
     assert '2.5.29.37={text}1.3.6.1.5.5.7.3.3' in script
     assert '2.5.29.19={text}' in script
     identity = json.loads((REPO_ROOT / "store/msix/identity.example.json").read_text())
-    assert identity["identity_name"] == "TAHAIWebServices.NHFamilyLawLLM"
+    assert identity["identity_name"] == "TAHAIWebServices.NewHampshireFamilyLawLLM"
     assert identity["publisher"] == "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868"
     assert "$IdentityName = $identityConfig.identity_name" in script
     assert "$Publisher = $identityConfig.publisher" in script

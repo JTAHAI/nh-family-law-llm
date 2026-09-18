@@ -13,7 +13,7 @@ from legal.release.signed_update_metadata import signed_payload, verify_update_m
 
 
 def _package(path: Path) -> None:
-    manifest = '''<?xml version="1.0" encoding="utf-8"?><Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="TAHAIWebServices.NHFamilyLawLLM" Publisher="CN=Fictional" Version="8.0.0.0" ProcessorArchitecture="x64"/><Properties/><Resources><Resource Language="en-us"/></Resources><Applications><Application Id="NHFamilyLawLLM" Executable="NHFamilyLawLLM.exe" EntryPoint="Windows.FullTrustApplication"/></Applications></Package>'''
+    manifest = '''<?xml version="1.0" encoding="utf-8"?><Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="TAHAIWebServices.NewHampshireFamilyLawLLM" Publisher="CN=Fictional" Version="8.0.0.0" ProcessorArchitecture="x64"/><Properties/><Resources><Resource Language="en-us"/></Resources><Applications><Application Id="NHFamilyLawLLM" Executable="NHFamilyLawLLM.exe" EntryPoint="Windows.FullTrustApplication"/></Applications></Package>'''
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("AppxManifest.xml", manifest)
 

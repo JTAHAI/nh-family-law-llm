@@ -21,7 +21,7 @@ from legal.retrieval.optional_backends import SQLiteHybridIndex
 from nh_family_law_llm.version import VERSION
 
 
-EXPECTED_PACKAGE_NAME = "TAHAIWebServices.NHFamilyLawLLM"
+EXPECTED_PACKAGE_NAME = "TAHAIWebServices.NewHampshireFamilyLawLLM"
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RUNTIME_ROOT = DEFAULT_REPO_ROOT / "dist" / "store" / "runtime"
 DEFAULT_MSIX_PATH = DEFAULT_REPO_ROOT / "dist" / "release" / "v8.0.0" / "msix" / "NHFamilyLawLLM_8.0.0.0_x64.msix"

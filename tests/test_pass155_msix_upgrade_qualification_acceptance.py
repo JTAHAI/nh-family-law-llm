@@ -6,7 +6,7 @@ from pathlib import Path
 from legal.release.msix_upgrade_qualification import build_upgrade_execution_contract, validate_runner_result
 
 
-def _package(path: Path, *, version: str, name: str = "TAHAIWebServices.NHFamilyLawLLM", publisher: str = "CN=Fictional") -> None:
+def _package(path: Path, *, version: str, name: str = "TAHAIWebServices.NewHampshireFamilyLawLLM", publisher: str = "CN=Fictional") -> None:
     manifest = f'''<?xml version="1.0" encoding="utf-8"?><Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="{name}" Publisher="{publisher}" Version="{version}" ProcessorArchitecture="x64"/><Properties/><Resources><Resource Language="en-us"/></Resources><Applications><Application Id="NHFamilyLawLLM" Executable="NHFamilyLawLLM.exe" EntryPoint="Windows.FullTrustApplication"/></Applications></Package>'''
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("AppxManifest.xml", manifest)

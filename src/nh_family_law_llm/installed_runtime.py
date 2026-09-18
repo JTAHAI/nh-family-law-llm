@@ -11,7 +11,7 @@ from typing import Any
 
 from .version import APP_EXECUTABLE_NAME
 
-DEFAULT_PACKAGE_NAME = "TAHAIWebServices.NHFamilyLawLLM"
+DEFAULT_PACKAGE_NAME = "TAHAIWebServices.NewHampshireFamilyLawLLM"
 
 
 @dataclass(frozen=True)

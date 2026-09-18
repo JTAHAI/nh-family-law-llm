@@ -47,7 +47,7 @@ $manifest = [ordered]@{
     package_version = "7.0.0.0"
     architecture = "x64"
     language = "en-us"
-    identity = "TAHAIWebServices.NHFamilyLawLLM"
+    identity = "TAHAIWebServices.NewHampshireFamilyLawLLM"
     publisher = "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868"
     executable = "NHFamilyLawLLM.exe"
     x_generate = $false

@@ -50,7 +50,7 @@ def _wait_for_json(url: str, timeout_s: int = 120) -> dict[str, object]:
 
 def test_resolve_installed_runtime_executable_prefers_appx_location(monkeypatch, tmp_path: Path) -> None:
     payload = {
-        "PackageFullName": "TAHAIWebServices.NHFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
+        "PackageFullName": "TAHAIWebServices.NewHampshireFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
         "InstallLocation": str(tmp_path / "installed"),
         "Version": "6.0.4.0",
     }

@@ -119,9 +119,9 @@ def main() -> int:
         "status": "blocked",
         "target_package": relative(MSIX),
         "target_sha256": package_hash,
-        "real_store_package_before_after": "TAHAIWebServices.NHFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
+        "real_store_package_before_after": "TAHAIWebServices.NewHampshireFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
         "real_store_package_touched": False,
-        "qa_identity": "TAHAIWebServices.NHFamilyLawLLM.QA7",
+        "qa_identity": "TAHAIWebServices.NewHampshireFamilyLawLLM.QA7",
         "qa_package_installed": False,
         "attempts": [
             {
@@ -200,7 +200,7 @@ def main() -> int:
         "sha256": package_hash,
         "manifest": package_manifest,
         "expected": {
-            "identity": "TAHAIWebServices.NHFamilyLawLLM",
+            "identity": "TAHAIWebServices.NewHampshireFamilyLawLLM",
             "publisher": "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868",
             "version": "7.0.0.0",
             "architecture": "x64",

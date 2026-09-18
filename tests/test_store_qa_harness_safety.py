@@ -15,16 +15,16 @@ pytestmark = pytest.mark.skipif(os.name != "nt", reason="Windows PowerShell para
     ("arguments", "expected"),
     [
         (["-NotARealParameter", "rejected"], "NamedParameterNotFound"),
-        (["-QaIdentity", "TAHAIWebServices.NHFamilyLawLLM"], "ParameterArgumentValidationError"),
+        (["-QaIdentity", "TAHAIWebServices.NewHampshireFamilyLawLLM"], "ParameterArgumentValidationError"),
         (
-            ["-QaIdentity", "TAHAIWebServices.NHFamilyLawLLM.QA" + "a" * 32],
+            ["-QaIdentity", "TAHAIWebServices.NewHampshireFamilyLawLLM.QA" + "a" * 32],
             "ParameterArgumentValidationError",
         ),
     ],
 )
 def test_qa_script_rejects_unsafe_parameters_before_execution(arguments, expected):
     completed = subprocess.run(
-        ["powershell", "-NoProfile", "-File", str(SCRIPT), *arguments],
+        ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(SCRIPT), *arguments],
         capture_output=True,
         text=True,
         timeout=30,
@@ -46,6 +46,8 @@ def test_qa_script_preserves_an_existing_work_directory(tmp_path):
         [
             "powershell",
             "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
             "-File",
             str(SCRIPT),
             "-FinalMsix",
@@ -86,9 +88,9 @@ def test_default_qa_identity_is_unique_and_within_manifest_limit():
     )
     identities = json.loads(result.stdout)
     assert len(set(identities)) == 32
-    assert all(38 <= len(identity) <= 50 for identity in identities)
+    assert all(45 <= len(identity) <= 50 for identity in identities)
     assert all(
-        identity.startswith("TAHAIWebServices.NHFamilyLawLLM.QA") for identity in identities
+        identity.startswith("TAHAIWebServices.NewHampshireFamilyLawLLM.QA") for identity in identities
     )
 
 

@@ -9,7 +9,7 @@ from legal.release.rollback_preparation import build_rollback_preparation, valid
 
 
 def _package(path: Path, *, version: str, publisher: str = "CN=Fictional") -> None:
-    manifest = f'''<?xml version="1.0" encoding="utf-8"?><Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="TAHAIWebServices.NHFamilyLawLLM" Publisher="{publisher}" Version="{version}" ProcessorArchitecture="x64"/><Properties/><Resources><Resource Language="en-us"/></Resources><Applications><Application Id="NHFamilyLawLLM" Executable="NHFamilyLawLLM.exe" EntryPoint="Windows.FullTrustApplication"/></Applications></Package>'''
+    manifest = f'''<?xml version="1.0" encoding="utf-8"?><Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="TAHAIWebServices.NewHampshireFamilyLawLLM" Publisher="{publisher}" Version="{version}" ProcessorArchitecture="x64"/><Properties/><Resources><Resource Language="en-us"/></Resources><Applications><Application Id="NHFamilyLawLLM" Executable="NHFamilyLawLLM.exe" EntryPoint="Windows.FullTrustApplication"/></Applications></Package>'''
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("AppxManifest.xml", manifest)
 

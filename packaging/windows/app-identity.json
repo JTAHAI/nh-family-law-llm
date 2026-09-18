@@ -1,7 +1,7 @@
 {
   "displayName": "New Hampshire Family Law LLM",
   "publisherDisplayName": "TAHAI Web Services",
-  "identityName": "TAHAIWebServices.NHFamilyLawLLM",
+  "identityName": "TAHAIWebServices.NewHampshireFamilyLawLLM",
   "applicationId": "NHFamilyLawLLM",
   "aumid": "JTAHAI.NHFamilyLawLLM",
   "executable": "NHFamilyLawLLM.exe",

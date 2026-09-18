@@ -25,7 +25,7 @@ FIXTURE_MANIFEST = (
 API_PROBE = RUNTIME / "installed_api_probe.json"
 MSIX = ROOT / "dist" / "store" / "msix" / "NHFamilyLawLLM_6.0.4.0_x64.msix"
 INSTALLED_EXE = Path(
-    r"C:\Program Files\WindowsApps\TAHAIWebServices.NHFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4\NHFamilyLawLLM.exe"
+    r"C:\Program Files\WindowsApps\TAHAIWebServices.NewHampshireFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4\NHFamilyLawLLM.exe"
 )
 
 
@@ -197,7 +197,7 @@ def main() -> int:
             "os": "Windows",
             "loopback_url": "http://127.0.0.1:8791/",
             "production_ui": "UI bundled in the installed frozen executable",
-            "installed_package": "TAHAIWebServices.NHFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
+            "installed_package": "TAHAIWebServices.NewHampshireFamilyLawLLM_6.0.4.0_x64__k9af96g77tmj4",
             "installed_package_status": "Ok",
             "product_version": "6.0.4",
             "package_version": "6.0.4.0",
