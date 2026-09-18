@@ -11713,7 +11713,6 @@
         window.localStorage.setItem(layoutPreferenceKey, JSON.stringify({
           evidenceOpen: drawerUserPreference,
           shortcutsOpen: sideCardsUserPreference,
-          v8View: activeV8View,
         }));
       } catch (_error) {
         // Layout remains fully usable when storage is unavailable.
@@ -11723,8 +11722,11 @@
     let drawerReturnFocus = null;
     let drawerUserPreference = typeof savedLayoutPreferences.evidenceOpen === 'boolean' ? savedLayoutPreferences.evidenceOpen : null;
     let sideCardsUserPreference = savedLayoutPreferences.shortcutsOpen !== false;
-    // Chat intentionally wins on first launch. The larger workspace is an explicit view.
-    let activeV8View = savedLayoutPreferences.v8View === 'workspace' ? 'workspace' : 'chat';
+    // A Local AI Chat launch always opens the compact chat. The expanded
+    // workbench is an explicit, session-local choice: restoring it from an
+    // earlier session turns the landing surface into a page-length set of
+    // rails and makes it look like the chat itself has failed to fit.
+    let activeV8View = 'chat';
     let responsiveLayoutMode = '';
     const inlineDrawerQuery = window.matchMedia('(min-width: 960px)');
     const fullWorkbenchQuery = window.matchMedia('(min-width: 1360px)');

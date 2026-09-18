@@ -47,6 +47,13 @@ def test_v500_drawer_state_tracks_resize_and_user_preference() -> None:
     assert "window.matchMedia('(min-width: 1041px)')" not in js
 
 
+def test_v500_chat_launch_never_restores_the_page_length_workspace() -> None:
+    js = read_workbench_asset("workbench.js")
+    assert "let activeV8View = 'chat';" in js
+    assert "savedLayoutPreferences.v8View" not in js
+    assert "v8View: activeV8View" not in js
+
+
 def test_v500_mobile_keeps_settings_accessible_without_horizontal_control_overflow() -> None:
     css = read_workbench_asset("workbench.css")
     assert ".v5-control-bar .v5-control-field" in css
