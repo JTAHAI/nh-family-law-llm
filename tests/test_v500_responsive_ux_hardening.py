@@ -11,6 +11,8 @@ def test_v500_app_shell_uses_dynamic_viewport_without_row_gaps() -> None:
     assert ".v5-workbench.app-shell" in css
     assert "gap: 0" in css
     assert "overscroll-behavior: contain" in css
+    assert 'body.v9-legal-ops-workbench[data-v8-view="chat"] { height: 100dvh; overflow: hidden; display: grid;' in css
+    assert 'body.v9-legal-ops-workbench[data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell { height: auto; min-height: 0; max-height: none;' in css
 
 
 def test_v500_responsive_layout_has_full_compact_and_overlay_modes() -> None:

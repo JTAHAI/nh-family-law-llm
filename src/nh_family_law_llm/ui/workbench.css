@@ -5690,8 +5690,8 @@ body.v9-legal-ops-workbench .composer-guide:focus-visible { outline: 3px solid #
 /* Chat is the default working surface.  Keep its composer inside a compact
    desktop viewport even when the welcome guidance is taller than the visible
    message area; only the conversation region may scroll. */
-body.v9-legal-ops-workbench[data-v8-view="chat"] { overflow: hidden; }
-body.v9-legal-ops-workbench[data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell { height: 100dvh; min-height: 0; max-height: 100dvh; margin-block: 0; grid-template-rows: auto minmax(0, 1fr) auto; }
+body.v9-legal-ops-workbench[data-v8-view="chat"] { height: 100dvh; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+body.v9-legal-ops-workbench[data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell { height: auto; min-height: 0; max-height: none; margin-block: 0; grid-template-rows: auto minmax(0, 1fr) auto; }
 body.v9-legal-ops-workbench[data-v8-view="chat"] .v5-main-stage.main-stage { min-height: 0; height: auto; }
 body.v9-legal-ops-workbench[data-v8-view="chat"] .chat-panel.panel { min-height: 0; height: 100%; grid-template-rows: auto minmax(0, 1fr) auto; }
 body.v9-legal-ops-workbench[data-v8-view="chat"] .chat-scroll { min-height: 0; }
@@ -5710,7 +5710,7 @@ body.v9-legal-ops-workbench :is(button, summary, input, select, textarea, a):foc
   box-shadow: 0 0 0 2px #fff;
 }
 @media (max-width: 720px), (max-height: 650px) {
-  body.v9-legal-ops-workbench[data-v8-view="chat"] { overflow: auto; }
+  body.v9-legal-ops-workbench[data-v8-view="chat"] { height: auto; overflow: auto; display: block; }
   body.v9-legal-ops-workbench[data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell {
     width: calc(100% - 8px); max-width: 100%; min-width: 0;
     height: auto; min-height: 100dvh; max-height: none; overflow: visible;
