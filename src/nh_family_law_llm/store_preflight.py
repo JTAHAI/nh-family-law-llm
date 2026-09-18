@@ -251,10 +251,34 @@ def audit_manifest(msix_path: Path, expected_version: str) -> dict[str, Any]:
     if capability_names != ["runFullTrust"]:
         issues.append("capability_mismatch")
     if extension_nodes:
-        if any(node.tag != _qname(DESKTOP_NS, "Extension") for node in extension_nodes):
+        # The package deliberately has two supported extensions: the full-trust
+        # desktop process and the view-only ``nhfl`` protocol.  Treating the
+        # required uap protocol extension as unsupported made every real
+        # package fail preflight even when its manifest was valid.
+        desktop_extensions = [
+            node for node in extension_nodes if node.tag == _qname(DESKTOP_NS, "Extension")
+        ]
+        protocol_extensions = [
+            node for node in extension_nodes if node.tag == _qname(UAP_NS, "Extension")
+        ]
+        if len(desktop_extensions) != 1 or len(protocol_extensions) != 1 or len(extension_nodes) != 2:
             issues.append("unsupported_extension_namespace")
-        if any(node.attrib.get("Category") != "windows.fullTrustProcess" for node in extension_nodes):
-            issues.append("unsupported_extension_category")
+        for node in desktop_extensions:
+            if (
+                node.attrib.get("Category") != "windows.fullTrustProcess"
+                or node.attrib.get("Executable") != "NHFamilyLawLLM.exe"
+            ):
+                issues.append("unsupported_extension_category")
+        for node in protocol_extensions:
+            protocol = node.find(_qname(UAP_NS, "Protocol"))
+            if (
+                node.attrib.get("Category") != "windows.protocol"
+                or node.attrib.get("Executable") != "NHFamilyLawLLM.exe"
+                or node.attrib.get("EntryPoint") != "Windows.FullTrustApplication"
+                or protocol is None
+                or protocol.attrib.get("Name") != "nhfl"
+            ):
+                issues.append("unsupported_extension_category")
     if "x-generate" in manifest_text.lower():
         issues.append("x_generate_present")
 

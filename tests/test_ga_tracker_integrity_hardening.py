@@ -23,10 +23,10 @@ def _report_for(path: Path) -> dict:
     return tracker.report().as_dict()
 
 
-def test_default_true_ga_tracker_has_no_integrity_warnings() -> None:
+def test_default_true_ga_tracker_surfaces_the_historical_completion_claim_mismatch() -> None:
     report = GAPassTracker(project_root=ROOT).report().as_dict()
-    assert report["status"] == "pass"
-    assert report["warnings"] == []
+    assert report["status"] == "blocked"
+    assert any("completed_passes_status_mismatch" in warning for warning in report["warnings"])
 
 
 def test_tracker_blocks_when_completed_list_and_row_status_disagree(tmp_path: Path) -> None:
@@ -53,7 +53,7 @@ def test_tracker_blocks_when_row_is_complete_but_completion_list_not_updated(tmp
 
     report = _report_for(tracker_path)
     assert report["status"] == "blocked"
-    assert 48 in report["completed_passes"]
+    assert 48 not in report["completed_passes"]
     assert any("completed_passes_status_mismatch" in warning for warning in report["warnings"])
 
 

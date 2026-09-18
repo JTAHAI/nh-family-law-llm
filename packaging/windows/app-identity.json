@@ -1,7 +1,7 @@
 {
   "displayName": "New Hampshire Family Law LLM",
-  "publisherDisplayName": "JTAHAI",
-  "identityName": "NHFamilyLawLLM.LocalQA",
+  "publisherDisplayName": "TAHAI Web Services",
+  "identityName": "TAHAIWebServices.NHFamilyLawLLM",
   "applicationId": "NHFamilyLawLLM",
   "aumid": "JTAHAI.NHFamilyLawLLM",
   "executable": "NHFamilyLawLLM.exe",
@@ -13,8 +13,8 @@
     "accent": "#A61B29"
   },
   "version": "8.0.10.0",
-  "status": "source candidate; no Windows binary, signing, WACK, or Store identity verification",
-  "publisher": "CN=NHFamilyLawLLM-LocalQA",
+  "status": "source candidate; reserved Store identity is configured, but signing, WACK, installation, and certification remain unverified",
+  "publisher": "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868",
   "aumid_kind": "unpackaged_explicit_identity",
-  "msix_identity_status": "development_example_not_store_registered"
+  "msix_identity_status": "reserved_partner_center_identity_submission_not_completed"
 }

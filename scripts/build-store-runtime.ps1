@@ -238,9 +238,20 @@ foreach ($path in @($pyiDistRoot, $pyiWorkRoot, $runtimeRoot)) {
 }
 New-Item -ItemType Directory -Force -Path $pyiDistRoot, $pyiWorkRoot | Out-Null
 
+# PyInstaller launches in a clean environment, so the build-time tier variable
+# cannot be relied on by the installed executable. Generate a tiny immutable
+# runtime hook for this build; it is included in the sealed payload and sets
+# only the already validated feature-tier value.
+$featureTierRuntimeHook = Join-Path $pyiWorkRoot "feature-tier-runtime-hook.py"
+@"
+import os
+os.environ.setdefault("NHFL_STORE_FEATURE_TIER", "$FeatureTier")
+"@ | Set-Content -LiteralPath $featureTierRuntimeHook -Encoding UTF8
+
 $pyInstallerEnv = @{
   NHFL_STORE_DEBUG_CONSOLE = $(if ($DebugConsole) { "1" } else { "0" })
   NHFL_STORE_FEATURE_TIER = $FeatureTier
+  NHFL_STORE_FEATURE_TIER_RUNTIME_HOOK = $featureTierRuntimeHook
   NHFL_STORE_BUNDLED_SPECIALIST_PACK_ROOT = $SpecialistPackRoot
   NHFL_STORE_BUNDLED_SPECIALIST_VALIDATION = $(if ($SpecialistPackRoot) { $specialistValidationPath } else { "" })
 }
@@ -311,6 +322,18 @@ if ($FeatureTier -eq "full") {
   New-Item -ItemType Directory -Force -Path $doclingModelsRuntimeRoot | Out-Null
   Copy-Item -Path (Join-Path $doclingModelsSourceRoot "*") -Destination $doclingModelsRuntimeRoot -Recurse -Force
 }
+
+# The clean environment used by a launched MSIX does not retain this build
+# process's environment variables.  Stamp the selected tier into the immutable
+# runtime so UI/API capability labels remain accurate after installation.
+$featureTierPath = Join-Path $runtimeRoot "store\feature-tier.json"
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $featureTierPath) | Out-Null
+@{
+  schema_version = "nhfl_store_feature_tier_v1"
+  feature_tier = $FeatureTier
+  runtime_downloads_allowed = $false
+  review_required = $true
+} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $featureTierPath -Encoding UTF8
 
 $runtimeExe = Join-Path $runtimeRoot "NHFamilyLawLLM.exe"
 if (-not (Test-Path -LiteralPath $runtimeExe)) {

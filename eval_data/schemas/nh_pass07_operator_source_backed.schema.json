@@ -1,0 +1,15 @@
+{
+  "schema": "nh_family_law_llm.operator_source_backed_eval_case.v1",
+  "description": "Synthetic engineering-evaluation case only. This is not attorney-reviewed gold evidence and must not be treated as legal authority.",
+  "required": [
+    "case_id",
+    "category",
+    "jurisdiction",
+    "review_mode",
+    "synthetic",
+    "private_data_allowed_for_training",
+    "safety_critical",
+    "payload",
+    "expected"
+  ]
+}

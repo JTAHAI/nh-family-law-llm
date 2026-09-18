@@ -2,14 +2,14 @@ cff-version: 1.2.0
 title: New Hampshire Family Law LLM
 message: Cite this source repository by project name, version or commit, and repository URL. Do not cite this repository as legal authority.
 type: software
-version: 8.0.3
-date-released: 2026-09-11
+version: 8.0.10
+date-released: 2026-08-23
 authors:
   - name: New Hampshire Family Law LLM contributors
 license: other
 repository-code: https://github.com/JTAHAI/nh-family-law-llm
 url: https://github.com/JTAHAI/nh-family-law-llm
-abstract: Local-first New Hampshire family-law legal-information workbench for official-source research, exact citation and quote verification, privacy-aware record review, corpus organization, fail-closed filing gates, and review-required drafting support.
+abstract: Local-first New Hampshire family-law legal-information workbench for official-source research, exact citation and quote verification, privacy-aware record review, OCR derivatives, corpus organization, fail-closed filing gates, and review-required drafting support.
 keywords:
   - New Hampshire
   - family law

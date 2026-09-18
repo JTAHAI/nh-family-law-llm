@@ -38,6 +38,7 @@ GENERATED_PARTS = {
     "node_modules",
     "dist",
     "build",
+    "artifacts",
     ".eggs",
     ".proofs",
 }
@@ -88,6 +89,8 @@ def _is_ignored(rel_path: Path) -> bool:
     rel = rel_path.as_posix()
 
     if parts & GENERATED_PARTS:
+        return True
+    if any(part.endswith(".egg-info") for part in rel_path.parts):
         return True
     if rel.startswith(".local_tmp/"):
         return True

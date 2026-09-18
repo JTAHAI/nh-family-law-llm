@@ -72,7 +72,10 @@ def test_api_endpoints_use_same_safety_and_sources() -> None:
     draft = api.draft(api.DraftRequest(request="child support form checklist"))
     assert "not filing-ready" in draft["text"]
 
-    inspect = api.inspect_source("nh-rsa-461-a")
+    # The API must inspect only an identifier it currently lists; stale
+    # authority IDs are intentionally rejected rather than falling back to a
+    # similarly named seed record.
+    inspect = api.inspect_source(api.sources()[0]["id"])
     assert inspect["official"] is True
 
 
@@ -116,7 +119,11 @@ def test_local_scripts_exist_parse_and_doctor_json(tmp_path: Path) -> None:
     shutil.copytree(
         ROOT,
         disposable_root,
-        ignore=shutil.ignore_patterns(".git", ".pytest_cache", ".ruff_cache", "__pycache__", "dist", "build"),
+        # Historic qualification receipts are intentionally retained in this
+        # checkout but are not source-release inputs.  The doctor contract is
+        # for a clean source staging tree, so exclude them just as the release
+        # builder does.
+        ignore=shutil.ignore_patterns(".git", ".pytest_cache", ".ruff_cache", "__pycache__", "dist", "build", "artifacts"),
     )
     disposable_dist = disposable_root / "dist" / "generated"
     disposable_dist.mkdir(parents=True)

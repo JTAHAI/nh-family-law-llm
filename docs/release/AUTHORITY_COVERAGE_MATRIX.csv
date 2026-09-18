@@ -1,0 +1,9 @@
+topic,discovery_basis,configured_source_state,originals_acquired,legal_reviewed,enabled_for_current_law,outstanding_gap
+domestic_relations,RSA 457/458/458-A/458-C/461-A/461-B catalog,partial unreviewed seed catalog,partial,no,no,provision-level completeness and qualified review
+parentage_and_records,RSA 168-A/168-B/5-C catalog,partial unreviewed seed catalog,partial,no,no,competent-tribunal and terminology review
+support_and_enforcement,RSA 161-B/161-C/546-B catalog,partial unreviewed seed catalog,partial,no,no,administrative/judicial interaction and current tables
+family_jurisdiction,RSA 490-D and court-rule catalog,rule sources incomplete,partial,no,no,current Family Division and procedure rules
+child_protection_guardianship_adoption,RSA 169-B/169-C/169-D/170-A/170-B/170-C/173-B/463/464-A catalog,partial unreviewed seed catalog,partial,no,no,provision-level coverage and review
+cross_cutting_agency_and_records,RSA 21-M/126-A/541-A and agency guidance catalog,partial unreviewed seed catalog,partial,no,no,adopted-rule history and scope
+forms_and_instructions,Judicial Branch official forms index,one index only,partial,no,no,current form files/revisions and workflow mapping
+case_law,official opinion index,one index only,partial,no,no,topic search holdings and later-treatment scope

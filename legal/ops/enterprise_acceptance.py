@@ -108,6 +108,9 @@ class EnterpriseAcceptanceAuditor:
             "node_modules",
             "dist",
             "build",
+            # Historical gate receipts are generated evidence, not public source
+            # payload.  They may legitimately contain many diagnostic .txt files.
+            "artifacts",
             ".eggs",
             ".proofs",
         }
@@ -129,7 +132,16 @@ class EnterpriseAcceptanceAuditor:
 
     @staticmethod
     def _is_public_runtime_source(rel: str) -> bool:
-        return Path(rel).parts[:2] == ("legal", "runtime")
+        parts = Path(rel).parts
+        # The packaged read-only defaults are source-controlled application
+        # resources, not mutable case/runtime data.  Keep the broader runtime
+        # data deny-list in force everywhere else.
+        return parts[:2] == ("legal", "runtime") or parts[:4] == (
+            "src",
+            "nh_family_law_llm",
+            "resources",
+            "runtime",
+        )
 
     def audit(self) -> EnterpriseAcceptanceReport:
         findings: list[EnterpriseAcceptanceFinding] = []

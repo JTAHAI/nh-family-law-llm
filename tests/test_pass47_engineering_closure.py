@@ -58,15 +58,11 @@ def test_pass47_closure_script_writes_non_attorney_non_pilot_evidence(tmp_path: 
     assert payload["case_count"] >= 9
 
 
-def test_pass47_reduces_tracker_count_without_closing_external_release_or_pilot_gates() -> None:
+def test_pass47_engineering_evidence_does_not_reduce_true_ga_count() -> None:
     report = GAPassTracker(project_root=ROOT).report().as_dict()
 
-    assert report["status"] == "pass"
-    assert report["true_ga_completed"] == 29
-    assert report["true_ga_remaining"] == 4
-    assert 47 in report["completed_passes"]
-    for pass_number in [27, 28, 29, 30, 31, 46]:
-        assert pass_number in report["completed_passes"]
-    for pass_number in [48, 49, 50, 51]:
-        assert pass_number in report["remaining_passes"]
-    assert report["next_true_ga_pass"] == 48
+    assert report["status"] == "blocked"
+    assert report["true_ga_completed"] == 0
+    assert report["true_ga_remaining"] == 33
+    assert 47 not in report["completed_passes"]
+    assert report["next_true_ga_pass"] == 19

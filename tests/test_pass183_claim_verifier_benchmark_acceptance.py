@@ -44,7 +44,7 @@ def _strict_fixture(tmp_path: Path) -> tuple[Path, Path]:
             _strict_row(claim="New Hampshire requires a purple parenting certificate in every custody case.", expected_status="unsupported"),
             _strict_row(claim="The court may not order contact.", expected_status="contradicted", evidence_text="The court may order contact."),
             _strict_row(claim="Best interest controls parental rights.", expected_status="stale", authority_status="stale_unknown"),
-            _strict_row(claim="Best interest controls parental rights.", expected_status="jurisdiction_mismatch", jurisdiction="new_hampshire"),
+            _strict_row(claim="Best interest controls parental rights.", expected_status="jurisdiction_mismatch", jurisdiction="maine"),
             _strict_row(claim="!!!", expected_status="unknown"),
         ],
     )

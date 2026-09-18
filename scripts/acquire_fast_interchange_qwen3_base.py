@@ -17,7 +17,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from huggingface_hub import HfApi, hf_hub_download
+try:
+    from huggingface_hub import HfApi, hf_hub_download
+except ImportError:  # Keep metadata/safety inspection independent of a downloader extra.
+    HfApi = None  # type: ignore[assignment]
+    hf_hub_download = None  # type: ignore[assignment]
 
 
 MODEL_ID = "Qwen/Qwen3-0.6B"
@@ -76,6 +80,11 @@ def _stage_for_output(output_root: Path, *, resume: bool) -> Path:
 def acquire(*, output_root: Path, repository_root: Path, resume: bool = False) -> dict[str, Any]:
     """Download and inventory the locked public base; never overwrite output."""
 
+    if HfApi is None or hf_hub_download is None:
+        raise RuntimeError(
+            "huggingface_hub_required_for_public_base_acquisition; "
+            "install the approved acquisition dependency before downloading"
+        )
     output_root = _inside_external_root(output_root, repository_root)
     if output_root.exists() or output_root.is_symlink():
         raise ValueError("base_output_must_not_exist")

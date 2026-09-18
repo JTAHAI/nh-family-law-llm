@@ -656,11 +656,11 @@ contact schedule"></textarea></label>
   <div class="local-agent-safety"><strong>The source remains the authority.</strong> The local model is an optional worker. It cannot certify legal correctness, evidence, or filing readiness.</div>
   <div class="local-agent-layout">
     <aside class="local-agent-settings">
-      <label>Provider<select id="local-agent-provider"><option value="ollama">Ollama</option><option value="openai_compatible_local">OpenAI-compatible local server</option><option value="fast_interchange_local">FAST INTERCHANGE admitted local worker</option></select></label>
+      <label>Provider<select id="local-agent-provider"><option value="curated_ollama_reasoning">Local Qwen reasoning (4B / 8B)</option><option value="ollama">Ollama</option><option value="openai_compatible_local">OpenAI-compatible local server</option><option value="fast_interchange_local">FAST INTERCHANGE admitted local worker</option></select></label>
       <label>Loopback endpoint<input id="local-agent-endpoint" value="http://127.0.0.1:11434" spellcheck="false"/></label>
       <label>Model name<input id="local-agent-model" value="qwen2.5:7b" spellcheck="false"/></label>
       <label>Approved task<select id="local-agent-task"><option value="intake_triage">Intake triage</option><option value="evidence_review">Evidence Review — compare records</option><option value="authority_review" selected>Authority review</option><option value="drafting">Drafting Assistant — source-bound</option><option value="parenting_plan_review">Parenting-plan review</option><option value="financial_disclosure_review">Financial-disclosure review</option><option value="safety_privacy_review">Safety and privacy review</option></select></label>
-      <small>The app checks memory and graphics hardware before loading a specialist. FAST INTERCHANGE also requires an admitted model for this exact task. Selecting a task does not train or certify a model.</small>
+      <small>Local Qwen offers only 4B or 8B evidence review and source-bound drafting. Its output is reduced to host-verified quotations; it does not certify facts, legal conclusions, or filing readiness. FAST INTERCHANGE remains separately admitted.</small>
       <div class="local-agent-policy-list"><span>✓ Literal 127.0.0.1 / ::1 only</span><span>✓ Exact context hash approval</span><span>✓ Source instructions quarantined</span><span>✓ Review required</span><span>FAST INTERCHANGE requires a signed, admitted model pack for this exact task. No worker starts automatically.</span></div>
       <section class="local-agent-worker-control" aria-labelledby="local-agent-worker-title">
         <strong id="local-agent-worker-title">FAST INTERCHANGE worker</strong>

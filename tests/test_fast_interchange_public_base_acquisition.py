@@ -63,3 +63,12 @@ def test_public_base_acquisition_accepts_mapping_style_model_card_license() -> N
         cardData = Card()
 
     assert module._license_from_card(Info()) == "Apache-2.0"
+
+
+def test_public_base_acquisition_requires_downloader_only_when_download_is_requested(tmp_path, monkeypatch) -> None:
+    module = _module()
+    monkeypatch.setattr(module, "HfApi", None)
+    monkeypatch.setattr(module, "hf_hub_download", None)
+
+    with pytest.raises(RuntimeError, match="huggingface_hub_required_for_public_base_acquisition"):
+        module.acquire(output_root=tmp_path / "external-base", repository_root=tmp_path / "repo")

@@ -65,6 +65,10 @@ PRIVATE_OR_RUNTIME_FILENAMES = {
 # generated user state.
 PUBLIC_SOURCE_DIRECTORY_PREFIXES = {
     ("legal", "runtime"),
+    # Bundled, read-only application policy files.  These are package data,
+    # not generated matter/runtime state; package assembly separately audits
+    # the archive and may not include mutable external stores.
+    ("src", "nh_family_law_llm", "resources", "runtime"),
 }
 PUBLIC_FIXTURE_DIRECTORY_PREFIXES = {
     ("data", "fixtures"),

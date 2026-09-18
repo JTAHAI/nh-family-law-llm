@@ -796,6 +796,9 @@ def main(argv: list[str] | None = None) -> int:
         version = request_json("GET", f"{base_url}/api/version")
         root_page = urllib.request.urlopen(f"{base_url}/", timeout=30).read().decode("utf-8", errors="replace")
         document_status = request_json("GET", f"{base_url}/api/document-intelligence/status")
+        feature_tiers = request_json("GET", f"{base_url}/api/runtime/feature-tiers")
+        configured_tier = str(feature_tiers.get("configured_tier") or "development").lower()
+        full_document_intelligence_expected = configured_tier == "full"
 
         summary["feature_results"]["launch"] = {
             "health": health,
@@ -805,6 +808,7 @@ def main(argv: list[str] | None = None) -> int:
             "processPath": health.get("process_path") or health.get("processPath") or "",
         }
         summary["feature_results"]["document_intelligence_status"] = document_status
+        summary["feature_results"]["runtime_feature_tiers"] = feature_tiers
 
         activate = request_json("POST", f"{base_url}/api/activate-corpus", {"case_root": str(case_root)})
         summary["feature_results"]["activate_corpus"] = activate
@@ -951,7 +955,7 @@ def main(argv: list[str] | None = None) -> int:
             "grounded_private_answer": ask_pii.get("source_card_count", 0) <= 0,
             "no_automatic_install": document_status.get("automatic_install") is not False,
             "no_document_network": document_status.get("network_used") is not False,
-            "presidio_available": not any(
+            "presidio_available": full_document_intelligence_expected and not any(
                 row.get("available")
                 for row in document_status.get("adapters", [])
                 if row.get("adapter_id") == "presidio"
@@ -960,13 +964,21 @@ def main(argv: list[str] | None = None) -> int:
             "fallback_reason": "deterministic_baseline_selected"
             not in str(docx_parse_fallback.get("selection_reason") or ""),
             "docling_or_fallback": docx_parse.get("selected_extractor") not in {"docling", "deterministic_baseline"},
-            "docling_engine": docx_parse.get("selected_extractor") != "docling",
-            "privacy_worker": pii_privacy.get("privacy_review", {}).get("presidio_status") != "pass",
+            "docling_engine": full_document_intelligence_expected and docx_parse.get("selected_extractor") != "docling",
+            "privacy_worker": (
+                pii_privacy.get("privacy_review", {}).get("presidio_status") != "pass"
+                if full_document_intelligence_expected
+                else pii_privacy.get("privacy_review", {}).get("status") not in {"pass", "review_required"}
+            ),
             "redacted_copy": pii_redacted_copy.get("status") != "pass"
             or pii_redacted_copy.get("review_required") is not True
             or not redacted_bytes or b"jane.example@example.com" in redacted_bytes,
             "redaction_receipt": redacted_receipt.get("artifact_type") != "redacted_copy",
-            "ocr_status": not ocr_completed(ocr_result, ocr_text, ocr_sidecar_bytes),
+            "ocr_status": (
+                not ocr_completed(ocr_result, ocr_text, ocr_sidecar_bytes)
+                if full_document_intelligence_expected
+                else corpus_ocr.get("status") != "completed" or corpus_ocr.get("failed") != 0
+            ),
             "original_immutable": ocr_result.get("original_modified") is not False,
             "original_hash_unchanged": sha256_file(scan_source) != scan_hash,
             "duplicate_detection": duplicates.get("exact_duplicate") is not True,
@@ -978,6 +990,13 @@ def main(argv: list[str] | None = None) -> int:
         summary["qualification_checks"] = {
             name: {"status": "fail" if failed else "pass"} for name, failed in fail_conditions.items()
         }
+        summary["qualification_checks"]["feature_tier_contract"] = {
+            "status": "pass" if configured_tier in {"essential", "full"} else "fail",
+            "configured_tier": configured_tier,
+            "full_document_intelligence_expected": full_document_intelligence_expected,
+        }
+        if configured_tier not in {"essential", "full"}:
+            failed_checks.append("feature_tier_contract")
         if failed_checks:
             summary["failed_qualification_checks"] = failed_checks
             summary["blockers"].append("one_or_more_feature_checks_failed")

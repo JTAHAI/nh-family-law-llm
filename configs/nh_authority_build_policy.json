@@ -1,31 +1,33 @@
 {
-  "version": "1.0-pass17-external-authority-build",
+  "version": "1.1-catalog-aligned-external-authority-build",
   "purpose": "Production authority corpus build policy for official New Hampshire legal data snapshots stored outside the source repository.",
   "external_data_root_required": true,
   "official_store_name": "official_authority_store",
   "manifest_filename": "source_manifest.json",
-  "minimum_ingested_targets": 31,
+  "minimum_ingested_targets": 37,
   "required_source_class_minimums": {
-    "statute_title_index": 9,
-    "statute_title_pdf": 9,
-    "court_rules_index": 4,
-    "court_forms_index": 1,
-    "court_policy_index": 1,
-    "supreme_court_opinion_index": 7
+    "statute_section": 26,
+    "court_rule": 4,
+    "form_index": 1,
+    "official_guidance": 2,
+    "administrative_rule": 2,
+    "case_law_index": 1,
+    "session_law_index": 1
   },
   "acceptable_parser_statuses": [
     "parsed",
     "snapshot_only"
   ],
   "parsed_status_required_for_classes": [
-    "statute_title_index",
-    "court_rules_index",
-    "court_forms_index",
-    "court_policy_index",
-    "supreme_court_opinion_index"
+    "statute_section",
+    "court_rule",
+    "form_index",
+    "case_law_index",
+    "session_law_index"
   ],
   "snapshot_only_allowed_for_classes": [
-    "statute_title_pdf"
+    "official_guidance",
+    "administrative_rule"
   ],
   "required_manifest_fields": [
     "source_id",

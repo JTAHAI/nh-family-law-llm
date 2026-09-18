@@ -1,36 +1,6 @@
 {
   "counting_rule": "True-GA passes reduce the remaining count only when their configured exit evidence exists. Repo-only passes may close from repo evidence; live authority, retrieval, eval, security, pilot, and signoff passes require external evidence roots. Operator-source-backed evidence may be counted for engineering verifier gates only when rows are explicitly marked operator_source_backed and external audits pass; it is not attorney legal signoff. Passes 32-38 are repo-engineering closures backed by deterministic tests and generated evidence, not attorney/legal signoff. Pass 47 is closed from deterministic legal red-team repo evidence that blocks false-premise, fake-citation, stale-law, jurisdiction, injection, confidentiality, malicious-upload, and filing-ready bypass attacks; this is not pilot signoff and not attorney legal review Pass 46 now has an operator/source-backed release-eval lane prepared; that lane can pass engineering release metrics without attorney review, but does not imply true GA shipment, legal signoff, pilot signoff, or attorney review. Passes 27-31 and 46 are closed for the operator/source-backed engineering lane only: rows and metrics must be explicitly operator_source_backed; attorney_reviewed, legal_signoff, pilot_signoff, and true_ga_release_allowed remain false.",
-  "current_true_ga_completed_passes": [
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-    32,
-    33,
-    34,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    41,
-    42,
-    43,
-    44,
-    45,
-    46,
-    47
-  ],
+  "current_true_ga_completed_passes": [],
   "passes": [
     {
       "completion_evidence": [
@@ -41,7 +11,7 @@
         "docs/external-evidence/pass19_25_authority_retrieval_gate_summary.json"
       ],
       "external_dependency": true,
-      "next": false,
+      "next": true,
       "pass": 19,
       "phase": "Phase 1",
       "repo_prep_status": "external_evidence_validated",
@@ -549,7 +519,7 @@
         "scripts/run-pass48-51-launch-evidence-gates.py verifies attorney_sandbox_pilot_report.json"
       ],
       "external_dependency": true,
-      "next": true,
+      "next": false,
       "pass": 48,
       "phase": "Phase 12",
       "repo_prep_status": "external_evidence_gate_prepared",

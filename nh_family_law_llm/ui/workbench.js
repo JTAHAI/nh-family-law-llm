@@ -7784,13 +7784,22 @@
       refreshManagedWorkerStatus();
     }));
     localAgentProvider?.addEventListener('change', () => {
-      if (localAgentProvider.value === 'ollama') {
+      if (localAgentProvider.value === 'curated_ollama_reasoning') {
         localAgentEndpoint.value = 'http://127.0.0.1:11434';
+        localAgentEndpoint.readOnly = true;
+        localAgentModel.value = localAgentModel.value === 'qwen3:8b' ? 'qwen3:8b' : 'qwen3:4b';
+        localAgentModel.readOnly = false;
+        if (!['evidence_review', 'drafting'].includes(String(localAgentTask?.value || ''))) localAgentTask.value = 'evidence_review';
+      } else if (localAgentProvider.value === 'ollama') {
+        localAgentEndpoint.value = 'http://127.0.0.1:11434';
+        localAgentEndpoint.readOnly = false;
         localAgentModel.readOnly = false;
         if (!localAgentModel.value || localAgentModel.value === 'local-model') localAgentModel.value = 'qwen2.5:7b';
       } else if (localAgentProvider.value === 'fast_interchange_local') {
+        localAgentEndpoint.readOnly = false;
         syncFastInterchangeModelSelection();
       } else {
+        localAgentEndpoint.readOnly = false;
         localAgentEndpoint.value = 'http://127.0.0.1:1234';
         localAgentModel.readOnly = false;
         if (!localAgentModel.value || localAgentModel.value === 'qwen2.5:7b' || localAgentModel.value === 'admitted-release-model') localAgentModel.value = 'local-model';
@@ -9166,7 +9175,13 @@
         if (saved.model) localAgentModel.value = saved.model;
       } catch (err) {}
       if (!savedProvider && ['evidence_review', 'drafting'].includes(String(payload.local_agent_task || ''))) {
-        localAgentProvider.value = 'fast_interchange_local';
+        localAgentProvider.value = 'curated_ollama_reasoning';
+      }
+      if (localAgentProvider?.value === 'curated_ollama_reasoning') {
+        localAgentEndpoint.value = 'http://127.0.0.1:11434';
+        localAgentEndpoint.readOnly = true;
+        localAgentModel.value = localAgentModel.value === 'qwen3:8b' ? 'qwen3:8b' : 'qwen3:4b';
+        if (!['evidence_review', 'drafting'].includes(String(localAgentTask?.value || ''))) localAgentTask.value = 'evidence_review';
       }
       syncFastInterchangeModelSelection();
       openOverlay(localAgentModal);

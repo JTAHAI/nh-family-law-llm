@@ -10,11 +10,16 @@ def test_pass16_expanded_source_catalog_has_enterprise_coverage():
     for target in targets:
         by_class[target.source_class] = by_class.get(target.source_class, 0) + 1
 
-    assert by_class["statute_title_index"] >= 8
-    assert by_class["statute_title_pdf"] >= 8
-    assert by_class["court_rules_index"] >= 4
-    assert by_class["court_forms_index"] >= 1
-    assert by_class["supreme_court_opinion_index"] >= 7
+    # The current catalog is a source-seed inventory.  Its configured classes
+    # must match the authoritative build policy; acquisition/currentness is
+    # independently fail-closed in the external authority-build audit.
+    assert by_class["statute_section"] >= 26
+    assert by_class["court_rule"] >= 4
+    assert by_class["form_index"] >= 1
+    assert by_class["official_guidance"] >= 2
+    assert by_class["administrative_rule"] >= 2
+    assert by_class["case_law_index"] >= 1
+    assert by_class["session_law_index"] >= 1
     assert all("nh.gov" in target.url or "courts.nh.gov" in target.url for target in targets)
 
 

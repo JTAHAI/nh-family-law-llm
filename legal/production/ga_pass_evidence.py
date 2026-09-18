@@ -437,7 +437,7 @@ class GAPassEvidenceAuditor:
             "legal/evidence/matter_work_product.py",
             "legal/drafting/filing_ready_gate.py",
             "tests/test_nh_supreme_court_intelligence_pass8.py",
-            "tests/test_pass35_pass36_secure_matter_evidence.py",
+            "tests/test_pass43_pass44_pass45_security_compliance_sre.py",
             "tests/test_pass37_pass38_drafting_filing_gate.py",
         }
         if not required_basis.issubset({str(item) for item in evidence_basis}):

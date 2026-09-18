@@ -150,11 +150,11 @@ FULL_CORPUS_REQUIREMENTS: tuple[CorpusRequirement, ...] = (
     _rsa("461", "XLIII", "RSA 461 adoption and related provisions", priority=20),
     _rsa("461-A", "XLIII", "RSA 461-A parental rights and responsibilities", priority=2, aliases=("parenting plan", "residential responsibility", "parenting schedule")),
     _rsa("461-B", "XLIII", "RSA 461-B emancipation", priority=14),
-    _rsa("463", "XLIII", "RSA 463 guardianship of minors", priority=10),
-    _rsa("464-A", "XLIII", "RSA 464-A guardians and conservators", priority=17),
+    _rsa("463", "XLIV", "RSA 463 guardianship of minors", priority=10),
+    _rsa("464-A", "XLIV", "RSA 464-A guardians and conservators", priority=17),
     _rsa("490-C", "LI", "RSA 490-C Guardian ad Litem Board", priority=17, aliases=("GAL",)),
     _rsa("490-D", "LI", "RSA 490-D Judicial Branch Family Division", priority=8, aliases=("Family Division jurisdiction",)),
-    _rsa("546-B", "LIII", "RSA 546-B Uniform Interstate Family Support Act", priority=5, aliases=("UIFSA",)),
+    _rsa("546-B", "LV", "RSA 546-B Uniform Interstate Family Support Act", priority=5, aliases=("UIFSA",)),
 
     # New Hampshire court rules, forms, opinions, and official guidance.
     _r(
@@ -312,10 +312,10 @@ FULL_CORPUS_REQUIREMENTS: tuple[CorpusRequirement, ...] = (
     ),
     _r(
         "nh-session-laws-and-bills",
-        "New Hampshire General Court legislation and session-law index",
+        "New Hampshire General Court chaptered final versions and session-law index",
         "rulemaking_notice",
         "New Hampshire",
-        "https://gc.nh.gov/legislation/",
+        "https://gc.nh.gov/bill_status/misc/chaptered_final_version.aspx",
         "N.H. Laws",
         15,
         "official_nh_session_law",

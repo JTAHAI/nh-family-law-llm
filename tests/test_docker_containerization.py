@@ -106,9 +106,12 @@ def test_pass_changes_is_the_only_running_txt_pass_log():
         "venv",
         "__pycache__",
         "node_modules",
-        "dist",
-        "build",
-        ".eggs",
+            "dist",
+            "build",
+            # Historical qualification receipts are excluded from source and
+            # container payloads; PASS_CHANGES remains the only pass log.
+            "artifacts",
+            ".eggs",
         ".proofs",
     }
     pass_logs = sorted(

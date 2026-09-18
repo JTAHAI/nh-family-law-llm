@@ -101,10 +101,12 @@ def _write_pass26_external_requirements(path: Path) -> None:
 
 def test_default_ga_pass_evidence_audit_accepts_completed_repo_evidence_passes() -> None:
     report = GAPassEvidenceAuditor(project_root=ROOT).run().as_dict()
-    assert report["status"] == "pass"
-    assert report["true_ga_completed_claimed"] == list(range(19, 48))
-    assert report["true_ga_remaining"] == 4
-    assert report["audited_completed_passes"] == list(range(19, 48))
+    assert report["status"] == "blocked"
+    # No true-GA pass may be claimed from repository-only material.  External
+    # source, legal-review, pilot, and signing evidence remains outstanding.
+    assert report["true_ga_completed_claimed"] == []
+    assert report["true_ga_remaining"] == 33
+    assert report["audited_completed_passes"] == []
 
 
 def test_completed_true_ga_pass_without_real_external_evidence_is_blocked(tmp_path: Path) -> None:
@@ -346,11 +348,11 @@ def test_ga_pass_evidence_script_outputs_json() -> None:
         timeout=30,
         check=False,
     )
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "pass"
-    assert payload["true_ga_remaining"] == 4
-    assert payload["audited_completed_passes"] == list(range(19, 48))
+    assert payload["status"] == "blocked"
+    assert payload["true_ga_remaining"] == 33
+    assert payload["audited_completed_passes"] == []
 
 
 def test_completed_pass50_rejects_signed_report_with_blocked_status(tmp_path: Path) -> None:
@@ -404,6 +406,6 @@ def test_completed_pass50_accepts_signed_report_without_negative_status(tmp_path
 
 def test_completed_pass26_accepts_source_safe_queue_operations_summary() -> None:
     report = GAPassEvidenceAuditor(project_root=ROOT).run().as_dict()
-    assert report["status"] == "pass"
-    assert 26 in report["audited_completed_passes"]
-    assert report["true_ga_remaining"] == 4
+    assert report["status"] == "blocked"
+    assert 26 not in report["audited_completed_passes"]
+    assert report["true_ga_remaining"] == 33

@@ -16,7 +16,7 @@
   ],
   "required_configs": [
     "configs/nh_enterprise_resource_catalog.json",
-    "configs/nh_official_source_targets.json",
+    "config/nh_authority_sources.json",
     "configs/nh_authority_build_policy.json",
     "configs/nh_gold_eval_pack_policy.json",
     "configs/nh_release_gates_policy.json",

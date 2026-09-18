@@ -123,6 +123,54 @@ def verify_evidence_output(answer: str, sources: tuple[ContextSource, ...]) -> d
     return report
 
 
+def verify_selected_evidence_spans(rows: tuple, sources: tuple[ContextSource, ...]) -> dict:
+    """Verify one exact, non-sensitive excerpt per approved private record.
+
+    This checks character positions and digests only.  It deliberately cannot
+    establish relevance, completeness, factual truth, or legal support.
+    """
+    blockers, spans, represented = [], [], set()
+    keys = {"source_id", "reference", "start_offset", "end_offset", "source_text_sha256", "quote_sha256", "status"}
+    valid_shape = isinstance(rows, tuple) and 1 <= len(rows) <= 24
+    if not valid_shape:
+        blockers.append("evidence_review_selected_spans_invalid")
+    if not sources or any(source.lane != "private_record" for source in sources):
+        blockers.append("evidence_review_private_records_required")
+    for row in rows if valid_shape else ():
+        if not isinstance(row, dict) or set(row) != keys:
+            blockers.append("evidence_review_selected_spans_invalid")
+            continue
+        index, start, end = row["reference"], row["start_offset"], row["end_offset"]
+        if any(type(value) is not int for value in (index, start, end)) or not 1 <= index <= len(sources) or index in represented:
+            blockers.append("evidence_review_selected_spans_invalid")
+            continue
+        source = sources[index - 1]
+        if (not 0 <= start < end <= len(source.text) or end - start > 600
+            or row["source_id"] != source.source_id or row["status"] != "exact"
+            or row["source_text_sha256"] != sha256(source.text.encode("utf-8")).hexdigest()
+            or row["quote_sha256"] != sha256(source.text[start:end].encode("utf-8")).hexdigest()):
+            blockers.append("evidence_review_selected_source_changed")
+            continue
+        if overlaps_protected_span(start, end, source.text, source.metadata):
+            blockers.append("evidence_review_sensitive_quote_withheld")
+            continue
+        represented.add(index)
+        spans.append(dict(row))
+    if represented != set(range(1, len(sources) + 1)):
+        blockers.append("evidence_review_all_records_required")
+    report = {
+        "schema_version": "evidence_selected_spans_boundary_v1",
+        "status": "withheld" if blockers else "quoted_spans_bound_review_required",
+        "display_mode": "withheld" if blockers else "verified_extracts_only",
+        "review_required": True, "factual_claims_verified": False,
+        "legal_claims_verified": False, "relevance_verified": False,
+        "source_spans": [] if blockers else spans, "suppressed_spans": [],
+        "partial_extracts_available": False, "blockers": sorted(set(blockers)),
+    }
+    report["report_sha256"] = sha256(canonical_json(report)).hexdigest()
+    return report
+
+
 def render_verified_evidence_extracts(
     report: dict,
     sources: tuple[ContextSource, ...],

@@ -1,0 +1,15 @@
+{
+  "schema_version": "fast_interchange_provenance_v1",
+  "implementation_kind": "native_model_empty_implementation",
+  "source_files_copied": false,
+  "excluded_scope": [
+    "Mainely Code source",
+    "Mainely Code trademarks and branding",
+    "model weights",
+    "training datasets",
+    "adapters",
+    "credentials",
+    "proprietary binaries"
+  ],
+  "boundary_statement": "This repository contains a native, model-empty local worker and admission boundary. It does not import, bundle, connect to, or represent Mainely Code or private family-case material."
+}

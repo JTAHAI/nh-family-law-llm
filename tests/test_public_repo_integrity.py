@@ -62,6 +62,8 @@ def test_only_pass_changes_txt_is_packaged() -> None:
         "dist",
         "build",
         "node_modules",
+        # Historical qualification receipts are not source-package payloads.
+        "artifacts",
     }
     txt_files = sorted(
         path.relative_to(ROOT).as_posix()
@@ -95,6 +97,7 @@ def test_strict_doctor_marks_repo_safe_to_push(tmp_path: Path) -> None:
             "__pycache__",
             "dist",
             "build",
+            "artifacts",
         ),
     )
     subprocess.run(

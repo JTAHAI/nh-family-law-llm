@@ -180,7 +180,7 @@ def test_protocol_rejects_execution_or_file_arguments(uri):
     with pytest.raises(ValueError): protocol_view(uri)
 
 
-def test_packaging_has_one_template_and_development_identity_only():
+def test_packaging_has_one_template_and_reserved_identity_is_not_claimed_as_confirmed():
     import xml.etree.ElementTree as ET
     first=(ROOT/'store/msix/AppxManifest.xml.in').read_bytes()
     assert first==(ROOT/'packaging/windows/AppxManifest.template.xml').read_bytes()
@@ -188,7 +188,9 @@ def test_packaging_has_one_template_and_development_identity_only():
     ns={'uap':'http://schemas.microsoft.com/appx/manifest/uap/windows10'}
     assert manifest.find('.//uap:Protocol',ns).attrib['Name']=='nhfl'
     identity=json.loads((ROOT/'store/msix/identity.example.json').read_text())
-    assert identity['identity_name'].endswith('.LocalQA')
+    assert identity['identity_name'] == 'TAHAIWebServices.NHFamilyLawLLM'
+    assert identity['publisher'] == 'CN=D75EE668-B409-45ED-87E5-E37AA5FE3868'
+    assert identity['identity_status'] == 'reserved_partner_center_identity_submission_not_completed'
     assert identity['production_identity_confirmed'] is False
 
 

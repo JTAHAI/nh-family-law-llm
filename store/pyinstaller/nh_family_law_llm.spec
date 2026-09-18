@@ -31,6 +31,9 @@ BUNDLED_SPECIALIST_VALIDATION = (
     if BUNDLED_SPECIALIST_VALIDATION_TEXT
     else None
 )
+FEATURE_TIER_RUNTIME_HOOK = os.environ.get("NHFL_STORE_FEATURE_TIER_RUNTIME_HOOK", "").strip()
+if FEATURE_TIER_RUNTIME_HOOK and not Path(FEATURE_TIER_RUNTIME_HOOK).is_file():
+    raise ValueError("configured feature-tier runtime hook is missing")
 
 STORE_DOCS = (
     "README_FOR_NONTECHNICAL_USERS.html",
@@ -315,7 +318,7 @@ a = Analysis(
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=[FEATURE_TIER_RUNTIME_HOOK] if FEATURE_TIER_RUNTIME_HOOK else [],
     excludes=excluded_packages,
     noarchive=False,
     optimize=0,

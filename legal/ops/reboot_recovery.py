@@ -114,6 +114,9 @@ class RebootRecoveryAuditor:
             "node_modules",
             "dist",
             "build",
+            # Historical gate receipts are generated evidence, not source
+            # pass logs for the current checkout.
+            "artifacts",
             ".eggs",
             ".proofs",
         }

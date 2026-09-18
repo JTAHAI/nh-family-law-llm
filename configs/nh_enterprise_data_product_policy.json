@@ -12,11 +12,13 @@
     "model_registry"
   ],
   "required_source_target_minimums": {
-    "statute_title_index": 8,
-    "statute_title_pdf": 8,
-    "court_rules_index": 4,
-    "court_forms_index": 1,
-    "supreme_court_opinion_index": 7
+    "statute_section": 26,
+    "court_rule": 4,
+    "form_index": 1,
+    "official_guidance": 2,
+    "administrative_rule": 2,
+    "case_law_index": 1,
+    "session_law_index": 1
   },
   "required_gold_dataset_minimums": {
     "nh_rag_retrieval_gold.jsonl": 500,

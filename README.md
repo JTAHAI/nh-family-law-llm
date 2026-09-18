@@ -40,6 +40,18 @@ New Hampshire generally uses **parental rights and responsibilities**, **decisio
 
 ## Quick start
 
+For non-technical local testing on Windows, **Download** or clone this repository,
+open PowerShell in its folder, and run:
+
+```powershell
+.\START_LOCAL_CHAT.ps1
+```
+
+Then open http://127.0.0.1:8000/ in your browser. The first-run setup remains
+local; do not add personal family records until you have reviewed the clearly
+labeled fictional sample and the privacy notices. `START_LOCAL_CHAT.cmd` is
+available for Command Prompt users.
+
 Use the original application's normal setup command for its stack, then run the NH corpus checks:
 
 ```bash

@@ -54,24 +54,23 @@ def test_audit_authority_build_cli_fails_closed_when_manifest_missing(tmp_path: 
 def test_audit_authority_build_cli_allows_valid_external_build(tmp_path: Path):
     official_store = tmp_path / "official_authority_store"
     manifest = []
-    for index in range(9):
-        manifest.append(
-            _authority_record(official_store, f"statute-title-index-{index}", "statute_title_index")
-        )
-        manifest.append(
-            {
-                **_authority_record(official_store, f"statute-title-pdf-{index}", "statute_title_pdf"),
-                "parser_status": "snapshot_only",
-                "parser_audit": {"status": "snapshot_only", "parser_version": "test"},
-                "freshness_status": "retrieved_pdf_metadata_known",
-            }
-        )
-    for index in range(4):
-        manifest.append(_authority_record(official_store, f"court-rules-index-{index}", "court_rules_index"))
-    manifest.append(_authority_record(official_store, "forms-index", "court_forms_index"))
-    manifest.append(_authority_record(official_store, "court-policy-index", "court_policy_index"))
-    for index in range(7):
-        manifest.append(_authority_record(official_store, f"nh-supreme-court-index-{index}", "supreme_court_opinion_index"))
+    # A ready fixture must satisfy the active catalog-aligned policy, not a
+    # retired title-index policy.  These are synthetic bytes only; the test
+    # validates auditing mechanics and never represents acquired authority.
+    required = {
+        "statute_section": 26,
+        "court_rule": 4,
+        "form_index": 1,
+        "official_guidance": 2,
+        "administrative_rule": 2,
+        "case_law_index": 1,
+        "session_law_index": 1,
+    }
+    for source_class, count in required.items():
+        for index in range(count):
+            manifest.append(
+                _authority_record(official_store, f"{source_class}-{index}", source_class)
+            )
     (official_store / "source_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
     result = _run_script("audit-authority-build.py", "--data-root", tmp_path)

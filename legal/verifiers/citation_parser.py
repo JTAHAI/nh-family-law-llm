@@ -54,6 +54,14 @@ NH_RSA_PATTERN = re.compile(
     rf"(?P<chapter>{_RSA_CHAPTER})\s*:\s*(?P<section>{_RSA_SECTION})(?![A-Z0-9])",
     re.I,
 )
+# OCR and user-provided records sometimes contain a chapter-only RSA reference
+# (for example, ``RSA § 1653``) without a section.  Retain it as an explicitly
+# unverified citation lead rather than discarding it or inventing a section.
+NH_RSA_CHAPTER_ONLY_PATTERN = re.compile(
+    rf"\b(?:N\.?\s*H\.?\s*)?R\.?\s*S\.?\s*A\.?\s*[\u00a7\u00ba]+\s*"
+    rf"(?P<chapter>{_RSA_CHAPTER})(?![A-Z0-9:-])",
+    re.I,
+)
 NH_REVISED_STATUTES_PATTERN = re.compile(
     rf"\bN\.?\s*H\.?\s+Rev\.?\s+Stat\.?\s+Ann\.?\s*§+\s*"
     rf"(?P<chapter>{_RSA_CHAPTER})\s*:\s*(?P<section>{_RSA_SECTION})(?![A-Z0-9])",
@@ -89,8 +97,9 @@ FEDERAL_STATUTE_PATTERN = re.compile(
 )
 
 
-def normalize_nh_statute(chapter: str, section: str) -> str:
-    return f"RSA {chapter.upper()}:{section.upper()}"
+def normalize_nh_statute(chapter: str, section: str | None = None) -> str:
+    chapter = chapter.upper()
+    return f"RSA {chapter}:{section.upper()}" if section else f"RSA {chapter}"
 
 
 def normalize_nh_case(year: str, number: str) -> str:
@@ -150,6 +159,20 @@ def _append_statute_match(citations: list[ParsedCitation], match: re.Match[str])
     )
 
 
+def _append_statute_chapter_only_match(citations: list[ParsedCitation], match: re.Match[str]) -> None:
+    chapter = match.group("chapter").upper()
+    citations.append(
+        ParsedCitation(
+            raw=match.group(0),
+            kind="nh_statute",
+            normalized=normalize_nh_statute(chapter),
+            start=match.start(),
+            end=match.end(),
+            title=chapter,
+        )
+    )
+
+
 def extract_citations(text: str) -> list[ParsedCitation]:
     citations: list[ParsedCitation] = []
     occupied: list[tuple[int, int]] = []
@@ -161,6 +184,13 @@ def extract_citations(text: str) -> list[ParsedCitation]:
                 continue
             _append_statute_match(citations, match)
             occupied.append(span)
+
+    for match in NH_RSA_CHAPTER_ONLY_PATTERN.finditer(text):
+        span = (match.start(), match.end())
+        if any(span[0] < end and start < span[1] for start, end in occupied):
+            continue
+        _append_statute_chapter_only_match(citations, match)
+        occupied.append(span)
 
     for match in NH_CASE_PATTERN.finditer(text):
         pinpoint = match.group("pinpoint")

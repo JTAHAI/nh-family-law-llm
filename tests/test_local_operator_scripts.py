@@ -28,6 +28,9 @@ def test_required_corpus_source_package_is_present_in_release_tree():
     ]
     for rel in required:
         assert (ROOT / rel).is_file(), rel
+    schema = json.loads((ROOT / "legal/corpus/nh_source_manifest.schema.json").read_text(encoding="utf-8"))
+    assert schema["type"] == "array"
+    assert {"source_id", "jurisdiction", "hash", "retrieved_at"}.issubset(schema["items"]["required"])
 
 
 def test_local_smoke_report_passes_without_external_corpus_or_pytest(tmp_path):

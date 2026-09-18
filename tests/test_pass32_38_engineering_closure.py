@@ -35,15 +35,12 @@ def test_pass32_38_engineering_evidence_runner_closes_repo_gates(tmp_path: Path)
     assert payload["pass_results"]["38"]["signals"]["override_logged_without_silent_pass"] is True
 
 
-def test_true_ga_tracker_marks_pass32_38_complete_without_closing_attorney_or_pilot_gates() -> None:
+def test_engineering_closure_rows_do_not_mark_true_ga_passes_complete() -> None:
     tracker = json.loads((ROOT / "configs" / "nh_true_ga_pass_tracker.json").read_text(encoding="utf-8"))
     completed = tracker["current_true_ga_completed_passes"]
-    for pass_number in range(32, 39):
-        assert pass_number in completed
-    for pass_number in [27, 28, 29, 30, 31, 46, 47]:
-        assert pass_number in completed
-    for pass_number in [48, 49, 50, 51]:
-        assert pass_number not in completed
+    assert completed == []
     rows = {row["pass"]: row for row in tracker["passes"]}
+    # Engineering work remains recorded, but cannot stand in for true-GA
+    # legal, pilot, currentness, or external-release evidence.
     assert all(rows[pass_number]["status"] == "complete" for pass_number in range(32, 39))
-    assert rows[48]["next"] is True
+    assert rows[19]["next"] is True

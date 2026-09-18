@@ -23,13 +23,13 @@ def test_v800_canonical_versions_and_about_surface_are_consistent() -> None:
     assert "8.0.10.0" in html
 
 
-def test_v800_store_identity_is_development_only_with_new_version() -> None:
+def test_v800_store_identity_is_reserved_but_not_claimed_as_production_confirmed() -> None:
     identity = json.loads((ROOT / "store/msix/identity.example.json").read_text(encoding="utf-8"))
-    # An inherited publisher GUID is not proof of an NH Store registration.
-    assert identity['identity_name'] == 'NHFamilyLawLLM.LocalQA'
-    assert identity['publisher'] == 'CN=NHFamilyLawLLM-LocalQA'
+    # A reserved identity is not proof of publication, signing, or certification.
+    assert identity['identity_name'] == 'TAHAIWebServices.NHFamilyLawLLM'
+    assert identity['publisher'] == 'CN=D75EE668-B409-45ED-87E5-E37AA5FE3868'
     assert identity['package_version'] == PACKAGE_VERSION
-    assert identity['identity_status'] == 'development_example_not_store_registered'
+    assert identity['identity_status'] == 'reserved_partner_center_identity_submission_not_completed'
     assert identity['production_identity_confirmed'] is False
     manifest = (ROOT / "store/msix/AppxManifest.xml.in").read_text(encoding="utf-8")
     assert 'ProcessorArchitecture="x64"' in manifest

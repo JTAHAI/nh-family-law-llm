@@ -104,10 +104,13 @@ class EvaluationOrchestrator:
         }
 
     def _run_official_ingestion_checks(self) -> dict[str, Any]:
-        configured_targets = self._load_json("configs/nh_official_source_targets.json")
+        configured_targets = self._load_json("config/nh_authority_sources.json")
         targets = load_official_source_targets()
         target_ids = {target.target_id for target in targets}
-        configured_target_ids = {target["target_id"] for target in configured_targets["targets"]}
+        configured_target_ids = {
+            str(target.get("target_id") or target.get("authority_id") or target.get("source_id"))
+            for target in configured_targets["sources"]
+        }
 
         title_fixture = """
         <html><body><h1>Chapter 461-A: DOMESTIC RELATIONS</h1>

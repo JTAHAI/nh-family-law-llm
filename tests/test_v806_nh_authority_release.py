@@ -32,8 +32,10 @@ def test_v806_scope_remains_historical_while_current_release_advances():
     assert scope["model_import_requires_production_admission"] is True
     assert scope["storage_schema_change"] is False
     assert scope["automatic_downloads"] is False
-    assert identity["identity_name"] == "NHFamilyLawLLM.LocalQA"
-    assert identity["publisher"] == "CN=NHFamilyLawLLM-LocalQA"
+    assert identity["identity_name"] == "TAHAIWebServices.NHFamilyLawLLM"
+    assert identity["publisher"] == "CN=D75EE668-B409-45ED-87E5-E37AA5FE3868"
+    assert identity["identity_status"] == "reserved_partner_center_identity_submission_not_completed"
+    assert identity["production_identity_confirmed"] is False
     assert (ROOT / "src/nh_family_law_llm/version.py").read_bytes() == (
         ROOT / "nh_family_law_llm/version.py"
     ).read_bytes()

@@ -19,6 +19,17 @@ MAX_REQUEST_BYTES = 2 * 1024 * 1024
 MAX_RESPONSE_BYTES = 4 * 1024 * 1024
 MAX_MODEL_NAME_CHARS = 200
 _FAST_INTERCHANGE_MODEL_ID = re.compile(r"[a-z][a-z0-9_-]{2,79}\Z")
+_CURATED_OLLAMA_REASONING_MODELS = frozenset({"qwen3:4b", "qwen3:8b"})
+
+
+def _loopback_no_redirect_opener() -> Callable[..., Any]:
+    """Bypass ambient proxies and reject redirects for curated local inference."""
+
+    class NoRedirect(HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[no-untyped-def]
+            raise LocalModelError("local_model_redirect_forbidden", "Local model redirects are forbidden.")
+
+    return build_opener(ProxyHandler({}), NoRedirect()).open
 
 
 class LocalModelError(RuntimeError):
@@ -36,6 +47,13 @@ class LocalModelResponse:
     endpoint_class: str
     usage: dict[str, Any] = field(default_factory=dict)
     finish_reason: str | None = None
+
+
+@dataclass(frozen=True)
+class QwenEvidenceResponse(LocalModelResponse):
+    """Untrusted Qwen candidate quotes; the host must resolve every span."""
+
+    excerpts: tuple[dict[str, Any], ...] = ()
 
 
 class LocalGenerationClient:
@@ -211,6 +229,113 @@ class OllamaLocalClient(LocalGenerationClient):
         self._http.post_json(
             "/api/generate",
             {"model": self.model_name, "keep_alive": 0, "stream": False},
+        )
+
+
+class CuratedOllamaReasoningClient(OllamaLocalClient):
+    """Fixed, loopback-only Qwen choices for source-bound review.
+
+    This is a transport and output boundary, not model admission or legal
+    qualification.  Browser values cannot select another endpoint or model.
+    """
+
+    provider_id = "curated_ollama_reasoning"
+
+    def __init__(
+        self,
+        *,
+        model_name: str = "qwen3:4b",
+        endpoint: str = "http://127.0.0.1:11434",
+        timeout_seconds: int = 120,
+        max_response_bytes: int = MAX_RESPONSE_BYTES,
+        opener: Callable[..., Any] = urlopen,
+        capability: str | None = None,
+    ):
+        clean_model = " ".join(str(model_name or "").replace("\x00", " ").split())
+        if clean_model not in _CURATED_OLLAMA_REASONING_MODELS:
+            raise LocalModelError("curated_ollama_model_not_allowed", "Choose local Qwen 4B or 8B.")
+        if capability not in {"evidence_review", "drafting"}:
+            raise LocalModelError("curated_ollama_task_invalid", "Choose evidence review or drafting.")
+        super().__init__(
+            model_name=clean_model,
+            endpoint="http://127.0.0.1:11434",
+            timeout_seconds=timeout_seconds,
+            max_response_bytes=max_response_bytes,
+            opener=_loopback_no_redirect_opener() if opener is urlopen else opener,
+        )
+        self.capability = capability
+        self.model_binding = {
+            "kind": "curated_local_general_reasoning",
+            "model_class": "reasoning_4b" if clean_model == "qwen3:4b" else "reasoning_8b",
+            "quality_status": "local_runtime_only_not_legal_qualified",
+            "production_admitted": False,
+            "source_references_required": True,
+            "review_required": True,
+            "network_used": False,
+            "task": capability,
+            "execution_policy_revision": "qwen-source-review-nh-v1",
+            "output_mode": "model_selected_exact_record_quotes",
+            "context_tokens": 8192,
+            "max_prompt_bytes": 5000,
+        }
+
+    def generate_response(self, prompt: str) -> LocalModelResponse:
+        prompt, model = _validate_prompt_model(prompt, self.model_name)
+        if len(prompt.encode("utf-8")) > 5000:
+            raise LocalModelError("curated_ollama_context_too_large", "Select shorter passages for this local review.")
+        if re.search(r"<\|[^>]*\|>", prompt):
+            raise LocalModelError("curated_ollama_reserved_token", "Selected passages contain model control tokens.")
+        contract = {
+            "type": "object", "additionalProperties": False, "required": ["excerpts"],
+            "properties": {"excerpts": {"type": "array", "minItems": 1, "maxItems": 24,
+                "items": {"type": "object", "additionalProperties": False,
+                    "required": ["reference", "quote"], "properties": {
+                        "reference": {"type": "integer", "minimum": 1, "maximum": 24},
+                        "quote": {"type": "string", "minLength": 1, "maxLength": 3000},
+                    }}}},
+        }
+        body = self._http.post_json(
+            "/api/generate",
+            {
+                "model": model,
+                # Explicit empty thinking prevents legacy Qwen templates from
+                # returning private chain-of-thought text despite think:false.
+                "prompt": "<|im_start|>user\n" + prompt + "\n/no_think<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+                "raw": True, "stream": False, "think": False, "keep_alive": 0,
+                "options": {"temperature": 0.0, "top_p": 0.9, "num_predict": 2048, "num_ctx": 8192},
+                "format": contract,
+            },
+        )
+        if str(body.get("model") or "") != model:
+            raise LocalModelError("curated_ollama_runtime_identity_mismatch", "The local runtime returned a different model.")
+        if body.get("done") is not True or body.get("done_reason") != "stop":
+            raise LocalModelError("curated_ollama_completion_incomplete", "The local model did not complete the response.")
+        if not isinstance(body.get("response"), str) or body.get("tool_calls"):
+            raise LocalModelError("local_model_invalid_payload", "The local model returned an invalid answer.")
+        text = body["response"].strip()
+        if "</think>" in text:
+            text = text.rsplit("</think>", 1)[1].strip()
+        if not text:
+            raise LocalModelError("local_model_empty_response", "The local model returned no text.")
+        if "<think>" in text or "<tool_call>" in text:
+            raise LocalModelError("local_model_invalid_payload", "The local model returned an unfinished answer.")
+        try:
+            document = json.loads(text)
+            excerpts = document["excerpts"]
+            if set(document) != {"excerpts"} or not isinstance(excerpts, list) or not 1 <= len(excerpts) <= 24:
+                raise ValueError
+            for item in excerpts:
+                if (not isinstance(item, dict) or set(item) != {"reference", "quote"}
+                    or type(item["reference"]) is not int or not 1 <= item["reference"] <= 24
+                    or not isinstance(item["quote"], str) or not 1 <= len(item["quote"]) <= 3000):
+                    raise ValueError
+        except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
+            raise LocalModelError("local_model_invalid_payload", "The model did not return verifiable excerpts.") from exc
+        usage = {key: body.get(key) for key in ("prompt_eval_count", "eval_count", "total_duration", "load_duration") if body.get(key) is not None}
+        return QwenEvidenceResponse(
+            text="Selected record excerpts " + " ".join(f"[{item['reference']}]" for item in excerpts),
+            provider_id=self.provider_id, model_id=model, endpoint_class=self.endpoint.endpoint_class,
+            usage=usage, finish_reason="stop", excerpts=tuple(excerpts),
         )
 
 
@@ -430,6 +555,10 @@ def build_local_client(*, provider: str, endpoint: str, model_name: str, timeout
     provider_key = str(provider or "").strip().lower().replace("-", "_")
     if provider_key == "ollama":
         return OllamaLocalClient(model_name=model_name, endpoint=endpoint, timeout_seconds=timeout_seconds)
+    if provider_key == "curated_ollama_reasoning":
+        return CuratedOllamaReasoningClient(
+            model_name=model_name, endpoint=endpoint, timeout_seconds=timeout_seconds, capability=capability
+        )
     if provider_key in {"openai_compatible", "openai_compatible_local", "lm_studio", "llama_cpp"}:
         return OpenAICompatibleLocalClient(model_name=model_name, endpoint=endpoint, timeout_seconds=timeout_seconds)
     if provider_key in {"fast_interchange", "fast_interchange_local"}:

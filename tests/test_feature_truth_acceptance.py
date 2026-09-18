@@ -59,7 +59,10 @@ def test_every_accepted_specialized_workbench_has_production_navigation() -> Non
 
 def test_runtime_inventory_separates_legacy_reachability_from_current_store_claims() -> None:
     release_scope = capability_inventory()["release_scope"]
-    assert len(ACCEPTED_FEATURE_IDS) == 57
+    # The NH review desk is deliberately reachable for local review, but it
+    # remains outside the current Store claim scope below.
+    assert len(ACCEPTED_FEATURE_IDS) == 58
+    assert "capability_78_nh_review_desk" in ACCEPTED_FEATURE_IDS
     assert release_scope["legacy_reachable_feature_ids"] == list(LEGACY_REACHABLE_FEATURE_IDS)
     assert release_scope["accepted_feature_ids"] == []
     assert release_scope["experimental_disabled_feature_ids"] == []

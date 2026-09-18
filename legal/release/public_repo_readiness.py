@@ -101,6 +101,8 @@ class PublicRepoReadinessAuditor:
             "node_modules",
             "dist",
             "build",
+            # Historical gate receipts are generated evidence, not source.
+            "artifacts",
             ".eggs",
             ".proofs",
         }
@@ -129,7 +131,10 @@ class PublicRepoReadinessAuditor:
 
     @staticmethod
     def _is_public_runtime_source(rel: str) -> bool:
-        return Path(rel).parts[:2] == ("legal", "runtime")
+        parts = Path(rel).parts
+        return parts[:2] == ("legal", "runtime") or parts[:4] == (
+            "src", "nh_family_law_llm", "resources", "runtime"
+        )
 
     def _public_binary_inventory(self, root_rel: str) -> dict[str, str]:
         inventory_path = self.project_root / root_rel / "family_toolkit_inventory.json"

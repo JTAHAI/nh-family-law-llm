@@ -25,8 +25,11 @@ def preflight_inputs(tmp_path_factory):
     identity = json.loads((REPO_ROOT / "store/msix/identity.example.json").read_text())
     identity["package_version"] = "8.0.0.0"
     manifest = (REPO_ROOT / "store/msix/AppxManifest.xml.in").read_text()
+    # The identity record also carries boolean release-state metadata that is
+    # intentionally not a manifest placeholder.  Substitute only strings.
     for name, value in identity.items():
-        manifest = manifest.replace(f"__{name.upper()}__", value)
+        if isinstance(value, str):
+            manifest = manifest.replace(f"__{name.upper()}__", value)
     with zipfile.ZipFile(candidate, "w") as archive:
         archive.writestr("AppxManifest.xml", manifest)
     evidence = root / "evidence"
@@ -58,6 +61,12 @@ def test_store_preflight_report_fail_closes_on_missing_qualification_evidence_an
     assert preflight_report["final_readiness_state"] == "BLOCKED"
     assert len(str(preflight_report["package"]["sha256"])) == 64
     assert preflight_report["package"]["path"] == str(preflight_inputs[0].resolve())
+
+
+def test_manifest_audit_accepts_the_supported_full_trust_and_view_only_protocol_extensions(preflight_inputs) -> None:
+    candidate, _, _ = preflight_inputs
+    report = preflight_module.audit_manifest(candidate, "8.0.10.0")
+    assert report["issues"] == ["version_mismatch"]
 
 
 def test_store_preflight_cli_writes_expected_evidence(tmp_path, preflight_report: dict[str, object], preflight_inputs) -> None:

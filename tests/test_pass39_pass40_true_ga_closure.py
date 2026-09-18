@@ -24,24 +24,23 @@ def test_repo_ga_evidence_files_close_only_passes_39_and_40():
     assert result["ui_report"]["production_legal_ga"] is False
 
 
-def test_true_ga_tracker_now_has_launch_only_passes_remaining():
+def test_true_ga_tracker_refuses_to_turn_repo_evidence_into_true_ga_completion():
     report = GAPassTracker(project_root=ROOT).report().as_dict()
 
-    assert report["status"] == "pass", report
-    assert report["true_ga_completed"] == 29
-    assert report["true_ga_remaining"] == 4
-    assert report["completed_passes"] == list(range(19, 48))
-    assert report["next_true_ga_pass"] == 48
+    assert report["status"] == "blocked", report
+    assert report["true_ga_completed"] == 0
+    assert report["true_ga_remaining"] == 33
+    assert report["completed_passes"] == []
+    assert report["next_true_ga_pass"] == 19
 
 
-def test_ga_pass_evidence_audits_closed_repo_evidence_passes():
+def test_ga_pass_evidence_audit_blocks_until_external_evidence_is_available():
     report = GAPassEvidenceAuditor(project_root=ROOT).run().as_dict()
 
-    assert report["status"] == "pass", report
-    assert report["pass_evidence_valid"] is True
-    assert report["audited_completed_passes"] == list(range(19, 48))
-    assert report["true_ga_remaining"] == 4
-    assert not report["blockers"]
+    assert report["status"] == "blocked", report
+    assert report["audited_completed_passes"] == []
+    assert report["true_ga_remaining"] == 33
+    assert "tracker_report_not_pass" in report["blockers"]
 
 
 def test_generate_repo_ga_evidence_cli_check_mode():

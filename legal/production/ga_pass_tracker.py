@@ -103,7 +103,10 @@ class GAPassTracker:
         counting_rule, passes, configured_completed = self.load()
         by_number = {item.number: item for item in passes}
         row_completed = sorted(item.number for item in passes if item.status == "complete")
-        completed = sorted(set(configured_completed) | set(row_completed))
+        # Only the explicit, audited completion list can reduce the formal
+        # true-GA counter.  Narrative row status is planning metadata and may
+        # never resurrect an unverified completion claim.
+        completed = configured_completed
         unknown_completed = [item for item in completed if item not in by_number]
         if unknown_completed:
             warnings.append(f"completed_passes_not_in_tracker:{unknown_completed}")

@@ -23,13 +23,13 @@ def test_canonical_versions_and_about_surface_are_consistent() -> None:
     assert "6.0.4-extended-hardening-full-source.zip" not in html
 
 
-def test_store_development_identity_is_explicit_and_manifest_preserves_contract() -> None:
+def test_store_reserved_identity_is_explicit_and_manifest_preserves_contract() -> None:
     identity = json.loads((ROOT / "store/msix/identity.example.json").read_text(encoding="utf-8"))
-    # An inherited publisher GUID is not proof of an NH Store registration.
-    assert identity['identity_name'] == 'NHFamilyLawLLM.LocalQA'
-    assert identity['publisher'] == 'CN=NHFamilyLawLLM-LocalQA'
+    # Reservation alone is not proof of publication, signing, or certification.
+    assert identity['identity_name'] == 'TAHAIWebServices.NHFamilyLawLLM'
+    assert identity['publisher'] == 'CN=D75EE668-B409-45ED-87E5-E37AA5FE3868'
     assert identity['package_version'] == PACKAGE_VERSION
-    assert identity['identity_status'] == 'development_example_not_store_registered'
+    assert identity['identity_status'] == 'reserved_partner_center_identity_submission_not_completed'
     assert identity['production_identity_confirmed'] is False
     local_identity = ROOT / "store/msix/identity.local.json"
     if local_identity.exists():

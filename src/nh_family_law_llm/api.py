@@ -360,6 +360,7 @@ if FastAPI is not None:
     )
     from app.services.local_agent_run_service import LocalAgentRunStore
     from app.api.model_packs import register_model_pack_routes
+    from legal.security.local_encryption import default_matter_passphrase
 
 
 class QueryRequest(BaseModel):
@@ -4401,6 +4402,17 @@ if FastAPI is not None:
                     "bundled_model_artifacts": False,
                     "external_admission_required": True,
                 },
+                {
+                    "provider_id": "curated_ollama_reasoning",
+                    "default_endpoint": "http://127.0.0.1:11434",
+                    "allowed_models": ["qwen3:4b", "qwen3:8b"],
+                    "tasks": ["evidence_review", "drafting"],
+                    "browser_endpoint_override_allowed": False,
+                    "browser_model_override_allowed": False,
+                    "bundled_model_artifacts": False,
+                    "legal_quality_status": "not_legal_qualified",
+                    "review_required": True,
+                },
             ],
             "exact_manifest_approval_required": True,
             "server_rehydrated_sources_required": True,
@@ -4445,7 +4457,10 @@ if FastAPI is not None:
         return {**identity, "matter_id": payload.matter_id}, Path(case_root)
 
     def _local_agent_audit_store(root: Path) -> LocalAgentAuditStore:
-        return LocalAgentAuditStore(root, encryption_key=os.environ.get("NH_MATTER_STORE_KEY") or "local-development-key-change-me")
+        return LocalAgentAuditStore(
+            root,
+            encryption_key=os.environ.get("NH_MATTER_STORE_KEY") or default_matter_passphrase(),
+        )
 
     register_model_pack_routes(app, scope_resolver=_local_agent_scope, audit_factory=_local_agent_audit_store)
 
@@ -4459,9 +4474,10 @@ if FastAPI is not None:
 
     def _local_agent_runtime_from_request(payload: LocalAgentPreviewRequest) -> LocalAgentRuntime:
         try:
+            curated = str(payload.provider).strip().lower().replace("-", "_") == "curated_ollama_reasoning"
             client = build_local_client(
                 provider=payload.provider,
-                endpoint=payload.endpoint,
+                endpoint="http://127.0.0.1:11434" if curated else payload.endpoint,
                 model_name=payload.model,
                 timeout_seconds=120,
                 capability=payload.task,
@@ -4474,6 +4490,32 @@ if FastAPI is not None:
         return LocalAgentRuntime(client)
 
     def _local_agent_hardware_readiness(runtime: LocalAgentRuntime) -> dict[str, Any]:
+        if runtime.client.provider_id == "curated_ollama_reasoning":
+            gib = 1024 ** 3
+            profile = profile_hardware(Path(__file__).resolve().parents[2]).as_dict()
+            ram = max(0, int(profile.get("available_memory_bytes") or 0))
+            vram = max(0, int(profile.get("available_vram_bytes") or 0))
+            model = runtime.client.model_name
+            required_ram = 6 * gib if model == "qwen3:4b" else 10 * gib
+            required_vram = 4 * gib if model == "qwen3:4b" else int(5.5 * gib)
+            gpu_reserve = 2 * gib
+            gpu_ready = vram >= required_vram and ram >= gpu_reserve
+            ready = ram >= required_ram or gpu_ready
+            return {
+                "schema_version": "curated_qwen_hardware_readiness_v1",
+                "status": "ready_for_local_runtime_request" if ready else "hardware_review_required",
+                "execution_lane": "system_ram" if ram >= required_ram else "gpu_vram" if gpu_ready else "unavailable",
+                "model": model,
+                "available_memory_bytes": ram,
+                "available_vram_bytes": vram,
+                "required_available_memory_bytes": required_ram,
+                "required_available_vram_bytes": required_vram,
+                "gpu_lane_system_memory_reserve_bytes": gpu_reserve,
+                "model_presence_checked": False,
+                "blockers": [] if ready else ["insufficient_available_memory_or_vram"],
+                "review_required": True,
+                "network_used": False,
+            }
         if runtime.client.provider_id != "fast_interchange_local":
             return {
                 "schema_version": "fast_interchange_hardware_readiness_v1",

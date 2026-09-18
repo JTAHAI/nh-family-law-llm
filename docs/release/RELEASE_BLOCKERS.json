@@ -1,0 +1,68 @@
+{
+  "schema_version": "nhfl.release-blockers.v1",
+  "status": "NOT_READY",
+  "scope": "New Hampshire Family Law LLM v8.0.10 prelaunch",
+  "status_meaning": "Every blocker is evidence-based. A missing receipt is never a passing gate.",
+  "blockers": [
+    {
+      "id": "AUTH-001",
+      "severity": "critical",
+      "affected_feature": "Current-law research and authority-grounded drafting",
+      "reproduction": "Run the 37-target official-source acquisition audit against the preserved r2 data root.",
+      "expected_behavior": "Every configured authority target has an authentic original, currentness evidence, and an approved promotion record.",
+      "actual_behavior": "33 original official responses were retained; NH-0028 through NH-0031 returned HTTP 404 and remain unpromoted.",
+      "evidence": "D:\\NHFamilyLawLLM-authority-data\\run-20260912-full-catalog-repaired-r2",
+      "remediation": "Identify and acquire current official rule publications, then perform source identity, extraction, proposition, and currentness review before promotion.",
+      "owner_dependency": "Independent qualified New Hampshire legal reviewer for promotion decisions.",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "AUTH-002",
+      "severity": "critical",
+      "affected_feature": "RSA 461-A:6 current-law answers on and after 2026-09-13",
+      "reproduction": "Ask a present-law question requiring the pending-amendment capsule on or after the effective date.",
+      "expected_behavior": "A current, reviewed replacement may support the proposition; stale text may not.",
+      "actual_behavior": "The application fails closed rather than using the stale capsule. No reviewed replacement is promoted.",
+      "evidence": "tests/test_pass07_nh_evaluation_hardening.py::test_known_effective_amendment_blocks_stale_current_law_answer",
+      "remediation": "Preserve fresh primary source and session-law material, verify applicability and effective interval, and obtain qualified review before explicit activation.",
+      "owner_dependency": "Independent qualified New Hampshire legal reviewer.",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "LEGAL-001",
+      "severity": "critical",
+      "affected_feature": "All consequential legal workflows",
+      "reproduction": "Inspect the true-GA tracker and legal-review evidence auditor.",
+      "expected_behavior": "Release claims require digest-bound, scope-limited independent legal review evidence.",
+      "actual_behavior": "Zero of 33 true-GA passes is verified; no attorney sign-off is represented.",
+      "evidence": "configs/nh_true_ga_pass_tracker.json; scripts/audit-ga-pass-evidence.py",
+      "remediation": "Complete the reviewer packet, collect decisions against exact digests, and rerun the independent evidence audit.",
+      "owner_dependency": "Qualified New Hampshire attorney or appropriately authorized legal reviewer.",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "WIN-001",
+      "severity": "high",
+      "affected_feature": "Windows installed application",
+      "reproduction": "Run installed-package, accessibility, upgrade, and clean-machine qualification for the exact submission MSIX.",
+      "expected_behavior": "A real installed MSIX passes supported-user, accessibility, lifecycle, and offline checks with preserved receipts.",
+      "actual_behavior": "Frozen runtime checks pass, but installed MSIX, clean-machine, upgrade/uninstall, and OS-level zero-network evidence are not complete.",
+      "evidence": "dist/store-submission-v8.0.10-prelaunch-r7/evidence/installed-offline-qualification.json",
+      "remediation": "Install a separately labeled test package in a supported Windows test environment and preserve non-sensitive qualification receipts.",
+      "owner_dependency": "Windows test environment and owner authorization for test installation/trust changes when required.",
+      "status": "BLOCKED"
+    },
+    {
+      "id": "STORE-001",
+      "severity": "high",
+      "affected_feature": "Microsoft Store submission",
+      "reproduction": "Run Store preflight for the r7 MSIX and inspect identity configuration.",
+      "expected_behavior": "Exact Partner Center identity is confirmed and package qualification/WACK evidence is attached.",
+      "actual_behavior": "The unsigned package is prepared, but production identity confirmation, WACK, Store submission, and Microsoft certification receipts are absent.",
+      "evidence": "dist/store-submission-v8.0.10-prelaunch-r7/evidence/store-preflight.json; store/msix/identity.example.json",
+      "remediation": "Confirm the owner-controlled Partner Center identity, run WACK for the exact package, and complete submission only with separate owner authorization.",
+      "owner_dependency": "Owner-controlled Partner Center account and Microsoft external review.",
+      "status": "BLOCKED"
+    }
+  ]
+}
