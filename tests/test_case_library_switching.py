@@ -98,4 +98,6 @@ def test_launcher_uses_scrollable_tabs_for_short_desktop_windows() -> None:
     build_ui_source = inspect.getsource(launcher.NHFamilyLawLauncher._build_ui)
     assert "ttk.Scrollbar" in source
     assert "canvas.yview" in source
+    assert "required_height > viewport_height" in source
+    assert "scrollbar.grid_remove()" in source
     assert "make_scrollable_tab(notebook)" in build_ui_source

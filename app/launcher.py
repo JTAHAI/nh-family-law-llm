@@ -95,7 +95,13 @@ def mountain_token_logo_path(repo_root: Path) -> Path:
 
 
 def make_scrollable_tab(parent: ttk.Notebook) -> tuple[ttk.Frame, ttk.Frame]:
-    """Create a notebook tab whose content remains reachable on short displays."""
+    """Create a tab that scrolls only when its content cannot fit.
+
+    The launcher must remain usable on a short laptop display, but a permanent
+    full-height gutter is distracting on normal desktop and Store-capture
+    resolutions.  Keep the canvas as the short-window fallback and remove its
+    scrollbar whenever the complete tab is already visible.
+    """
 
     tab = ttk.Frame(parent, style="App.TFrame")
     tab.columnconfigure(0, weight=1)
@@ -104,16 +110,41 @@ def make_scrollable_tab(parent: ttk.Notebook) -> tuple[ttk.Frame, ttk.Frame]:
     scrollbar = ttk.Scrollbar(tab, orient="vertical", command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
     canvas.grid(row=0, column=0, sticky="nsew")
-    scrollbar.grid(row=0, column=1, sticky="ns")
     content = ttk.Frame(canvas, style="App.TFrame", padding=4)
     content.columnconfigure(0, weight=1)
     window = canvas.create_window((0, 0), window=content, anchor="nw")
 
+    visibility_refresh_pending = False
+
     def refresh_scroll_region(_event=None) -> None:
         canvas.configure(scrollregion=canvas.bbox("all"))
+        schedule_scrollbar_visibility()
 
     def fit_content_width(event) -> None:
         canvas.itemconfigure(window, width=event.width)
+        schedule_scrollbar_visibility()
+
+    def schedule_scrollbar_visibility() -> None:
+        nonlocal visibility_refresh_pending
+        if visibility_refresh_pending:
+            return
+        visibility_refresh_pending = True
+        canvas.after_idle(update_scrollbar_visibility)
+
+    def update_scrollbar_visibility() -> None:
+        nonlocal visibility_refresh_pending
+        visibility_refresh_pending = False
+        viewport_height = canvas.winfo_height()
+        required_height = content.winfo_reqheight()
+        if viewport_height <= 1:
+            return
+        if required_height > viewport_height:
+            if not scrollbar.winfo_ismapped():
+                scrollbar.grid(row=0, column=1, sticky="ns")
+        else:
+            canvas.yview_moveto(0)
+            if scrollbar.winfo_ismapped():
+                scrollbar.grid_remove()
 
     def scroll_wheel(event) -> str:
         if event.delta:
