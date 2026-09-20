@@ -48,10 +48,71 @@ def _resolve_candidate(path_text: str) -> Path:
     return candidate
 
 
-def build_report(*, package: Path | None = None) -> dict[str, Any]:
+def _report_path(path: Path) -> str:
+    """Render repository-relative paths when possible, without hiding test paths."""
+
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def _candidate_evidence(package: Path) -> dict[str, Any]:
+    """Bind build and WACK receipts to exactly the selected MSIX.
+
+    A release report must not inherit a passing build summary or WACK receipt
+    from an earlier package with the same version.  Missing or malformed
+    receipts remain explicit blockers; this function never promotes a package.
+    """
+
+    package_hash = _sha256(package)
+    candidate_root = package.parent.parent
+    summary_path = candidate_root / "evidence" / "test-summary.txt"
+    wack_path = candidate_root / "evidence" / "wack" / "wack-result.json"
+    summary_text = summary_path.read_text(encoding="utf-8") if summary_path.is_file() else ""
+    summary_hash = _sha256(summary_path)
+    summary_passed = (
+        package_hash is not None
+        and "MSIX build: PASS" in summary_text
+        and f"Package SHA-256: {package_hash}" in summary_text
+    )
+    wack: dict[str, Any] = {}
+    wack_parse_error = ""
+    if wack_path.is_file():
+        try:
+            parsed = json.loads(wack_path.read_text(encoding="utf-8"))
+            wack = parsed if isinstance(parsed, dict) else {}
+            if not wack:
+                wack_parse_error = "wack_receipt_not_object"
+        except json.JSONDecodeError:
+            wack_parse_error = "wack_receipt_invalid_json"
+    else:
+        wack_parse_error = "wack_receipt_missing"
+    wack_hash = str((wack.get("package") or {}).get("sha256") or "").lower()
+    return {
+        "candidate_root": _report_path(candidate_root),
+        "build_summary": {
+            "path": _report_path(summary_path),
+            "sha256": summary_hash,
+            "status": "pass" if summary_passed else "blocked",
+            "reason": "hash_bound_build_summary" if summary_passed else "missing_or_unbound_build_summary",
+        },
+        "wack": {
+            "path": _report_path(wack_path),
+            "sha256": _sha256(wack_path),
+            "status": str(wack.get("status") or "blocked"),
+            "execution_status": str(wack.get("execution_status") or "not_run"),
+            "hash_matches_candidate": bool(package_hash and package_hash == wack_hash),
+            "parse_error": wack_parse_error,
+        },
+    }
+
+
+def build_report(*, package: Path) -> dict[str, Any]:
     ledger_path = ROOT / "docs" / "release" / "RELEASE_BLOCKERS.json"
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-    package_state = package or ROOT / "dist" / "store-submission-v8.0.10-partner-identity-r6" / "msix" / "NHFamilyLawLLM_8.0.10.0_x64.msix"
+    package_state = package
+    candidate_evidence = _candidate_evidence(package_state)
     gates = [
         {"gate": "engineering_correctness", "status": "FAIL", "reason": "ENG-001"},
         {"gate": "authority_acquisition_and_integrity", "status": "BLOCKED", "reason": "AUTH-001"},
@@ -74,6 +135,7 @@ def build_report(*, package: Path | None = None) -> dict[str, Any]:
             "sha256": _sha256(package_state),
             "exists": package_state.is_file(),
         },
+        "candidate_evidence": candidate_evidence,
         "invalidation": "Any relevant source, prompt, model/runtime, calculation, dependency, or package change requires a fresh receipt for affected gates.",
     }
 
@@ -83,7 +145,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, help="Write the machine-readable status to this path.")
     parser.add_argument(
         "--package",
-        default="dist/store-submission-v8.0.10-partner-identity-r6/msix/NHFamilyLawLLM_8.0.10.0_x64.msix",
+        required=True,
         help="Repository-relative MSIX candidate to bind to this receipt.",
     )
     args = parser.parse_args()

@@ -35,4 +35,21 @@ def test_readiness_receipt_binds_to_the_selected_candidate() -> None:
     report = module.build_report(package=candidate)
     assert report["artifact"]["path"] == "dist/candidate/msix/example.msix"
     assert report["artifact"]["exists"] is False
+    assert report["candidate_evidence"]["build_summary"]["status"] == "blocked"
+    assert report["candidate_evidence"]["wack"]["hash_matches_candidate"] is False
     assert report["overall_status"] == "NOT_READY"
+
+
+def test_candidate_evidence_rejects_a_build_receipt_from_another_package(tmp_path) -> None:
+    module = _load_module()
+    candidate = tmp_path / "candidate" / "msix" / "example.msix"
+    candidate.parent.mkdir(parents=True)
+    candidate.write_bytes(b"fictional-msix")
+    evidence = candidate.parent.parent / "evidence"
+    evidence.mkdir()
+    (evidence / "test-summary.txt").write_text(
+        "MSIX build: PASS\nPackage SHA-256: " + "0" * 64 + "\n", encoding="utf-8"
+    )
+
+    report = module._candidate_evidence(candidate)
+    assert report["build_summary"]["status"] == "blocked"
