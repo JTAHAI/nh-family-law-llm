@@ -425,5 +425,10 @@ def test_calm_start_is_production_ui_and_uses_the_canonical_encrypted_preference
     assert ".starting-path-actions button.is-selected" in styles
     assert ".next-safe-action-card" in styles
     assert ".chat-matter-summary" in styles
-    assert 'data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell { height: 100dvh;' in styles
+    # The shell must not own a second full viewport in chat mode.  The body
+    # supplies the bounded viewport and only the conversation panel scrolls;
+    # otherwise the desktop app can render the long page scrollbar that hid
+    # the composer below the fold.
+    assert 'data-v8-view="chat"] { height: 100dvh; overflow: hidden;' in styles
+    assert 'data-v8-view="chat"] .v5-workbench.v9-legal-ops-shell { height: auto; min-height: 0;' in styles
     assert 'data-v8-view="chat"] .chat-panel.panel { min-height: 0; height: 100%;' in styles
