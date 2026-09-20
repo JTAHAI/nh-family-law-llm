@@ -59,7 +59,7 @@
       "reproduction": "Run installed-package, accessibility, upgrade, and clean-machine qualification for the exact submission MSIX.",
       "expected_behavior": "A real installed MSIX passes supported-user, accessibility, lifecycle, and offline checks with preserved receipts.",
       "actual_behavior": "Frozen runtime checks pass, but installed MSIX, clean-machine, upgrade/uninstall, and OS-level zero-network evidence are not complete.",
-      "evidence": "dist/store-submission-v8.0.10-partner-identity-r6/evidence/test-summary.txt",
+      "evidence": "dist/store-submission-v8.0.10-prelaunch-r9/evidence/test-summary.txt; dist/store-submission-v8.0.10-prelaunch-r9/evidence/wack/wack-result.json",
       "remediation": "Install a separately labeled test package in a supported Windows test environment and preserve non-sensitive qualification receipts.",
       "owner_dependency": "Windows test environment and owner authorization for test installation/trust changes when required.",
       "status": "BLOCKED"
@@ -68,10 +68,10 @@
       "id": "STORE-001",
       "severity": "high",
       "affected_feature": "Microsoft Store submission",
-      "reproduction": "Inspect the sealed r6 MSIX manifest and run Store preflight for that exact package.",
+      "reproduction": "Inspect the sealed r9 MSIX manifest and run Store preflight/WACK for that exact package.",
       "expected_behavior": "Exact Partner Center identity is represented and package qualification/WACK evidence is attached for the same artifact.",
-      "actual_behavior": "The unsigned r6 package now uses TAHAIWebServices.NewHampshireFamilyLawLLM, but WACK, Store submission, and Microsoft certification receipts are absent.",
-      "evidence": "dist/store-submission-v8.0.10-partner-identity-r6/evidence/test-summary.txt; store/msix/identity.example.json",
+      "actual_behavior": "The unsigned r9 package uses TAHAIWebServices.NewHampshireFamilyLawLLM and passed its sealed-package audit; WACK is blocked because this machine is not elevated, and Store submission and Microsoft certification receipts are absent.",
+      "evidence": "dist/store-submission-v8.0.10-prelaunch-r9/evidence/test-summary.txt; dist/store-submission-v8.0.10-prelaunch-r9/evidence/wack/wack-result.json; store/msix/identity.example.json",
       "remediation": "Run WACK for the exact package, then complete submission only with separate owner authorization.",
       "owner_dependency": "Windows App Certification Kit, owner-controlled Partner Center account, and Microsoft external review.",
       "status": "BLOCKED"

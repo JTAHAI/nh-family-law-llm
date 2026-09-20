@@ -1,3 +1,10 @@
+## v8.0.10 — Prelaunch hardening and correct Store identity
+
+- Product version: 8.0.10. Microsoft Store package target: 8.0.10.0.
+- Keeps the local-first, review-required New Hampshire workspace and the compact chat viewport safeguards.
+- Uses the Partner Center package identity `TAHAIWebServices.NewHampshireFamilyLawLLM`.
+- The sealed package audit and frozen-runtime smoke are engineering checks only; WACK, installed-app qualification, independent legal review, and Microsoft certification remain separate gates.
+
 ## v8.0.2 — Chat and Windows packaging reliability
 
 - Product version: 8.0.2. Microsoft Store package target: 8.0.2.0.

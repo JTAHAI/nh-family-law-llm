@@ -56,7 +56,10 @@ MARKERS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("maine_court", re.compile(r"\b(?:maine\s+law\s+court|maine\s+supreme\s+judicial\s+court|maine\s+judicial\s+branch)\b", re.I)),
     ("maine_authority_token", re.compile(r"\b(?:maine_statute|maine_case|maine_rule|maine_form|verified_official_maine|verified_maine_law_court|federal_maine|district_maine|maine_sjc|maine_revisor)\b", re.I)),
     ("maine_source_id", re.compile(r"\b(?:me-revisor|me-courts|mrs-title|case-(?:19|20)\d{2}-me-|me-title-19a|me-statutes|me-rules|me-nh-supreme)\b", re.I)),
-    ("maine_runtime_identity", re.compile(r"(?:maine_family_law_llm|NewHampshireFamilyLawLLM|MAINE_FAST_INTERCHANGE|ME_FM_LLM|\bUS-ME\b)", re.I)),
+    # NewHampshireFamilyLawLLM is the current MSIX identity, not a legacy
+    # Maine reference.  Keeping it in this matcher made the NH-only audit
+    # fail on correctly branded production files and masked real findings.
+    ("maine_runtime_identity", re.compile(r"(?:maine_family_law_llm|MAINE_FAST_INTERCHANGE|ME_FM_LLM|\bUS-ME\b)", re.I)),
     ("maine_legacy_control", re.compile(r"(?:uses_real_official_maine_authority|OFFICIAL_MAINE_DOMAINS|official_maine_fixture|_MAINE_JURISDICTION)", re.I)),
     ("maine_legacy_parser_label", re.compile(r"(?:\blawcourt\b|/courts/sjc/|revisor-layout-table|ingest-maine-authority|title[_-]?19a)", re.I)),
 )

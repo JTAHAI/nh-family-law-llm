@@ -86,6 +86,19 @@ PUBLIC_FIXTURE_ROOTS = (
     Path("tests/fixtures"),
 )
 
+# These are immutable, checked-in public validation receipts.  They are source
+# evidence rather than local runtime output.  Keep this allowlist explicit so
+# a newly-created artifact directory is still surfaced for review instead of
+# being silently treated as safe to publish.
+PUBLIC_EVIDENCE_ROOTS = (
+    Path("artifacts/pass-03"),
+    Path("artifacts/pass-04"),
+    Path("artifacts/pass-06"),
+    Path("artifacts/pass-07"),
+    Path("artifacts/pass-08"),
+    Path("artifacts/release/20260912-regression-repair"),
+)
+
 
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -133,6 +146,16 @@ def _is_public_fixture(repo_root: Path, path: Path) -> bool:
     except ValueError:
         return False
     return any(rel.parts[: len(root.parts)] == root.parts for root in PUBLIC_FIXTURE_ROOTS)
+
+
+def _is_public_evidence(repo_root: Path, path: Path) -> bool:
+    """Return whether a path is in a deliberate, source-controlled receipt root."""
+
+    try:
+        rel = path.resolve().relative_to(repo_root.resolve())
+    except ValueError:
+        return False
+    return any(rel.parts[: len(root.parts)] == root.parts for root in PUBLIC_EVIDENCE_ROOTS)
 
 
 TESTS_ALLOWED_TOP_LEVEL_FILES = {"conftest.py", "__init__.py"}
@@ -270,6 +293,7 @@ def scan(repo_root: Path, *, allow_venv: bool = False) -> dict[str, object]:
             and path.suffix.lower() == ".txt"
             and rel.as_posix() not in ALLOWED_TEXT_FILES
             and not _is_public_fixture(repo_root, path)
+            and not _is_public_evidence(repo_root, path)
         ):
             forbidden.append(rel.as_posix())
 

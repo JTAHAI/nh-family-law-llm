@@ -1,4 +1,4 @@
-New Hampshire Family Law LLM v8.0.2
+New Hampshire Family Law LLM v8.0.10
 
 Maintenance package: browser-session private-record chat no longer requires an
 unrelated authority store to initialize. Legal-source admission remains intact.

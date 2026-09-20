@@ -514,6 +514,8 @@ class LocalAgentRuntime:
             text = self._quarantine(source.text)
             status = (
                 "HOST RECORD STATUS: private-record statement, not an established fact.\n"
+                f"HOST SOURCE STATUS: {source.authority_status or 'unknown'}; "
+                f"FRESHNESS: {source.freshness_status or 'unknown'}\n"
                 "LEGAL AUTHORITY/FRESHNESS: not applicable to this private-record lane.\n"
                 if source.lane == "private_record" else
                 f"HOST SOURCE STATUS: {source.authority_status or 'unknown'}; FRESHNESS: {source.freshness_status or 'unknown'}\n"
