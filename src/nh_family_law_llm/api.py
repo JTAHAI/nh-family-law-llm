@@ -360,7 +360,7 @@ if FastAPI is not None:
     )
     from app.services.local_agent_run_service import LocalAgentRunStore
     from app.api.model_packs import register_model_pack_routes
-    from legal.security.local_encryption import default_matter_passphrase
+    from legal.security import local_encryption
 
 
 class QueryRequest(BaseModel):
@@ -4459,7 +4459,10 @@ if FastAPI is not None:
     def _local_agent_audit_store(root: Path) -> LocalAgentAuditStore:
         return LocalAgentAuditStore(
             root,
-            encryption_key=os.environ.get("NH_MATTER_STORE_KEY") or default_matter_passphrase(),
+            encryption_key=(
+                os.environ.get("NH_MATTER_STORE_KEY")
+                or local_encryption.default_matter_passphrase()
+            ),
         )
 
     register_model_pack_routes(app, scope_resolver=_local_agent_scope, audit_factory=_local_agent_audit_store)
