@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """Emit the evidence-based prelaunch status without promoting any authority."""
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
 import subprocess
-import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -95,7 +94,9 @@ def _candidate_evidence(package: Path) -> dict[str, Any]:
             "path": _report_path(summary_path),
             "sha256": summary_hash,
             "status": "pass" if summary_passed else "blocked",
-            "reason": "hash_bound_build_summary" if summary_passed else "missing_or_unbound_build_summary",
+            "reason": "hash_bound_build_summary"
+            if summary_passed
+            else "missing_or_unbound_build_summary",
         },
         "wack": {
             "path": _report_path(wack_path),
@@ -116,16 +117,28 @@ def build_report(*, package: Path) -> dict[str, Any]:
     gates = [
         {"gate": "engineering_correctness", "status": "FAIL", "reason": "ENG-001"},
         {"gate": "authority_acquisition_and_integrity", "status": "BLOCKED", "reason": "AUTH-001"},
-        {"gate": "authority_currentness_and_coverage", "status": "BLOCKED", "reason": "AUTH-001; AUTH-002"},
+        {
+            "gate": "authority_currentness_and_coverage",
+            "status": "BLOCKED",
+            "reason": "AUTH-001; AUTH-002",
+        },
         {"gate": "independent_legal_review", "status": "BLOCKED", "reason": "LEGAL-001"},
-        {"gate": "privacy_security_ai_behavior", "status": "NOT_RUN", "reason": "Current full qualification receipt required."},
+        {
+            "gate": "privacy_security_ai_behavior",
+            "status": "NOT_RUN",
+            "reason": "Current full qualification receipt required.",
+        },
         {"gate": "installed_windows_accessibility", "status": "BLOCKED", "reason": "WIN-001"},
         {"gate": "store_submission_preparation", "status": "BLOCKED", "reason": "STORE-001"},
-        {"gate": "microsoft_certification_publication", "status": "NOT_RUN", "reason": "External Microsoft process has not been submitted or completed."},
+        {
+            "gate": "microsoft_certification_publication",
+            "status": "NOT_RUN",
+            "reason": "External Microsoft process has not been submitted or completed.",
+        },
     ]
     return {
         "schema_version": "nhfl.prelaunch-release-readiness.v1",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "revision": _revision(),
         "overall_status": "NOT_READY",
         "gates": gates,
@@ -136,13 +149,18 @@ def build_report(*, package: Path) -> dict[str, Any]:
             "exists": package_state.is_file(),
         },
         "candidate_evidence": candidate_evidence,
-        "invalidation": "Any relevant source, prompt, model/runtime, calculation, dependency, or package change requires a fresh receipt for affected gates.",
+        "invalidation": (
+            "Any relevant source, prompt, model/runtime, calculation, dependency, or "
+            "package change requires a fresh receipt for affected gates."
+        ),
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, help="Write the machine-readable status to this path.")
+    parser.add_argument(
+        "--output", type=Path, help="Write the machine-readable status to this path."
+    )
     parser.add_argument(
         "--package",
         required=True,

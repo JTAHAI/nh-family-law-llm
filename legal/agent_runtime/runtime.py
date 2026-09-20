@@ -518,7 +518,8 @@ class LocalAgentRuntime:
                 f"FRESHNESS: {source.freshness_status or 'unknown'}\n"
                 "LEGAL AUTHORITY/FRESHNESS: not applicable to this private-record lane.\n"
                 if source.lane == "private_record" else
-                f"HOST SOURCE STATUS: {source.authority_status or 'unknown'}; FRESHNESS: {source.freshness_status or 'unknown'}\n"
+                f"HOST SOURCE STATUS: {source.authority_status or 'unknown'}; "
+                f"FRESHNESS: {source.freshness_status or 'unknown'}\n"
             )
             blocks.append(
                 f'<source index="{index}" lane="{source.lane}" source_id="{source.source_id}">\n'
