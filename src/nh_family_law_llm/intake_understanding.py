@@ -324,7 +324,7 @@ def _source_followup(text: str) -> bool:
         return True
     if re.fullmatch(
         r"(?:please\s+)?(?:show|open|list|display)\s+(?:only\s+)?(?:the\s+)?"
-        r"(?:nh\s+law|law|legal|my\s+records?|record|private\s+record)\s+"
+        r"(?:nh\s+law|new\s+hampshire\s+law|law|legal|my\s+records?|record|private\s+record)\s+"
         r"(?:sources?|source\s+cards?|cards?|matches?)",
         compact,
     ):
@@ -363,7 +363,7 @@ def _source_lane(text: str) -> str:
     compact = text.casefold()
     if re.search(r"\b(?:my\s+records?|record|private\s+record|matter\s+record)\s+(?:sources?|cards?|matches?)\b", compact):
         return "private_record"
-    if re.search(r"\b(?:nh\s+law|law|legal|authority)\s+(?:sources?|cards?|matches?)\b", compact):
+    if re.search(r"\b(?:nh\s+law|new\s+hampshire\s+law|law|legal|authority)\s+(?:sources?|cards?|matches?)\b", compact):
         return "legal_authority"
     return "all"
 

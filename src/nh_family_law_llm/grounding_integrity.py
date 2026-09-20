@@ -83,7 +83,7 @@ def _authority_status(metadata: dict[str, Any], lane: str) -> str:
     official = bool(metadata.get("official"))
     jurisdiction = str(metadata.get("jurisdiction") or "").casefold()
     if official and source_type in _PRIMARY_TYPES:
-        if "nh" in jurisdiction or jurisdiction == "":
+        if jurisdiction == "" or "nh" in jurisdiction or "new hampshire" in jurisdiction:
             return "official_primary_authority"
         return "official_out_of_jurisdiction_primary_authority"
     if official and source_type in _OFFICIAL_GUIDANCE_TYPES:
