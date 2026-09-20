@@ -36,12 +36,24 @@ def _revision() -> str:
     return f"{revision}-dirty" if dirty.stdout.strip() else revision
 
 
-def build_report() -> dict[str, Any]:
+def _resolve_candidate(path_text: str) -> Path:
+    candidate = Path(path_text).expanduser()
+    if not candidate.is_absolute():
+        candidate = ROOT / candidate
+    candidate = candidate.resolve(strict=False)
+    try:
+        candidate.relative_to(ROOT)
+    except ValueError as exc:
+        raise ValueError("candidate package must be inside the repository") from exc
+    return candidate
+
+
+def build_report(*, package: Path | None = None) -> dict[str, Any]:
     ledger_path = ROOT / "docs" / "release" / "RELEASE_BLOCKERS.json"
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-    package = ROOT / "dist" / "store-submission-v8.0.10-prelaunch-r7" / "msix" / "NHFamilyLawLLM_8.0.10.0_x64.msix"
+    package_state = package or ROOT / "dist" / "store-submission-v8.0.10-partner-identity-r6" / "msix" / "NHFamilyLawLLM_8.0.10.0_x64.msix"
     gates = [
-        {"gate": "engineering_correctness", "status": "NOT_RUN", "reason": "A completed full-suite receipt is required for this revision."},
+        {"gate": "engineering_correctness", "status": "FAIL", "reason": "ENG-001"},
         {"gate": "authority_acquisition_and_integrity", "status": "BLOCKED", "reason": "AUTH-001"},
         {"gate": "authority_currentness_and_coverage", "status": "BLOCKED", "reason": "AUTH-001; AUTH-002"},
         {"gate": "independent_legal_review", "status": "BLOCKED", "reason": "LEGAL-001"},
@@ -57,7 +69,11 @@ def build_report() -> dict[str, Any]:
         "overall_status": "NOT_READY",
         "gates": gates,
         "blockers": ledger["blockers"],
-        "artifact": {"path": str(package.relative_to(ROOT)), "sha256": _sha256(package)},
+        "artifact": {
+            "path": package_state.relative_to(ROOT).as_posix(),
+            "sha256": _sha256(package_state),
+            "exists": package_state.is_file(),
+        },
         "invalidation": "Any relevant source, prompt, model/runtime, calculation, dependency, or package change requires a fresh receipt for affected gates.",
     }
 
@@ -65,8 +81,17 @@ def build_report() -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, help="Write the machine-readable status to this path.")
+    parser.add_argument(
+        "--package",
+        default="dist/store-submission-v8.0.10-partner-identity-r6/msix/NHFamilyLawLLM_8.0.10.0_x64.msix",
+        help="Repository-relative MSIX candidate to bind to this receipt.",
+    )
     args = parser.parse_args()
-    report = build_report()
+    try:
+        package = _resolve_candidate(args.package)
+    except ValueError as exc:
+        parser.error(str(exc))
+    report = build_report(package=package)
     rendered = json.dumps(report, indent=2, sort_keys=True)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -5,6 +5,18 @@
   "status_meaning": "Every blocker is evidence-based. A missing receipt is never a passing gate.",
   "blockers": [
     {
+      "id": "ENG-001",
+      "severity": "high",
+      "affected_feature": "Full engineering regression qualification",
+      "reproduction": "Run python -m pytest --basetemp dist/pytest-prelaunch-r8 from the repository root.",
+      "expected_behavior": "The complete suite passes in a supported, policy-compliant qualification environment.",
+      "actual_behavior": "The September 20, 2026 repository-local run completed with 2551 passed, 156 failed, and 23 skipped. A large failure cluster correctly rejects authority and model stores located under the checkout; other failures require individual remediation and have not been waived.",
+      "evidence": "dist/full-prelaunch-r8.stdout.log; dist/full-prelaunch-r8.stderr.log",
+      "remediation": "Classify each remaining failure. Preserve external-store protections; qualify those paths in an authorized environment that can use a dedicated external synthetic-data root, then repair non-environmental defects and rerun the full suite.",
+      "owner_dependency": "Supported Windows qualification environment with a dedicated synthetic external-data root.",
+      "status": "FAIL"
+    },
+    {
       "id": "AUTH-001",
       "severity": "critical",
       "affected_feature": "Current-law research and authority-grounded drafting",
@@ -47,7 +59,7 @@
       "reproduction": "Run installed-package, accessibility, upgrade, and clean-machine qualification for the exact submission MSIX.",
       "expected_behavior": "A real installed MSIX passes supported-user, accessibility, lifecycle, and offline checks with preserved receipts.",
       "actual_behavior": "Frozen runtime checks pass, but installed MSIX, clean-machine, upgrade/uninstall, and OS-level zero-network evidence are not complete.",
-      "evidence": "dist/store-submission-v8.0.10-prelaunch-r7/evidence/installed-offline-qualification.json",
+      "evidence": "dist/store-submission-v8.0.10-partner-identity-r6/evidence/test-summary.txt",
       "remediation": "Install a separately labeled test package in a supported Windows test environment and preserve non-sensitive qualification receipts.",
       "owner_dependency": "Windows test environment and owner authorization for test installation/trust changes when required.",
       "status": "BLOCKED"
@@ -56,12 +68,12 @@
       "id": "STORE-001",
       "severity": "high",
       "affected_feature": "Microsoft Store submission",
-      "reproduction": "Run Store preflight for the r7 MSIX and inspect identity configuration.",
-      "expected_behavior": "Exact Partner Center identity is confirmed and package qualification/WACK evidence is attached.",
-      "actual_behavior": "The unsigned package is prepared, but production identity confirmation, WACK, Store submission, and Microsoft certification receipts are absent.",
-      "evidence": "dist/store-submission-v8.0.10-prelaunch-r7/evidence/store-preflight.json; store/msix/identity.example.json",
-      "remediation": "Confirm the owner-controlled Partner Center identity, run WACK for the exact package, and complete submission only with separate owner authorization.",
-      "owner_dependency": "Owner-controlled Partner Center account and Microsoft external review.",
+      "reproduction": "Inspect the sealed r6 MSIX manifest and run Store preflight for that exact package.",
+      "expected_behavior": "Exact Partner Center identity is represented and package qualification/WACK evidence is attached for the same artifact.",
+      "actual_behavior": "The unsigned r6 package now uses TAHAIWebServices.NewHampshireFamilyLawLLM, but WACK, Store submission, and Microsoft certification receipts are absent.",
+      "evidence": "dist/store-submission-v8.0.10-partner-identity-r6/evidence/test-summary.txt; store/msix/identity.example.json",
+      "remediation": "Run WACK for the exact package, then complete submission only with separate owner authorization.",
+      "owner_dependency": "Windows App Certification Kit, owner-controlled Partner Center account, and Microsoft external review.",
       "status": "BLOCKED"
     }
   ]

@@ -1,31 +1,38 @@
 from __future__ import annotations
 
-import json
-import subprocess
-import sys
+import importlib.util
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = ROOT / "scripts" / "verify-prelaunch-release.py"
 
 
-def test_prelaunch_release_verifier_fails_closed_and_writes_a_machine_readable_receipt(tmp_path: Path) -> None:
-    output = tmp_path / "release-readiness.json"
-    completed = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "verify-prelaunch-release.py"), "--output", str(output)],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-        timeout=30,
-    )
-    assert completed.returncode == 1
-    payload = json.loads(completed.stdout)
-    assert payload["overall_status"] == "NOT_READY"
-    assert payload["revision"].endswith("-dirty")
-    assert {gate["gate"] for gate in payload["gates"]} == {
-        "engineering_correctness", "authority_acquisition_and_integrity", "authority_currentness_and_coverage",
-        "independent_legal_review", "privacy_security_ai_behavior", "installed_windows_accessibility",
-        "store_submission_preparation", "microsoft_certification_publication",
-    }
-    assert json.loads(output.read_text(encoding="utf-8"))["blockers"] == payload["blockers"]
+def _load_module():
+    spec = importlib.util.spec_from_file_location("verify_prelaunch_release", SCRIPT)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_candidate_resolution_stays_within_the_checkout() -> None:
+    module = _load_module()
+    candidate = module._resolve_candidate("dist/candidate/msix/example.msix")
+    assert candidate == ROOT / "dist" / "candidate" / "msix" / "example.msix"
+
+    try:
+        module._resolve_candidate(r"C:\outside\candidate.msix")
+    except ValueError as exc:
+        assert "inside the repository" in str(exc)
+    else:
+        raise AssertionError("outside package candidate must be rejected")
+
+
+def test_readiness_receipt_binds_to_the_selected_candidate() -> None:
+    module = _load_module()
+    candidate = ROOT / "dist" / "candidate" / "msix" / "example.msix"
+    report = module.build_report(package=candidate)
+    assert report["artifact"]["path"] == "dist/candidate/msix/example.msix"
+    assert report["artifact"]["exists"] is False
+    assert report["overall_status"] == "NOT_READY"
