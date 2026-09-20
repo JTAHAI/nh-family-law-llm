@@ -210,7 +210,11 @@ def _inspection_paths(repo_root: Path):
         current = Path(directory)
         descend = []
         for name in dirnames:
-            if name == ".git" or name in transient_dir_names:
+            # Editable/install builds can leave only package metadata in an
+            # ignored ``*.egg-info`` directory.  It is not source evidence or
+            # a runtime data store, and the other source-hygiene checks already
+            # keep real build output (``build``/``dist``) fail-closed.
+            if name == ".git" or name in transient_dir_names or name.endswith(".egg-info"):
                 continue
             path = current / name
             yield path

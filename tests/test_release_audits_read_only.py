@@ -21,7 +21,8 @@ def _doctor():
 def test_doctor_preserves_caches_and_reports_data_without_traversing_it(tmp_path):
     doctor = _doctor()
     paths = ("__pycache__/keep.pyc", ".pytest_cache/keep", ".nhfl_work/keep.json",
-             ".proofs/keep.json", "dist/models/keep.safetensors", "source.pyc")
+             ".proofs/keep.json", "dist/models/keep.safetensors", "source.pyc",
+             "nh_family_law_llm.egg-info/PKG-INFO")
     for relative in paths:
         path = tmp_path / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -31,6 +32,7 @@ def test_doctor_preserves_caches_and_reports_data_without_traversing_it(tmp_path
     assert report["status"] == "fail"
     assert {"dist", ".proofs", ".nhfl_work"} <= set(report["forbidden_paths"])
     assert not any(name.startswith("dist/") for name in report["forbidden_paths"])
+    assert "nh_family_law_llm.egg-info" not in report["forbidden_paths"]
     for relative in paths:
         assert (tmp_path / relative).read_bytes() == b"fictional-preservation-sentinel"
 
