@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import argparse
 import ast
-import hashlib
 import json
 from pathlib import Path
 import sys
-import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / 'src'), str(ROOT)]
@@ -17,6 +15,7 @@ sys.path[:0] = [str(ROOT / 'src'), str(ROOT)]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wheel', type=Path)
+    parser.add_argument('--output', type=Path, default=ROOT/'artifacts/pass-08/source-gate.json')
     args = parser.parse_args()
     from nh_family_law_llm.version import VERSION, PACKAGE_VERSION, BUILD_NUMBER
     scope = json.loads((ROOT / 'configs/v8010_release_scope.json').read_text())
@@ -57,27 +56,21 @@ def main():
             try:ast.parse(py.read_text(encoding='utf-8-sig'),filename=str(py))
             except (SyntaxError, UnicodeError) as exc:errors.append(f'{py.relative_to(ROOT)}: {exc}')
     wheel_receipt=None
+    wheel_integrity=None
     if args.wheel:
-        wheel=args.wheel.resolve()
-        if not wheel.is_relative_to(ROOT): raise SystemExit('wheel must be inside repository')
-        with zipfile.ZipFile(wheel) as archive:
-            names=archive.namelist()
-            require(archive.testzip() is None, 'wheel CRC')
-            for name in required:
-                require(name in names, 'wheel member '+name)
-                if name in names:require(archive.read(name)==(ROOT/'src'/name).read_bytes(), 'wheel source byte parity '+name)
-            require(not any('/.git/' in name or name.lower().endswith(('.pfx','.p12','.ttf','.otf','.woff','.woff2')) for name in names), 'no private keys, git database or font files in wheel')
-            metadata=archive.read(next(name for name in names if name.endswith('.dist-info/METADATA'))).decode()
-            metadata_fields = {
-                line.partition(':')[0]: line.partition(':')[2].strip()
-                for line in metadata.splitlines()
-                if ':' in line
-            }
-            require(metadata_fields.get('Version') == VERSION, 'wheel metadata version')
-            require('Name: nh-family-law-llm' in metadata or 'Name: nh_family_law_llm' in metadata,'wheel package identity')
-            wheel_receipt={'filename':wheel.name,'sha256':hashlib.sha256(wheel.read_bytes()).hexdigest(),'bytes':wheel.stat().st_size,'members':len(names)}
-    report={'pass':8,'status':'pass' if not errors else 'fail','scope':'source and wheel packaging only','check_count':len(checked),'checks':checked,'errors':errors,'wheel':wheel_receipt,'windows_qualified':False,'production_ready':False,'authority_promotions':0}
-    out=ROOT/'artifacts/pass-08/source-gate.json';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,indent=2)+'\n')
+        wheel=args.wheel.absolute()
+        if not wheel.resolve().is_relative_to(ROOT): raise SystemExit('wheel must be inside repository')
+        from legal.release.wheel_integrity import audit_wheel
+        wheel_integrity = audit_wheel(wheel, source_root=ROOT)
+        require(wheel_integrity['status'] == 'pass', 'complete wheel source/resource integrity')
+        errors.extend(wheel_integrity['blockers'])
+        wheel_receipt={'filename':wheel.name,'sha256':wheel_integrity['wheel_sha256'],
+                       'members':wheel_integrity.get('member_count',0),
+                       'integrity_status':wheel_integrity['status']}
+    report={'pass':8,'status':'pass' if not errors else 'fail','scope':'source and wheel packaging only','check_count':len(checked),'checks':checked,'errors':errors,'wheel':wheel_receipt,'wheel_integrity':wheel_integrity,'windows_qualified':False,'production_ready':False,'authority_promotions':0}
+    out=args.output.absolute()
+    if not out.is_relative_to(ROOT): raise SystemExit('output must stay inside this repository')
+    out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'status':report['status'],'checks':len(checked),'errors':errors,'wheel':wheel_receipt},indent=2))
     return 0 if not errors else 1
 

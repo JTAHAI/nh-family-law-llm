@@ -45,6 +45,12 @@ jobs:
       - name: Vault, boundary, preview, local-agent and startup regressions
         run: >-
           python -m pytest
+          tests/test_pass05_fixture_contracts.py
+          tests/test_cli_api_local_v1.py
+          tests/test_compound_claim_filing_boundary.py
+          tests/test_enterprise_resource_collection.py
+          tests/test_external_audit_cli_fail_closed.py
+          tests/test_pass04_wheel_integrity.py
           tests/test_pass04_model_boundary.py
           tests/test_pass04_packaging_checkout.py
           tests/test_v650_local_intelligence_control_center.py
@@ -79,7 +85,7 @@ jobs:
         run: python scripts/run-public-source-preflight.py --index --require-ready --output dist/storage-hardening/public-source-index.json
       - name: Build wheel in repository-owned intermediates
         run: >-
-          python -c "from setuptools import setup; setup(script_args=['egg_info','--egg-base','dist/storage-hardening','build','--build-base','dist/storage-hardening/build','bdist_wheel','--dist-dir','dist/storage-hardening/wheels'])"
+          python -c "from setuptools import setup; setup(script_args=['egg_info','--egg-base','dist/storage-hardening','build','--build-base','dist/storage-hardening/build','bdist_wheel','--bdist-dir','dist/storage-hardening/bdist','--dist-dir','dist/storage-hardening/wheels'])"
       - name: Install and exercise the exact wheel independently of checkout imports
         shell: python
         run: |
@@ -94,8 +100,8 @@ jobs:
           if len(wheels) != 1:
               raise SystemExit('Exactly one candidate wheel is required')
           wheel = wheels[0]
-          subprocess.check_call([sys.executable, 'scripts/verify_pass_08.py', '--wheel', str(wheel)])
-          (work / 'wheel-source-gate.json').write_bytes((root / 'artifacts/pass-08/source-gate.json').read_bytes())
+          subprocess.check_call([sys.executable, 'scripts/verify_pass_08.py', '--wheel', str(wheel),
+                                 '--output', str(work / 'wheel-source-gate.json')])
           venv = work / 'installed-venv'
           subprocess.check_call([sys.executable, '-m', 'venv', str(venv)])
           python = venv / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
@@ -104,7 +110,7 @@ jobs:
           with (work / 'installed-dependencies.json').open('w', encoding='utf-8') as output:
               subprocess.check_call([str(python), '-m', 'pip', 'list', '--format=json'], stdout=output)
           subprocess.check_call([sys.executable, 'scripts/qualify_nh_desktop.py',
-                                 '--installed', '--python', str(python),
+                                 '--installed', '--wheel', str(wheel), '--python', str(python),
                                  '--work-dir', str(work / 'installed-journey'),
                                  '--output', str(work / 'installed-journey.json')])
       - name: Preserve compact engineering evidence only

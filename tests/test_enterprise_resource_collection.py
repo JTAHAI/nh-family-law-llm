@@ -49,8 +49,8 @@ def test_enterprise_catalog_has_windows_defaults_and_required_sources() -> None:
     assert any(item["resource_id"] == "nh-supreme-court-opinions-current" for item in catalog["resources"])
 
 
-def test_enterprise_resource_collector_dry_run_writes_planned_manifest(tmp_path: Path) -> None:
-    project_root = Path(__file__).resolve().parents[1]
+def test_enterprise_resource_collector_dry_run_writes_planned_manifest(tmp_path: Path, synthetic_source_project: Path) -> None:
+    project_root = synthetic_source_project
     data_root = tmp_path / "external-data"
     report = EnterpriseResourceCollector(
         project_root=project_root,
@@ -76,8 +76,8 @@ def test_enterprise_resource_collector_refuses_repo_data_root() -> None:
         ).collect(dry_run=True)
 
 
-def test_enterprise_resource_auditor_validates_snapshot_hash_and_coverage(tmp_path: Path) -> None:
-    project_root = Path(__file__).resolve().parents[1]
+def test_enterprise_resource_auditor_validates_snapshot_hash_and_coverage(tmp_path: Path, synthetic_source_project: Path) -> None:
+    project_root = synthetic_source_project
     data_root = tmp_path / "external-data"
     root = data_root / "research_resources"
     snapshot = root / "snapshots" / "test_class" / "test-resource" / "snapshot.txt"

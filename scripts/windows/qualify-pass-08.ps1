@@ -52,7 +52,7 @@ try {
     $InstalledPy = Join-Path $Isolated "Scripts\python.exe"
     Invoke-Checked "wheel-dependencies" $InstalledPy @("-m", "pip", "install", ($Wheel.FullName + "[api]"))
     Invoke-Checked "wheel-pip-check" $InstalledPy @("-m", "pip", "check")
-    $JourneyArgs = @("scripts/qualify_nh_desktop.py", "--installed", "--python", $InstalledPy, "--work-dir", (Join-Path $Work "installed-journey"), "--output", (Join-Path $Work "installed-journey.json"))
+    $JourneyArgs = @("scripts/qualify_nh_desktop.py", "--installed", "--wheel", $Wheel.FullName, "--python", $InstalledPy, "--work-dir", (Join-Path $Work "installed-journey"), "--output", (Join-Path $Work "installed-journey.json"))
     if ($LiveBrowser) {
         Invoke-Checked "browser-tools" $Py @("-m", "pip", "install", "playwright")
         # Requires an already approved/installed Chromium browser on this host.
