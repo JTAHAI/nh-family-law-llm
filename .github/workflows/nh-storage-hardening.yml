@@ -37,7 +37,7 @@ jobs:
                   output.write(f'{key}={path}\n')
               output.write('PYTHONDONTWRITEBYTECODE=1\n')
       - name: Install declared dependencies and PDF test fixtures
-        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13" build wheel
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13" "setuptools>=69" "jsonschema>=4,<5" build wheel
       - name: Check dependency consistency
         run: python -m pip check
       - name: Record dependency versions
