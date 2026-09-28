@@ -45,6 +45,11 @@ jobs:
       - name: Vault, boundary, preview, local-agent and startup regressions
         run: >-
           python -m pytest
+          tests/test_pass02_provider_storage.py
+          tests/test_pass02_index_preflight.py
+          tests/test_provider_connections.py
+          tests/test_public_source_pre_push_gate_v191.py
+          tests/test_release_audits_read_only.py
           tests/test_pass01_vault_storage_hardening.py
           tests/test_pass01_deliberation_startup.py
           tests/test_matter_vault_encryption.py
@@ -55,6 +60,8 @@ jobs:
           --basetemp=dist/storage-hardening/pytest
           --junitxml=dist/storage-hardening/results.xml
           -ra --tb=short
+      - name: Verify exact staged source without deleting test artifacts
+        run: python scripts/run-public-source-preflight.py --index --require-ready --output dist/storage-hardening/public-source-index.json
       - name: Preserve compact engineering evidence only
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,5 +70,6 @@ jobs:
           path: |
             dist/storage-hardening/results.xml
             dist/storage-hardening/dependencies.json
+            dist/storage-hardening/public-source-index.json
           if-no-files-found: warn
           retention-days: 14

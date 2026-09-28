@@ -9,6 +9,7 @@ from fastapi import APIRouter, Header, HTTPException, Request
 from app.api.security import review_response
 from legal.provider_connections import ProviderConnectionService
 from legal.provider_connections.service import ProviderConnectionError
+from legal.provider_connections.store import ProviderStoreRootError
 from legal.security.local_request_firewall import evaluate_local_request
 
 router = APIRouter(tags=["providers"])
@@ -43,7 +44,15 @@ def _project_root() -> Path:
 def _service() -> ProviderConnectionService:
     project_root = _project_root()
     store_root = os.environ.get("NHFL_PROVIDER_STORE_ROOT") or None
-    return ProviderConnectionService(project_root=project_root, store_root=store_root)
+    try:
+        return ProviderConnectionService(project_root=project_root, store_root=store_root)
+    except (ProviderStoreRootError, OSError, ValueError) as exc:
+        # Missing or rejected storage is not permission to use another path.
+        # Keep filesystem details out of the browser and permit explicit recovery.
+        raise HTTPException(
+            status_code=503,
+            detail={"error": "provider_storage_unavailable", "review_required": True},
+        ) from exc
 
 
 def _handle_error(exc: ProviderConnectionError) -> HTTPException:

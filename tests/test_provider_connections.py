@@ -59,7 +59,7 @@ def _service(tmp_path: Path, transport=None) -> ProviderConnectionService:
     backend = FakeWin32Cred()
     store = WindowsCredentialStore(namespace="test-provider-store", backend=backend)  # type: ignore[arg-type]
     return ProviderConnectionService(
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
         store_root=tmp_path / "provider-store",
         credential_store=store,
         transport=transport,
@@ -402,7 +402,7 @@ def test_provider_routes_and_local_only_deliberation_do_not_call_transport(tmp_p
     service = _service(tmp_path, transport=transport)
     monkeypatch.setattr(provider_routes, "_service", lambda: service)
     monkeypatch.setattr(deliberation_routes, "PROVIDER_SERVICE", service)
-    host = DeliberationHost(project_root=ROOT, root=tmp_path / "deliberation")
+    host = DeliberationHost(project_root=tmp_path / "synthetic-project", root=tmp_path / "deliberation")
     monkeypatch.setattr(deliberation_routes, "HOST", host)
     client = TestClient(app)
 

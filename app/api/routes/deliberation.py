@@ -12,6 +12,7 @@ from legal.deliberation.external_root import DeliberationRootError
 from legal.deliberation.host import DeliberationHost, DeliberationHostError
 from legal.provider_connections import ProviderConnectionService
 from legal.provider_connections.service import ProviderConnectionError
+from legal.provider_connections.store import ProviderStoreRootError
 from legal.security.local_request_firewall import evaluate_local_request
 
 router = APIRouter(tags=["deliberation"])
@@ -19,7 +20,25 @@ router = APIRouter(tags=["deliberation"])
 # default must not crash import of the production gateway or other local tools.
 HOST: DeliberationHost | None = None
 _HOST_LOCK = threading.Lock()
-PROVIDER_SERVICE = ProviderConnectionService(project_root=Path(__file__).resolve().parents[3], store_root=os.environ.get("NHFL_PROVIDER_STORE_ROOT") or None)
+PROVIDER_SERVICE: ProviderConnectionService | None = None
+_PROVIDER_LOCK = threading.Lock()
+
+
+def _get_provider_service() -> ProviderConnectionService:
+    global PROVIDER_SERVICE
+    with _PROVIDER_LOCK:
+        if PROVIDER_SERVICE is None:
+            try:
+                PROVIDER_SERVICE = ProviderConnectionService(
+                    project_root=Path(__file__).resolve().parents[3],
+                    store_root=os.environ.get("NHFL_PROVIDER_STORE_ROOT") or None,
+                )
+            except (ProviderStoreRootError, OSError, ValueError) as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail={"error": "provider_storage_unavailable", "review_required": True},
+                ) from exc
+        return PROVIDER_SERVICE
 
 
 def _get_host() -> DeliberationHost:
@@ -113,7 +132,7 @@ def cancel_run(run_id: str, payload: dict[str, Any], request: Request, x_user_ro
     _enforce_local_request(request)
     try:
         host_result = _get_host().cancel_run(run_id, payload)
-        provider_result = PROVIDER_SERVICE.cancel(run_id)
+        provider_result = _get_provider_service().cancel(run_id)
     except DeliberationHostError as exc:
         raise _handle_error(exc) from exc
     except ProviderConnectionError as exc:
@@ -160,7 +179,7 @@ def outbound_preview(
             "allowed_tools": list(payload.get("allowed_tools") or scope.get("allowed_tools") or []),
             "retention_data_control_summary": str(payload.get("retention_data_control_summary") or "BYOK provider retention stays under the provider's own policy surface."),
         }
-        manifest = PROVIDER_SERVICE.build_manifest(run_id=run_id, provider_id=str(payload.get("provider_id") or ""), payload=preview_payload)
+        manifest = _get_provider_service().build_manifest(run_id=run_id, provider_id=str(payload.get("provider_id") or ""), payload=preview_payload)
     except DeliberationHostError as exc:
         raise _handle_error(exc) from exc
     except ProviderConnectionError as exc:
@@ -185,7 +204,7 @@ def approve_outbound(
     manifest_id = str(payload.get("manifest_id") or "").strip()
     actor = str(payload.get("approval_actor") or x_user_role or "reviewer")
     try:
-        approval = PROVIDER_SERVICE.approve_manifest(manifest_id, actor=actor, run_id=run_id)
+        approval = _get_provider_service().approve_manifest(manifest_id, actor=actor, run_id=run_id)
     except ProviderConnectionError as exc:
         raise _handle_provider_error(exc) from exc
     except KeyError as exc:
@@ -207,7 +226,7 @@ def start_external(
     _enforce_local_request(request)
     manifest_id = str(payload.get("manifest_id") or "").strip()
     try:
-        result = PROVIDER_SERVICE.start_external(manifest_id, run_id=run_id)
+        result = _get_provider_service().start_external(manifest_id, run_id=run_id)
     except ProviderConnectionError as exc:
         raise _handle_provider_error(exc) from exc
     except KeyError as exc:
@@ -222,7 +241,7 @@ def start_external(
 @router.get("/deliberation/runs/{run_id}/usage", summary="Fetch provider usage for a run")
 def usage(run_id: str, request: Request, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
     _enforce_local_request(request)
-    result = PROVIDER_SERVICE.usage(run_id)
+    result = _get_provider_service().usage(run_id)
     return review_response("GET /api/deliberation/runs/{run_id}/usage", "deliberation_run_usage", result)
 
 

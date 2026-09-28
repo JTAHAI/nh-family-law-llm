@@ -18,10 +18,20 @@ def main() -> int:
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument("--output", type=Path, default=Path("docs/external-evidence/public_source_pre_push_gate_v193.json"))
     parser.add_argument("--require-ready", action="store_true")
+    parser.add_argument(
+        "--index", action="store_true",
+        help="Audit every blob in the exact Git index, preserving ignored working artifacts.",
+    )
     args = parser.parse_args()
 
-    report = write_pre_push_gate(args.repo_root, args.output)
-    payload = report.as_dict()
+    if args.index:
+        from legal.release.index_preflight import audit_index_source
+        payload = audit_index_source(args.repo_root)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    else:
+        report = write_pre_push_gate(args.repo_root, args.output)
+        payload = report.as_dict()
     print(json.dumps(payload, indent=2, sort_keys=True))
     if args.require_ready and payload["status"] != "pass":
         return 1

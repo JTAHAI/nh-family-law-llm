@@ -1,24 +1,36 @@
 name: CI
 on:
   pull_request:
+    branches: [master]
   push:
-    branches: [main]
+    branches: [master, 'hardening/**']
+permissions:
+  contents: read
 jobs:
   hygiene-and-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Local doctor
-        run: python scripts/doctor-local-repo.py --repo-root . --json
-      - name: Public source pre-push gate
-        run: python scripts/run-public-source-preflight.py --repo-root . --require-ready --output docs/external-evidence/public_source_pre_push_gate_ci.json
-      - name: Install
-        run: python -m pip install ".[api,dev]"
-      - name: Remove package build artifacts
-        run: python scripts/clean-local-artifacts.py --repo-root . --json
+      - name: Prepare repository-owned test workspace
+        run: |
+          mkdir -p dist/ci/tmp dist/ci/profile dist/ci/cache
+          echo "TMPDIR=$GITHUB_WORKSPACE/dist/ci/tmp" >> "$GITHUB_ENV"
+          echo "HOME=$GITHUB_WORKSPACE/dist/ci/profile" >> "$GITHUB_ENV"
+          echo "PIP_CACHE_DIR=$GITHUB_WORKSPACE/dist/ci/cache" >> "$GITHUB_ENV"
+          echo "NHFL_VAULT_KEY_ROOT=$GITHUB_WORKSPACE/dist/ci/profile/vault" >> "$GITHUB_ENV"
+          echo "PYTHONDONTWRITEBYTECODE=1" >> "$GITHUB_ENV"
+      - name: Install declared API and test dependencies
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13"
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Source snapshot gate including doctor-local-repo.py
+        run: python scripts/run-public-source-preflight.py --repo-root . --index --require-ready --output dist/ci/public-source-index.json
       - name: Offline dependency floor gate
         run: python scripts/check-dependency-security.py --strict-optional
       - name: Current advisory audit
@@ -26,7 +38,7 @@ jobs:
       - name: Quality-check command contract
         run: python -m py_compile scripts/run-quality-checks.py
       - name: Chat library evidence
-        run: python scripts/run-chat-library-evidence.py --require-ready --output docs/external-evidence/chat_library_workbench_evidence_ci.json
+        run: python scripts/run-chat-library-evidence.py --require-ready --output dist/ci/chat-library.json
       - name: Targeted tests
         run: >-
           python -m pytest -q
@@ -49,3 +61,17 @@ jobs:
           tests/test_v510_knowledge_bundle.py
           tests/test_v510_docx_media_and_skill_package.py
           tests/test_v510_ingestion_integration.py
+          --basetemp=dist/ci/pytest
+          --junitxml=dist/ci/results.xml
+          -ra --tb=short
+      - name: Preserve compact CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-general-ci-${{ github.sha }}
+          path: |
+            dist/ci/public-source-index.json
+            dist/ci/chat-library.json
+            dist/ci/results.xml
+          if-no-files-found: warn
+          retention-days: 14
