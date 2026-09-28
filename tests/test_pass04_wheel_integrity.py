@@ -21,7 +21,7 @@ DIST = 'nh_family_law_llm-8.0.10.dist-info'
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def write_wheel(path, payload, *, repair_record=True):
+def write_wheel(path, payload, *, repair_record=True, wire_names=None):
     payload = dict(payload)
     if repair_record:
         stream = io.StringIO(newline='')
@@ -35,7 +35,13 @@ def write_wheel(path, payload, *, repair_record=True):
         payload[DIST + '/RECORD'] = stream.getvalue().encode()
     with zipfile.ZipFile(path, 'w', zipfile.ZIP_DEFLATED) as archive:
         for name, raw in payload.items():
-            archive.writestr(name, raw)
+            # Negative fixtures must retain their exact wire name on Windows
+            # too. ZipInfo's constructor normalizes backslashes and truncates
+            # NULs, so assign the deliberately unsafe name after construction.
+            info = zipfile.ZipInfo()
+            info.filename = info.orig_filename = (wire_names or {}).get(name, name)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(info, raw)
     return path
 
 
@@ -110,6 +116,34 @@ def test_unsafe_archive_paths_are_never_accepted(candidate, name):
     source, wheel, files = candidate
     files[name] = b'fictional'
     write_wheel(wheel, files)
+    assert integrity.audit_wheel(wheel, source_root=source)['blockers'] == ['unsafe_wheel_path']
+
+
+
+@pytest.mark.parametrize('wire_name', [
+    r'nh_family_law_llm\__init__.py',
+    'nh_family_law_llm/__init__.py\x00hidden',
+])
+def test_raw_archive_alias_cannot_hide_behind_normalized_name(candidate, monkeypatch, wire_name):
+    source, wheel, files = candidate
+    canonical = 'nh_family_law_llm/__init__.py'
+    original_info = zipfile.ZipInfo
+
+    class WindowsNormalizedInfo(original_info):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Exercise Windows filename normalization on every test host;
+            # orig_filename retains the actual central-directory name.
+            self.filename = self.filename.replace('\\', '/')
+
+    monkeypatch.setattr(zipfile, 'ZipInfo', WindowsNormalizedInfo)
+    write_wheel(wheel, files, wire_names={canonical: wire_name})
+    with zipfile.ZipFile(wheel) as archive:
+        info = next(item for item in archive.infolist() if item.orig_filename == wire_name)
+        assert info.filename == canonical
+        assert archive.read(info) == files[canonical]
+    # RECORD and payload bytes are otherwise correct. It is the original
+    # member name, not a checksum discrepancy, that must prevent acceptance.
     assert integrity.audit_wheel(wheel, source_root=source)['blockers'] == ['unsafe_wheel_path']
 
 

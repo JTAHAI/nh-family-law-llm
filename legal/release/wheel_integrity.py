@@ -75,8 +75,12 @@ def _read_wheel(wheel: Path) -> tuple[dict[str, bytes], str, Any, str]:
         _require(0 < len(entries) <= MAX_MEMBERS, 'wheel_member_count_invalid')
         _require(sum(info.file_size for info in entries) <= MAX_EXPANDED_BYTES, 'wheel_expansion_limit')
         for info in entries:
-            name = info.filename
+            # ZipInfo may normalize Windows separators or truncate a NUL.
+            # Validate the original central-directory name before accepting
+            # the normalized lookup name, even with a self-consistent RECORD.
+            name = info.orig_filename
             _safe_name(name)
+            _require(name == info.filename, 'unsafe_wheel_path')
             _require(not name.lower().endswith(('.pfx', '.p12', '.pvk', '.snk', '.ttf', '.otf', '.woff', '.woff2')), 'private_key_or_font_in_wheel')
             _require(name.casefold() not in seen, 'duplicate_wheel_member')
             seen.add(name.casefold())
