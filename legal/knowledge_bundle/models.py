@@ -12,8 +12,11 @@ class KnowledgeBundleError(ValueError):
 
 
 def parse_concept_id(value: str) -> tuple[str, ...]:
-    parts = tuple(part for part in value.split("/") if part)
-    if not parts:
+    if not isinstance(value, str):
+        raise KnowledgeBundleError("concept id must be a string")
+    # Do not silently alias /a, a/, or a//b to another identifier.
+    parts = tuple(value.split("/"))
+    if not value or any(not part for part in parts):
         raise KnowledgeBundleError("empty concept id")
     for part in parts:
         if not _CONCEPT_SEGMENT_RE.fullmatch(part):

@@ -88,6 +88,8 @@ class RetrievalPipeline:
         top_k: int = 10,
         include_text: bool = True,
     ) -> dict[str, Any]:
+        if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k <= 0:
+            raise ValueError("top_k must be a positive integer")
         search_documents = coerce_many(tuple(documents)) if documents is not None else self.documents
         candidate_limit = max(top_k, min(max(top_k * 4, 12), 80))
         results: list[RetrievalResult] = self.hybrid_search.search(query, search_documents, top_k=candidate_limit)
