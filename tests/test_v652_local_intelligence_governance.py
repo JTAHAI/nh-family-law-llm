@@ -106,7 +106,7 @@ def test_runtime_adapter_reports_contract_and_refuses_unsafe_configuration():
 
 def test_control_center_dashboard_surfaces_registry_storage_history_and_runtime_contract(tmp_path):
     center = ModelControlCenter(
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
         role_catalog_path=ROOT / "configs" / "nh_model_roles.json",
         admission_policy_path=ROOT / "configs" / "nh_model_admission_policy.json",
         registry_seed_path=ROOT / "configs" / "nh_model_registry.seed.json",
@@ -126,10 +126,10 @@ def test_control_center_dashboard_surfaces_registry_storage_history_and_runtime_
 
 
 def test_control_center_benchmark_quarantine_and_api_surface(tmp_path, monkeypatch):
-    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(ROOT))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(tmp_path / "synthetic-project"))
     monkeypatch.setenv("NHFL_MODEL_STORE_ROOT", str(tmp_path / "model-store"))
     center = ModelControlCenter(
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
         role_catalog_path=ROOT / "configs" / "nh_model_roles.json",
         admission_policy_path=ROOT / "configs" / "nh_model_admission_policy.json",
         registry_seed_path=ROOT / "configs" / "nh_model_registry.seed.json",
@@ -178,7 +178,7 @@ def test_control_center_benchmark_quarantine_and_api_surface(tmp_path, monkeypat
 
 def test_control_center_routing_supports_explicit_fallback_modes(tmp_path):
     center = ModelControlCenter(
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
         role_catalog_path=ROOT / "configs" / "nh_model_roles.json",
         admission_policy_path=ROOT / "configs" / "nh_model_admission_policy.json",
         registry_seed_path=ROOT / "configs" / "nh_model_registry.seed.json",

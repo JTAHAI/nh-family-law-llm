@@ -34,6 +34,8 @@ def main():
       'nh_family_law_llm/resources/brand-kit/css/tokens.css',
       'nh_family_law_llm/resources/brand-kit/assets/favicon/favicon.svg',
       'nh_family_law_llm/resources/runtime/configs/nh_deliberation_state_machine.json',
+      'nh_family_law_llm/resources/runtime/configs/nh_model_roles.json',
+      'nh_family_law_llm/resources/runtime/configs/nh_model_admission_policy.json',
       'nh_family_law_llm/resources/runtime/configs/release_feature_truth.json',
       'nh_family_law_llm/resources/runtime/configs/v8010_release_scope.json',
       'nh_family_law_llm/data/authority_snapshot/manifest/nh_authorities.json',

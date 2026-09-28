@@ -7,7 +7,11 @@ from typing import Any
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.api.security import review_response
+from app.api.release_boundary import official_authority_required
 from legal.model_orchestration import AdaptiveRuntimePlanner, ModelControlCenter
+from legal.model_orchestration.hardware import profile_hardware
+from legal.model_orchestration.store import ModelStoreRootError
+from nh_family_law_llm.runtime_resources import runtime_config_path
 from legal.security.local_request_firewall import evaluate_local_request
 from nh_family_law_llm.prose_sentinel import prepare_training_admission
 from nh_family_law_llm.runtime_kernel import ACTIVE_STATUSES, get_runtime_kernel
@@ -44,13 +48,24 @@ def _project_root() -> Path:
 def _center() -> ModelControlCenter:
     project_root = _project_root()
     model_store_root = os.environ.get("NHFL_MODEL_STORE_ROOT") or None
-    return ModelControlCenter(
-        project_root=project_root,
-        role_catalog_path=project_root / "configs" / "nh_model_roles.json",
-        admission_policy_path=project_root / "configs" / "nh_model_admission_policy.json",
-        registry_seed_path=project_root / "configs" / "nh_model_registry.seed.json",
-        store_root=model_store_root,
-    )
+    try:
+        return ModelControlCenter(
+            project_root=project_root,
+            role_catalog_path=runtime_config_path("nh_model_roles.json"),
+            admission_policy_path=runtime_config_path("nh_model_admission_policy.json"),
+            # Historical seed records are development examples, not independent
+            # model admission. Never bootstrap them from a production request.
+            registry_seed_path=(None if official_authority_required() else
+                                project_root / "configs" / "nh_model_registry.seed.json"),
+            store_root=model_store_root,
+        )
+    except (ModelStoreRootError, OSError, ValueError, TypeError, KeyError) as exc:
+        # Do not leak private filesystem paths or recover using another store.
+        raise HTTPException(
+            status_code=503,
+            detail={"error": "model_control_unavailable", "review_required": True},
+        ) from exc
+
 
 
 def _sanitize_payload(value: Any) -> Any:
@@ -249,7 +264,8 @@ def hardware_profile(
 ):
     _enforce_local_request(request)
     _require_role(x_user_role)
-    payload = _center().refresh_hardware()
+    # Inventory does not need a model registry and must not create one.
+    payload = profile_hardware(_project_root()).as_dict()
     return review_response(
         "GET /api/hardware/profile", "hardware_profile", _sanitize_payload(payload)
     )
@@ -281,7 +297,7 @@ def routing_status(
     payload = _center().routing_status(
         task=task,
         preferred_model_id=preferred_model_id,
-        require_production=require_production,
+        require_production=official_authority_required() or require_production,
         fallback_mode=fallback_mode,
     )
     return review_response(
@@ -311,7 +327,7 @@ def adaptive_runtime_plan(
         requested_context_tokens=int(payload.get("context_tokens") or 0),
         requested_concurrency=int(payload.get("concurrency") or 1),
         active_model_jobs=active_jobs,
-        require_production=bool(payload.get("require_production", False)),
+        require_production=official_authority_required() or bool(payload.get("require_production", False)),
     )
     return review_response(
         "POST /api/model-runtime/plan",

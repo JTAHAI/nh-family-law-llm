@@ -17,7 +17,7 @@ def _headers() -> dict[str, str]:
 
 
 def test_external_model_store_layout_is_outside_repo_and_creates_control_center_root(tmp_path):
-    layout = external_model_store_layout(tmp_path / "model-store", project_root=ROOT, create=True)
+    layout = external_model_store_layout(tmp_path / "model-store", project_root=tmp_path / "synthetic-project", create=True)
     assert layout.root == (tmp_path / "model-store").resolve()
     assert layout.registry.is_dir()
     assert layout.artifacts.is_dir()
@@ -30,7 +30,7 @@ def test_model_registry_supports_rich_metadata_and_file_backed_admission(tmp_pat
         catalog,
         ROOT / "configs" / "nh_model_admission_policy.json",
         storage_root=tmp_path / "model-store",
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
     )
     record = ModelAdmissionRecord(
         model_id="local-draft-002",
@@ -66,7 +66,7 @@ def test_model_registry_supports_rich_metadata_and_file_backed_admission(tmp_pat
         catalog,
         ROOT / "configs" / "nh_model_admission_policy.json",
         storage_root=tmp_path / "model-store",
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
     )
     assert loaded.get_record("local-draft-002").display_name == "Local Draft Generator"
     assert loaded.get_record("local-draft-002").supports_cancellation is True
@@ -74,7 +74,7 @@ def test_model_registry_supports_rich_metadata_and_file_backed_admission(tmp_pat
 
 def test_model_control_center_reports_hardware_and_safe_fallback(tmp_path):
     center = ModelControlCenter(
-        project_root=ROOT,
+        project_root=tmp_path / "synthetic-project",
         role_catalog_path=ROOT / "configs" / "nh_model_roles.json",
         admission_policy_path=ROOT / "configs" / "nh_model_admission_policy.json",
         registry_seed_path=ROOT / "configs" / "nh_model_registry.seed.json",
@@ -92,7 +92,7 @@ def test_model_control_center_reports_hardware_and_safe_fallback(tmp_path):
 
 
 def test_model_control_center_routes_and_api_surface_are_registered(monkeypatch, tmp_path):
-    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(ROOT))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(tmp_path / "synthetic-project"))
     monkeypatch.setenv("NHFL_MODEL_STORE_ROOT", str(tmp_path / "model-store"))
     client = TestClient(app)
 

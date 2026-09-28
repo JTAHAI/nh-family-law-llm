@@ -198,7 +198,8 @@ def test_shipped_runtime_configs_match_source_bytes():
     from nh_family_law_llm.runtime_resources import runtime_config_path
     folder = ROOT / 'src/nh_family_law_llm/resources/runtime/configs'
     names = sorted(p.name for p in folder.glob('*.json'))
-    assert len(names) == 19
+    assert len(names) == 21
+    assert {"nh_model_roles.json", "nh_model_admission_policy.json"}.issubset(names)
     for name in names:
         assert (folder / name).read_bytes() == (ROOT / 'configs' / name).read_bytes()
         assert runtime_config_path(name) == ROOT / 'configs' / name

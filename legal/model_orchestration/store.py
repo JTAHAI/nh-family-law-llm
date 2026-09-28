@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -47,7 +48,7 @@ def _contains_forbidden_segment(path: Path, forbidden: Iterable[str]) -> str:
     for candidate in forbidden:
         folded = candidate.casefold()
         for part in parts:
-            if folded == part or folded in part or part in folded:
+            if folded == part or folded in part:
                 return candidate
     return ""
 
@@ -63,6 +64,27 @@ def default_external_model_root(project_root: str | Path = ".") -> Path:
     return Path.home() / ".codex" / DEFAULT_MODEL_DIRNAME / namespace
 
 
+def _reject_linked_path(path: Path) -> None:
+    """Check lexical ancestors before resolution can hide a link or junction."""
+    for component in (path, *path.parents):
+        try:
+            metadata = component.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError as exc:
+            raise ModelStoreRootError(
+                "model_store_unavailable", "The model store cannot be inspected."
+            ) from exc
+        reparse = getattr(metadata, "st_file_attributes", 0) & getattr(
+            stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400
+        )
+        if stat.S_ISLNK(metadata.st_mode) or reparse:
+            raise ModelStoreRootError(
+                "model_store_symlink_refused",
+                "The model store and its ancestors cannot be links or reparse points.",
+            )
+
+
 def resolve_external_model_root(
     configured: str | Path | None,
     *,
@@ -70,42 +92,30 @@ def resolve_external_model_root(
     create: bool = False,
 ) -> Path:
     project = Path(project_root).resolve()
-    if configured is None or not str(configured).strip():
-        candidate = default_external_model_root(project)
-        if create:
-            candidate.mkdir(parents=True, exist_ok=True)
-        return candidate
-
-    raw = str(configured).strip()
+    raw = str(configured).strip() if configured is not None else ""
+    if not raw:
+        # Choosing a default is not approval to bypass the storage policy.
+        raw = str(default_external_model_root(project))
     if _looks_like_traversal(raw):
         raise ModelStoreRootError(
-            "model_store_path_traversal",
-            "The model store root path contains a traversal segment.",
+            "model_store_path_traversal", "The model store path contains traversal."
         )
-
-    path = Path(raw).expanduser()
-    if path.exists() and path.is_symlink():
-        raise ModelStoreRootError(
-            "model_store_symlink_refused",
-            "The model store root cannot be a symlink.",
-        )
-
+    path = Path(raw).expanduser().absolute()
+    _reject_linked_path(path)
     try:
-        candidate = _safe_external_root(path, repo_root=project, create=create)
+        candidate = _safe_external_root(
+            path, repo_root=project, forbidden_roots=(project,), create=False
+        )
     except ReleasePilotHardeningError as exc:
         raise ModelStoreRootError(exc.code, str(exc), status_code=exc.status_code) from exc
-
-    forbidden = _contains_forbidden_segment(candidate, FORBIDDEN_SEGMENTS)
-    if forbidden:
+    if candidate is None:
+        raise ModelStoreRootError("model_store_unavailable", "A model store is required.")
+    if _contains_forbidden_segment(candidate, FORBIDDEN_SEGMENTS):
         raise ModelStoreRootError(
             "model_store_inside_forbidden_root",
-            f"The model store root cannot live inside forbidden directory segment: {forbidden}.",
+            "The model store cannot live in a protected directory.",
         )
-    if candidate.exists() and candidate.is_symlink():
-        raise ModelStoreRootError(
-            "model_store_symlink_refused",
-            "The model store root cannot be a symlink.",
-        )
+    _reject_linked_path(path)
     if create:
         candidate.mkdir(parents=True, exist_ok=True)
     return candidate
@@ -152,7 +162,7 @@ class ModelStoreLayout:
         return self.root / "routing"
 
     def ensure(self) -> None:
-        for path in (
+        paths = (
             self.registry,
             self.artifacts,
             self.runtime_profiles,
@@ -162,7 +172,11 @@ class ModelStoreLayout:
             self.cache,
             self.quarantine,
             self.routing,
-        ):
+        )
+        # Validate all existing children before creating any layout directory.
+        for path in paths:
+            _reject_linked_path(path)
+        for path in paths:
             path.mkdir(parents=True, exist_ok=True)
 
 

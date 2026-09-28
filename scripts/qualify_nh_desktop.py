@@ -63,6 +63,7 @@ def main():
     env['PYTHONDONTWRITEBYTECODE']='1'
     env['NHFL_PROJECT_ROOT']=str(work/'empty-project') if args.installed else str(ROOT)
     env['NHFL_RUNTIME_MODE']='source'
+    env['NHFL_MODEL_STORE_ROOT']=str(work/'model-store')
     records=[];launches=[];errors=[];browser_record={'status':'not_run'}
     source_prefix='' if args.installed else f'import sys; sys.path.insert(0,{str(ROOT)!r}); sys.path.insert(0,{str(ROOT / "src")!r}); '
     probe=source_prefix+'''import json, nh_family_law_llm; from nh_family_law_llm.authority_snapshot import default_manifest_path; from nh_family_law_llm.version import VERSION; print(json.dumps({'module':nh_family_law_llm.__file__,'manifest':str(default_manifest_path()),'version':VERSION}))'''
@@ -110,9 +111,24 @@ def main():
                 assert int(observed.get('x-nhfl-service-pid','0'))==launch['pid']
                 launches.append({'cycle':cycle,'instance_id':launch['instance_id'],'pid':process.pid,'startup_seconds':round(time.monotonic()-start,3)})
                 paths=['/', '/nh-review','/api/runtime/ui-manifest','/api/runtime/release-scope','/ui-assets/nh-review.js','/ui-assets/nh-review.css','/ui-assets/brand/nh-banner.png','/brand-assets/assets/favicon/favicon.svg',f'/api/nh-review/status?as_of_date={AS_OF}']
+                paths.append('/api/hardware/profile')
+                if args.installed:
+                    paths.extend(['/api/models', '/api/model-routing/status?require_production=false'])
                 for path in paths:
                     status,resp_headers,raw=request(origin,path)
                     assert status==200,(path,status,raw[:300])
+                    if path == '/api/hardware/profile':
+                        hardware=json.loads(raw)
+                        assert hardware['logical_cpu_count'] >= 1 and hardware['review_required'] is True
+                    if path == '/api/models':
+                        models=json.loads(raw)
+                        assert models['model_count'] == 0 and models['models'] == []
+                        assert models['review_required'] is True
+                    if path.startswith('/api/model-routing/status'):
+                        routing=json.loads(raw)
+                        assert routing['selected_model_id'] is None
+                        assert routing['status'] == 'fallback_review_required'
+                        assert routing['review_required'] is True
                     if path == '/api/runtime/release-scope':
                         ledger=json.loads(raw)
                         assert ledger['store_feature_claim_eligible'] is False
