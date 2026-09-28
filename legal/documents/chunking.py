@@ -34,6 +34,8 @@ def chunk_text(
     if overlap_chars < 0 or overlap_chars >= max_chars:
         raise ValueError("overlap_chars must be non-negative and less than max_chars")
 
+    # Offsets always refer to the caller's original string, not a stripped copy.
+    base_offset = len(text) - len(text.lstrip())
     chunks: list[LegalChunk] = []
     cursor = 0
     while cursor < len(clean_text):
@@ -45,18 +47,21 @@ def chunk_text(
             if split_at > cursor + max_chars // 3:
                 target_end = split_at + (2 if split_at == paragraph_break else 1)
 
-        chunk_body = clean_text[cursor:target_end].strip()
+        window = clean_text[cursor:target_end]
+        chunk_body = window.strip()
         if chunk_body:
+            start_offset = base_offset + cursor + len(window) - len(window.lstrip())
+            end_offset = base_offset + target_end - (len(window) - len(window.rstrip()))
             chunks.append(
                 LegalChunk(
-                    chunk_id=_stable_chunk_id(document_id, cursor, chunk_body),
+                    chunk_id=_stable_chunk_id(document_id, start_offset, chunk_body),
                     parent_document_id=document_id,
                     source_location=SourceLocation(
                         source_id=source_id,
                         url_or_path=url_or_path,
                         parent_id=document_id,
-                        start_offset=cursor,
-                        end_offset=target_end,
+                        start_offset=start_offset,
+                        end_offset=end_offset,
                     ),
                     text=chunk_body,
                     citation=citation,

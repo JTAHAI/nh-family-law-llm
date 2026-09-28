@@ -18,7 +18,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from nh_family_law_llm.api import AskRequest, ask  # noqa: E402
-from nh_family_law_llm.chat_library import get_chat_library, public_missing_information_prompts, public_prompt_packs, public_topics  # noqa: E402
+from nh_family_law_llm.chat_library import legacy_content_audit, get_chat_library, public_missing_information_prompts, public_prompt_packs, public_topics  # noqa: E402
 from nh_family_law_llm.local_workbench_ui import render_local_workbench_html  # noqa: E402
 
 
@@ -241,9 +241,16 @@ def main() -> int:
     if any(pack.get("prompt_count", 0) < 5 for pack in prompt_packs):
         blockers.append("starter_pack_prompt_count_too_small")
 
+    legacy_audit = legacy_content_audit()
+    blockers.extend(legacy_audit["blockers"])
+
     report = {
+        "scope": "development_fixture_chat_and_ui_only",
+        "production_legal_ready": False,
+        "attorney_reviewed": False,
+        "legacy_content_audit": legacy_audit,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "schema_version": "chat_library_workbench_evidence_v4",
+        "schema_version": "chat_library_workbench_evidence_v5",
         "status": "pass" if not blockers else "blocked",
         "blockers": blockers,
         "library_count": len(library),

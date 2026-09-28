@@ -7,6 +7,8 @@ LLM memory: the RSA § 1653(3) best-interest factors.
 
 from __future__ import annotations
 
+from app.api.release_boundary import official_authority_required
+
 from dataclasses import dataclass
 import re
 
@@ -71,6 +73,9 @@ def compose_best_interest_answer(
     *,
     answer_style: str = "plain_language",
 ) -> SpecialAnswer | None:
+    # This inherited enumeration has no approved NH promotion record.
+    if official_authority_required():
+        return None
     if not is_best_interest_question(question):
         return None
     supporting = tuple(result for result in retrieval_results if source_supports_best_interest(result))

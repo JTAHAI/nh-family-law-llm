@@ -45,6 +45,12 @@ jobs:
       - name: Vault, boundary, preview, local-agent and startup regressions
         run: >-
           python -m pytest
+          tests/test_canonical_document_model.py
+          tests/test_retrieval_stack_pass5.py
+          tests/test_v510_knowledge_bundle.py
+          tests/test_pass03_chat_quarantine.py
+          tests/test_pass03_ci_contract.py
+          tests/test_production_authority_lane_boundary.py
           tests/test_pass02_provider_storage.py
           tests/test_pass02_index_preflight.py
           tests/test_provider_connections.py
