@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -11,10 +12,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _run_script(script: str, *args: str | Path) -> subprocess.CompletedProcess[str]:
+def _run_script(
+    script: str, *args: str | Path, project_root: Path | None = None
+) -> subprocess.CompletedProcess[str]:
+    # An explicit synthetic checkout gives this CLI its real source-root
+    # contract. Copy only the exact script and its policy; never patch the
+    # production validator or add a test-only bypass to a shipped CLI.
+    checkout = project_root or ROOT
+    if project_root is not None:
+        for name in (f"scripts/{script}", "configs/nh_authority_build_policy.json"):
+            target = checkout / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            raw = (ROOT / name).read_bytes()
+            target.write_bytes(raw)
+            assert target.read_bytes() == raw
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.pathsep.join((str(ROOT), str(ROOT / "src")))
     return subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / script), *map(str, args)],
-        cwd=ROOT,
+        [sys.executable, str(checkout / "scripts" / script), *map(str, args)],
+        cwd=checkout,
+        env=env,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -51,7 +68,9 @@ def test_audit_authority_build_cli_fails_closed_when_manifest_missing(tmp_path: 
     assert "manifest_missing" in payload["blockers"]
 
 
-def test_audit_authority_build_cli_allows_valid_external_build(tmp_path: Path):
+def test_audit_authority_build_cli_allows_valid_external_build(
+    tmp_path: Path, synthetic_source_project: Path
+):
     official_store = tmp_path / "official_authority_store"
     manifest = []
     # A ready fixture must satisfy the active catalog-aligned policy, not a
@@ -73,7 +92,8 @@ def test_audit_authority_build_cli_allows_valid_external_build(tmp_path: Path):
             )
     (official_store / "source_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
-    result = _run_script("audit-authority-build.py", "--data-root", tmp_path)
+    result = _run_script("audit-authority-build.py", "--data-root", tmp_path,
+                         project_root=synthetic_source_project)
 
     assert result.returncode == 0, result.stdout + result.stderr
     payload = json.loads(result.stdout)

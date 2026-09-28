@@ -45,6 +45,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--python', default=sys.executable)
     parser.add_argument('--installed', action='store_true')
+    parser.add_argument('--wheel', type=Path, help='Exact source-verified wheel; required for --installed')
     parser.add_argument('--browser', action='store_true')
     parser.add_argument('--work-dir', default=str(ROOT/'dist/pass08-source-e2e'))
     parser.add_argument('--output', default=str(ROOT/'artifacts/pass-08/source-e2e.json'))
@@ -67,13 +68,61 @@ def main():
     records=[];launches=[];errors=[];browser_record={'status':'not_run'}
     source_prefix='' if args.installed else f'import sys; sys.path.insert(0,{str(ROOT)!r}); sys.path.insert(0,{str(ROOT / "src")!r}); '
     probe=source_prefix+'''import json, nh_family_law_llm; from nh_family_law_llm.authority_snapshot import default_manifest_path; from nh_family_law_llm.version import VERSION; print(json.dumps({'module':nh_family_law_llm.__file__,'manifest':str(default_manifest_path()),'version':VERSION}))'''
-    import_probe=subprocess.run([args.python,'-I','-c',probe],cwd=work,env=env,capture_output=True,text=True,timeout=15)
-    if import_probe.returncode: raise RuntimeError('Import probe failed: '+import_probe.stderr)
-    probe_result=json.loads(import_probe.stdout.strip())
-    if args.installed:
-        assert 'site-packages' in probe_result['module'], probe_result
-        assert 'data/authority_snapshot/manifest' in Path(probe_result['manifest']).as_posix(), probe_result
-    expected_version=probe_result['version']
+    wheel_source=None;wheel_install=None;probe_result={};expected_version=None
+    try:
+        if not __debug__:
+            raise ValueError('qualification_assertions_disabled')
+        if args.installed:
+            if args.wheel is None:
+                raise ValueError('exact_wheel_required_for_installed_qualification')
+            sys.path.insert(0, str(ROOT))
+            from legal.release.wheel_integrity import audit_wheel
+            wheel = args.wheel.absolute()
+            wheel_source = audit_wheel(wheel, source_root=ROOT)
+            if wheel_source['status'] != 'pass':
+                raise ValueError('source_wheel_integrity_failed')
+            check=subprocess.run(
+                [args.python, '-I', str(ROOT/'legal/release/wheel_integrity.py'),
+                 '--installed', '--wheel', str(wheel),
+                 '--expected-sha256', wheel_source['wheel_sha256']],
+                cwd=work, env=env, capture_output=True, text=True, timeout=60)
+            wheel_install=json.loads(check.stdout)
+            if check.returncode or wheel_install['status'] != 'pass':
+                raise ValueError('installed_wheel_integrity_failed')
+        import_probe=subprocess.run([args.python,'-I','-c',probe],cwd=work,env=env,capture_output=True,text=True,timeout=30)
+        if import_probe.returncode:
+            raise ValueError('installed_import_probe_failed')
+        probe_result=json.loads(import_probe.stdout.strip())
+        if args.installed:
+            if 'site-packages' not in probe_result['module']:
+                raise ValueError('installed_module_origin_invalid')
+            if 'data/authority_snapshot/manifest' not in Path(probe_result['manifest']).as_posix():
+                raise ValueError('installed_manifest_origin_invalid')
+            if probe_result['version'] != wheel_source['package_version']:
+                raise ValueError('installed_probe_version_mismatch')
+        expected_version=probe_result['version']
+    except (OSError, ValueError, KeyError, subprocess.TimeoutExpired) as exc:
+        # Preserve a failed receipt even when no application process can start.
+        # Do not copy interpreter stderr or arbitrary filesystem paths into it.
+        report={'schema':'nhfl.pass08.desktop-qualification.v2','status':'fail',
+                'mode':'installed_wheel' if args.installed else 'source',
+                'version':expected_version,'import_probe':probe_result,
+                'wheel_source_integrity':wheel_source,'wheel_installed_integrity':wheel_install,
+                'launches':[],'checks':[],'browser':browser_record,
+                'errors':['prelaunch_qualification_failed:'+type(exc).__name__],
+                'uses_synthetic_input_only':True,'windows_binary_qualification':False,
+                'production_ready':False,'legal_review_verified':False}
+        if isinstance(exc, ValueError) and str(exc) in {
+            'qualification_assertions_disabled','exact_wheel_required_for_installed_qualification',
+            'source_wheel_integrity_failed','installed_wheel_integrity_failed',
+            'installed_import_probe_failed','installed_module_origin_invalid',
+            'installed_manifest_origin_invalid','installed_probe_version_mismatch',
+        }:
+            report['errors']=[str(exc)]
+        output.parent.mkdir(parents=True,exist_ok=True)
+        output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+        print(json.dumps({'status':'fail','errors':report['errors']}))
+        return 1
     for cycle in range(2):
         log=work/f'service-{cycle}.log'
         code=source_prefix+f'from nh_family_law_llm.cli import main; raise SystemExit(main(["desktop","--port","0","--data-root",{str(work / "runtime")!r}]))'
@@ -152,6 +201,24 @@ def main():
                 assert request(origin,'/api/legal-behavior/analyze',payload={'question':'x'},headers={'Origin':'https://other.example'})[0]==403
                 assert request(origin,'/api/legal-behavior/analyze',payload={'parenting':[]})[0]==422
                 records.append({'cycle':cycle,'check':'analysis_source_hash_origin_and_invalid_input','status':'pass'})
+                # Installed behavior must preserve the hardening passes too,
+                # not merely serve the historical review snapshot successfully.
+                status,_,raw=request(origin,'/api/question-library')
+                assert status==200
+                prompts=json.loads(raw)
+                assert prompts and all(item.get('answer')=='' and not item.get('next_steps')
+                    and item.get('content_status')=='prompt_only_legal_answer_quarantined'
+                    and item.get('review_required') is True for item in prompts)
+                status,_,raw=request(origin,'/ask',payload={
+                    'question':'FICTIONAL QA: What authority applies to a parenting order?',
+                    'search_mode':'nh_law'},headers={'X-Runtime-Mode':'source'})
+                assert status==200
+                unanswered=json.loads(raw)
+                assert unanswered['grounded'] is False and unanswered['citations']==[]
+                assert unanswered.get('review_required',True) is True
+                status,_,raw=request(origin,'/api/nh-review/status?as_of_date=2026-09-13')
+                assert status==200 and 'RSA 461-A:6' in json.loads(raw)['known_amendment_blocks']
+                records.append({'cycle':cycle,'check':'quarantine_no_fixture_fallback_and_currentness','status':'pass'})
                 if args.browser and cycle==0:
                     browser_record=run_browser(origin,work,output.parent)
             except Exception as exc:
@@ -168,7 +235,7 @@ def main():
         if process.poll() is None:errors.append('Owned child process did not stop')
     if len(launches)!=2:errors.append('Restart journey not completed')
     elif launches[0]['instance_id']==launches[1]['instance_id']:errors.append('Restart reused its service instance nonce')
-    report={'schema':'nhfl.pass08.desktop-qualification.v1','status':'pass' if not errors else 'fail','version':expected_version,'mode':'installed_wheel' if args.installed else 'source','import_probe':probe_result,'launches':launches,'checks':records,'browser':browser_record,'errors':errors,'uses_synthetic_input_only':True,'windows_binary_qualification':False}
+    report={'schema':'nhfl.pass08.desktop-qualification.v2','status':'pass' if not errors else 'fail','version':expected_version,'mode':'installed_wheel' if args.installed else 'source','import_probe':probe_result,'wheel_source_integrity':wheel_source,'wheel_installed_integrity':wheel_install,'production_ready':False,'legal_review_verified':False,'launches':launches,'checks':records,'browser':browser_record,'errors':errors,'uses_synthetic_input_only':True,'windows_binary_qualification':False}
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'status':report['status'],'mode':report['mode'],'checks':len(records),'launches':len(launches),'browser':browser_record.get('status'),'errors':errors},indent=2))
     return 0 if not errors else 1

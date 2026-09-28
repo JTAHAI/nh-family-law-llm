@@ -98,7 +98,9 @@ def test_gate_keeps_fully_supported_positive_control():
     assert FilingReadyGate().evaluate(_complete_payload())["filing_ready"] is True
 
 
-def test_desktop_api_preserves_partial_status_and_filing_blocker(tmp_path, monkeypatch):
+def test_desktop_api_preserves_partial_status_and_filing_blocker(
+    tmp_path, monkeypatch, synthetic_authority_services
+):
     from nh_family_law_llm.api import app
 
     root = _authority_root(tmp_path)

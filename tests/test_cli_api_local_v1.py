@@ -54,7 +54,7 @@ def test_cli_smoke_sources_ask_draft_and_doctor() -> None:
     assert "not filing-ready" in draft.stdout
 
 
-def test_api_endpoints_use_same_safety_and_sources() -> None:
+def test_api_endpoints_use_same_safety_and_sources(synthetic_authority_services) -> None:
     pytest.importorskip("fastapi")
     from nh_family_law_llm import api
 
