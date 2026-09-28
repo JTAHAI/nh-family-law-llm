@@ -24,7 +24,7 @@ _CONTENT_STATUS = "prompt_only_legal_answer_quarantined"
 _MARKERS = {
     "inherited_section_1653": re.compile(r"\b1653\b", re.I),
     "inherited_court_label": re.compile(r"\bsupreme\s+judicial\s+court\b", re.I),
-    "inherited_title_19a": re.compile(r"\b19[ -]a\b", re.I),
+    "inherited_foreign_title": re.compile(r"\b19[ -]a\b", re.I),
 }
 
 
