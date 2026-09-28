@@ -1,20 +1,41 @@
 from __future__ import annotations
 
 import os
+import threading
 from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.api.security import review_response
+from legal.deliberation.external_root import DeliberationRootError
 from legal.deliberation.host import DeliberationHost, DeliberationHostError
 from legal.provider_connections import ProviderConnectionService
 from legal.provider_connections.service import ProviderConnectionError
 from legal.security.local_request_firewall import evaluate_local_request
 
 router = APIRouter(tags=["deliberation"])
-HOST = DeliberationHost(project_root=Path(__file__).resolve().parents[3])
+# Resolve protected storage only when this feature is requested. A refused
+# default must not crash import of the production gateway or other local tools.
+HOST: DeliberationHost | None = None
+_HOST_LOCK = threading.Lock()
 PROVIDER_SERVICE = ProviderConnectionService(project_root=Path(__file__).resolve().parents[3], store_root=os.environ.get("NHFL_PROVIDER_STORE_ROOT") or None)
+
+
+def _get_host() -> DeliberationHost:
+    global HOST
+    with _HOST_LOCK:
+        if HOST is None:
+            try:
+                HOST = DeliberationHost(project_root=Path(__file__).resolve().parents[3])
+            except (DeliberationRootError, OSError, ValueError) as exc:
+                # Do not expose filesystem details or fall back to an unsafe root.
+                # A failed initialization leaves HOST unset so recovery is retryable.
+                raise HTTPException(
+                    status_code=503,
+                    detail={"error": "deliberation_storage_unavailable", "review_required": True},
+                ) from exc
+        return HOST
 
 
 def _handle_error(exc: DeliberationHostError) -> HTTPException:
@@ -49,7 +70,7 @@ def _invoke(handler, *args, action: str, endpoint: str, **kwargs) -> dict[str, A
 
 @router.get("/deliberation/presets", summary="List deliberation presets")
 def list_presets(x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    presets = HOST.list_presets()
+    presets = _get_host().list_presets()
     return review_response(
         "GET /api/deliberation/presets",
         "deliberation_list_presets",
@@ -59,7 +80,7 @@ def list_presets(x_user_role: str | None = Header(default=None, alias="X-User-Ro
 
 @router.get("/deliberation/tools", summary="List deliberation tools")
 def list_tools(x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    tools = HOST.list_tools()
+    tools = _get_host().list_tools()
     return review_response(
         "GET /api/deliberation/tools",
         "deliberation_list_tools",
@@ -69,29 +90,29 @@ def list_tools(x_user_role: str | None = Header(default=None, alias="X-User-Role
 
 @router.post("/deliberation/runs", summary="Create a deliberation run")
 def create_run(payload: dict[str, Any], x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.create_run, payload, action="deliberation_run_create", endpoint="POST /api/deliberation/runs")
+    return _invoke(_get_host().create_run, payload, action="deliberation_run_create", endpoint="POST /api/deliberation/runs")
 
 
 @router.get("/deliberation/runs/{run_id}", summary="Fetch a deliberation run")
 def get_run(run_id: str, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.get_run, run_id, action="deliberation_run_get", endpoint="GET /api/deliberation/runs/{run_id}")
+    return _invoke(_get_host().get_run, run_id, action="deliberation_run_get", endpoint="GET /api/deliberation/runs/{run_id}")
 
 
 @router.post("/deliberation/runs/{run_id}/confirm", summary="Confirm a frozen local scope")
 def confirm_run(run_id: str, payload: dict[str, Any], x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.confirm_run, run_id, payload, action="deliberation_run_confirm", endpoint="POST /api/deliberation/runs/{run_id}/confirm")
+    return _invoke(_get_host().confirm_run, run_id, payload, action="deliberation_run_confirm", endpoint="POST /api/deliberation/runs/{run_id}/confirm")
 
 
 @router.post("/deliberation/runs/{run_id}/start", summary="Start a deliberation run")
 def start_run(run_id: str, payload: dict[str, Any] | None = None, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.start_run, run_id, payload, action="deliberation_run_start", endpoint="POST /api/deliberation/runs/{run_id}/start")
+    return _invoke(_get_host().start_run, run_id, payload, action="deliberation_run_start", endpoint="POST /api/deliberation/runs/{run_id}/start")
 
 
 @router.post("/deliberation/runs/{run_id}/cancel", summary="Cancel a deliberation run")
 def cancel_run(run_id: str, payload: dict[str, Any], request: Request, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
     _enforce_local_request(request)
     try:
-        host_result = HOST.cancel_run(run_id, payload)
+        host_result = _get_host().cancel_run(run_id, payload)
         provider_result = PROVIDER_SERVICE.cancel(run_id)
     except DeliberationHostError as exc:
         raise _handle_error(exc) from exc
@@ -103,22 +124,22 @@ def cancel_run(run_id: str, payload: dict[str, Any], request: Request, x_user_ro
 
 @router.get("/deliberation/runs/{run_id}/events", summary="List deliberation events")
 def list_events(run_id: str, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.get_events, run_id, action="deliberation_run_events", endpoint="GET /api/deliberation/runs/{run_id}/events")
+    return _invoke(_get_host().get_events, run_id, action="deliberation_run_events", endpoint="GET /api/deliberation/runs/{run_id}/events")
 
 
 @router.get("/deliberation/runs/{run_id}/claims", summary="List deliberation claims")
 def list_claims(run_id: str, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.get_claims, run_id, action="deliberation_run_claims", endpoint="GET /api/deliberation/runs/{run_id}/claims")
+    return _invoke(_get_host().get_claims, run_id, action="deliberation_run_claims", endpoint="GET /api/deliberation/runs/{run_id}/claims")
 
 
 @router.get("/deliberation/runs/{run_id}/positions", summary="List worker positions")
 def list_positions(run_id: str, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.get_positions, run_id, action="deliberation_run_positions", endpoint="GET /api/deliberation/runs/{run_id}/positions")
+    return _invoke(_get_host().get_positions, run_id, action="deliberation_run_positions", endpoint="GET /api/deliberation/runs/{run_id}/positions")
 
 
 @router.get("/deliberation/runs/{run_id}/synthesis", summary="Fetch the final synthesis")
 def get_synthesis(run_id: str, x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    return _invoke(HOST.get_synthesis, run_id, action="deliberation_run_synthesis", endpoint="GET /api/deliberation/runs/{run_id}/synthesis")
+    return _invoke(_get_host().get_synthesis, run_id, action="deliberation_run_synthesis", endpoint="GET /api/deliberation/runs/{run_id}/synthesis")
 
 
 @router.post("/deliberation/runs/{run_id}/outbound-preview", summary="Preview exact outbound provider consent")
@@ -130,7 +151,7 @@ def outbound_preview(
 ):
     _enforce_local_request(request)
     try:
-        run = HOST.get_run(run_id)
+        run = _get_host().get_run(run_id)
         scope = run.get("scope_freeze") or {}
         preview_payload = {
             **payload,
@@ -212,4 +233,4 @@ def invoke_tool(
     payload: dict[str, Any],
     x_user_role: str | None = Header(default=None, alias="X-User-Role"),
 ):
-    return _invoke(HOST.invoke_tool, run_id, tool_name, payload, action="deliberation_tool_invoke", endpoint="POST /api/deliberation/runs/{run_id}/tools/{tool_name}")
+    return _invoke(_get_host().invoke_tool, run_id, tool_name, payload, action="deliberation_tool_invoke", endpoint="POST /api/deliberation/runs/{run_id}/tools/{tool_name}")

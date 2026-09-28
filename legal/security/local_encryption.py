@@ -13,7 +13,7 @@ from pathlib import Path
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from .durable_io import atomic_write_bytes, read_bounded_regular_file
+from .durable_io import atomic_write_bytes, exclusive_file_lock, read_bounded_regular_file
 
 
 _VAULT_KEY_LOCK = threading.Lock()
@@ -157,29 +157,37 @@ def default_matter_passphrase() -> str:
     root = _vault_key_root()
     root.mkdir(parents=True, exist_ok=True)
     protected_path = root / ("master-key.dpapi" if os.name == "nt" else "master-key.local")
-    # Multiple API workers can reach first-use concurrently. Serialize the
-    # create/read transition so a caller never returns a key that another
-    # thread immediately replaced with a different protected key.
+    # A thread lock alone cannot serialize independent desktop/API processes.
+    # Keep the sidecar in place: unlinking it would let a new process lock a
+    # different inode while another waiter still holds the previous one.
     with _VAULT_KEY_LOCK:
-        cached = _VAULT_KEY_CACHE.get(protected_path)
-        if cached is not None:
-            secret = cached
-        elif protected_path.is_file():
-            protected = read_bounded_regular_file(
-                protected_path, max_bytes=_MAX_PROTECTED_KEY_BYTES
-            )
-            secret = _unprotect(protected)
-            _VAULT_KEY_CACHE[protected_path] = secret
-        else:
-            secret = secrets.token_bytes(32)
-            protected = _protect(secret)
-            atomic_write_bytes(protected_path, protected, mode=0o600)
-            persisted = read_bounded_regular_file(
-                protected_path, max_bytes=_MAX_PROTECTED_KEY_BYTES
-            )
-            if not hmac.compare_digest(persisted, protected):
-                raise ValueError("matter vault protected key persistence verification failed")
-            _VAULT_KEY_CACHE[protected_path] = secret
+        secret = _VAULT_KEY_CACHE.get(protected_path)
+        if secret is None:
+            with exclusive_file_lock(protected_path.with_suffix(protected_path.suffix + ".lock")):
+                # Recheck only AFTER acquiring the cross-process lock. lstat
+                # distinguishes an absent key from a dangling symlink or other
+                # invalid existing entry, neither of which may be replaced.
+                try:
+                    protected_path.lstat()
+                except FileNotFoundError:
+                    secret = secrets.token_bytes(32)
+                    protected = _protect(secret)
+                    atomic_write_bytes(protected_path, protected, mode=0o600)
+                    persisted = read_bounded_regular_file(
+                        protected_path, max_bytes=_MAX_PROTECTED_KEY_BYTES
+                    )
+                    if not hmac.compare_digest(persisted, protected):
+                        raise ValueError("matter vault protected key persistence verification failed")
+                else:
+                    protected = read_bounded_regular_file(
+                        protected_path, max_bytes=_MAX_PROTECTED_KEY_BYTES
+                    )
+                    secret = _unprotect(protected)
+                if len(secret) != 32:
+                    raise ValueError("matter vault master key is invalid")
+                # Failed reads, unlocks, or persistence must never poison the
+                # process cache or cause regeneration of an existing key.
+                _VAULT_KEY_CACHE[protected_path] = secret
     if len(secret) != 32:
         raise ValueError("matter vault master key is invalid")
     return base64.urlsafe_b64encode(secret).decode("ascii")

@@ -34,7 +34,8 @@ def test_os_bound_default_key_is_stable_and_not_the_development_literal(monkeypa
     assert first == second
     assert first != LocalEnvelopeEncryptor.development_default
     assert vault_security_status()["master_key_present"] is True
-    assert len(list(tmp_path.iterdir())) == 1
+    key_name = "master-key.dpapi" if os.name == "nt" else "master-key.local"
+    assert {path.name for path in tmp_path.iterdir()} == {key_name, key_name + ".lock"}
 
 
 def test_os_bound_default_key_is_stable_during_concurrent_first_use(monkeypatch, tmp_path):
@@ -42,7 +43,8 @@ def test_os_bound_default_key_is_stable_during_concurrent_first_use(monkeypatch,
     with ThreadPoolExecutor(max_workers=8) as executor:
         keys = list(executor.map(lambda _index: default_matter_passphrase(), range(32)))
     assert len(set(keys)) == 1
-    assert len(list(tmp_path.iterdir())) == 1
+    key_name = "master-key.dpapi" if os.name == "nt" else "master-key.local"
+    assert {path.name for path in tmp_path.iterdir()} == {key_name, key_name + ".lock"}
 
 
 def test_default_encryptor_can_read_legacy_development_envelope(monkeypatch, tmp_path):

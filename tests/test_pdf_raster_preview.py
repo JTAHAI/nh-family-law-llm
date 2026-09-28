@@ -261,11 +261,10 @@ def test_managed_vault_preview_without_environment_key(protected_pdf, monkeypatc
     local_encryption._VAULT_KEY_CACHE.clear()
     reopened = LocalAgentAuditStore(root, encryption_key=local_encryption.LocalEnvelopeEncryptor.development_default)
     assert reopened.encryptor.decrypt_json(json.loads(store.path.read_text()))["events"][-1]["action"] == "record_pdf_preview"
-    keys = list(vault.iterdir())
-    assert len(keys) == 1
+    key_name = "master-key.dpapi" if os.name == "nt" else "master-key.local"
+    assert {path.name for path in vault.iterdir()} == {key_name, key_name + ".lock"}
     if os.name == "nt":
-        assert keys[0].name == "master-key.dpapi"
-        assert keys[0].read_bytes() != base64.urlsafe_b64decode(store.encryptor.passphrase)
+        assert (vault / key_name).read_bytes() != base64.urlsafe_b64decode(store.encryptor.passphrase)
 
 
 def test_missing_recorded_hash_does_not_become_verified(protected_pdf, monkeypatch):
