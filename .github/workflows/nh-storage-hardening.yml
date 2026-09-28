@@ -46,6 +46,7 @@ jobs:
         run: >-
           python -m pytest
           tests/test_pass04_model_boundary.py
+          tests/test_pass04_packaging_checkout.py
           tests/test_v650_local_intelligence_control_center.py
           tests/test_v652_local_intelligence_governance.py
           tests/test_adaptive_local_runtime.py
