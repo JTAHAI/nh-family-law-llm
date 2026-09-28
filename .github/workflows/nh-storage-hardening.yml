@@ -1,0 +1,67 @@
+name: NH storage hardening
+on:
+  push:
+    branches: [master, 'hardening/**']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  storage-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare repository-owned synthetic workspace
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          root = Path.cwd() / 'dist' / 'storage-hardening'
+          paths = {'HOME': 'profile', 'USERPROFILE': 'profile',
+                   'LOCALAPPDATA': 'profile', 'TEMP': 'tmp', 'TMP': 'tmp',
+                   'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache'}
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              for key, leaf in paths.items():
+                  path = root / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\n')
+      - name: Install declared dependencies and PDF test fixtures
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13"
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Record dependency versions
+        run: python -m pip list --format=json > dist/storage-hardening/dependencies.json
+      - name: Vault, boundary, preview, local-agent and startup regressions
+        run: >-
+          python -m pytest
+          tests/test_pass01_vault_storage_hardening.py
+          tests/test_pass01_deliberation_startup.py
+          tests/test_matter_vault_encryption.py
+          tests/test_pdf_raster_preview.py
+          tests/test_v540_local_agent_runtime.py
+          tests/test_v540_local_agent_api_ui.py
+          tests/test_deliberation_workspace.py
+          --basetemp=dist/storage-hardening/pytest
+          --junitxml=dist/storage-hardening/results.xml
+          -ra --tb=short
+      - name: Preserve compact engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-storage-hardening-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/storage-hardening/results.xml
+            dist/storage-hardening/dependencies.json
+          if-no-files-found: warn
+          retention-days: 14

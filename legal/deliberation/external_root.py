@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -64,6 +65,27 @@ def default_external_deliberation_root(project_root: str | Path = ".") -> Path:
     return Path.home() / ".codex" / DEFAULT_DELIBERATION_DIRNAME / namespace
 
 
+def _reject_linked_path(path: Path) -> None:
+    """Reject links and Windows reparse points before resolve loses their identity."""
+    for component in (path, *path.parents):
+        try:
+            metadata = component.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError as exc:
+            raise DeliberationRootError(
+                "deliberation_root_unavailable", "The deliberation root cannot be inspected."
+            ) from exc
+        reparse = getattr(metadata, "st_file_attributes", 0) & getattr(
+            stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400
+        )
+        if stat.S_ISLNK(metadata.st_mode) or reparse:
+            raise DeliberationRootError(
+                "deliberation_root_symlink_refused",
+                "The deliberation root and its ancestors cannot be links or reparse points.",
+            )
+
+
 def resolve_external_deliberation_root(
     configured: str | Path | None,
     *,
@@ -71,27 +93,27 @@ def resolve_external_deliberation_root(
     create: bool = False,
 ) -> Path:
     project = Path(project_root).resolve()
-    if configured is None or not str(configured).strip():
-        candidate = default_external_deliberation_root(project)
-        if create:
-            candidate.mkdir(parents=True, exist_ok=True)
-        return candidate
-
-    raw = str(configured).strip()
+    # A default selects a candidate; it never grants an exception to policy.
+    raw = str(configured).strip() if configured is not None else ""
+    if not raw:
+        raw = str(default_external_deliberation_root(project))
     if _looks_like_traversal(raw):
         raise DeliberationRootError(
             "deliberation_root_path_traversal",
             "The deliberation root path contains a traversal segment.",
         )
 
-    path = Path(raw).expanduser()
-    if path.exists() and path.is_symlink():
-        raise DeliberationRootError("deliberation_root_symlink_refused", "The deliberation root cannot be a symlink.")
-
+    path = Path(raw).expanduser().absolute()
+    _reject_linked_path(path)
     try:
-        candidate = _safe_external_root(path, repo_root=project, create=create)
+        # Validation must be side-effect-free until ALL checks have passed.
+        candidate = _safe_external_root(path, repo_root=project, create=False)
     except ReleasePilotHardeningError as exc:
         raise DeliberationRootError(exc.code, str(exc), status_code=exc.status_code) from exc
+    if candidate is None:
+        raise DeliberationRootError(
+            "deliberation_root_unavailable", "A deliberation root is required."
+        )
 
     forbidden = _contains_forbidden_segment(candidate, FORBIDDEN_SEGMENTS)
     if forbidden:
@@ -99,8 +121,7 @@ def resolve_external_deliberation_root(
             "deliberation_root_inside_forbidden_root",
             f"The deliberation root cannot live inside forbidden directory segment: {forbidden}.",
         )
-    if candidate.exists() and candidate.is_symlink():
-        raise DeliberationRootError("deliberation_root_symlink_refused", "The deliberation root cannot be a symlink.")
+    _reject_linked_path(path)
     if create:
         candidate.mkdir(parents=True, exist_ok=True)
     return candidate
