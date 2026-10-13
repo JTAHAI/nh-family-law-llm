@@ -7,6 +7,8 @@ import sys
 import threading
 from pathlib import Path
 
+import pytest
+
 from corpus_builder_support import REPO_ROOT, assert_root_launchers_exist
 from nh_family_law_llm.case_corpus_builder import bootstrap_repository
 
@@ -259,7 +261,10 @@ def test_launcher_startup_keeps_intake_available_without_blocking(monkeypatch) -
 
     monkeypatch.setattr(launcher, "import_additional_corpus", _should_not_run)
 
-    app = launcher.NHFamilyLawLauncher(runtime_context=build_runtime_context(mode="source"))
+    try:
+        app = launcher.NHFamilyLawLauncher(runtime_context=build_runtime_context(mode="source"))
+    except launcher.tk.TclError as exc:
+        pytest.skip(f"graphical display unavailable for launcher acceptance: {exc}")
     try:
         assert "does not block startup" in app.status_var.get()
         assert ("Reopen Intake / Add More Evidence", "import_more_evidence") in launcher.ACTION_SPECS

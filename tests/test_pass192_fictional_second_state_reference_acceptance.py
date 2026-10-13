@@ -16,14 +16,16 @@ def _write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
 
 
-def test_pass192_fictional_second_state_pack_is_signed_and_explicitly_non_selectable(tmp_path: Path) -> None:
+def test_pass192_fictional_second_state_pack_is_signed_and_explicitly_non_selectable(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-jurisdiction-packs"
     key = Ed25519PrivateKey.generate()
     public = base64.b64encode(key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)).decode("ascii")
     _write_json(root / "jurisdiction_pack_trust.json", {"schema_version": "jurisdiction_pack_trust_v1", "trusted_keys": {"reference-key": public}})
     reference = FictionalSecondStateReferencePack.build(private_key=key, key_id="reference-key")
     _write_json(root / "packs" / "aurora_reference.json", reference)
-    catalog = JurisdictionPackCatalog(root, project_root=Path(__file__).resolve().parents[1])
+    catalog = JurisdictionPackCatalog(root, project_root=synthetic_repo_copy)
     report = catalog.get_verified("aurora_reference").as_dict()
     assert report["status"] == "reference_verified_not_selectable", report
     assert report["jurisdiction"] == "XX-AURORA"
@@ -34,7 +36,9 @@ def test_pass192_fictional_second_state_pack_is_signed_and_explicitly_non_select
         store.select(tenant_id="tenant_alpha", matter_id="fictional_matter_001", pack=catalog.get_verified("aurora_reference"), actor_role="reviewer")
 
 
-def test_pass192_reference_pack_is_visible_to_the_existing_production_catalog_but_cannot_activate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pass192_reference_pack_is_visible_to_the_existing_production_catalog_but_cannot_activate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
 
@@ -45,6 +49,7 @@ def test_pass192_reference_pack_is_visible_to_the_existing_production_catalog_bu
     public = base64.b64encode(key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)).decode("ascii")
     _write_json(root / "jurisdiction_pack_trust.json", {"schema_version": "jurisdiction_pack_trust_v1", "trusted_keys": {"reference-key": public}})
     _write_json(root / "packs" / "aurora_reference.json", FictionalSecondStateReferencePack.build(private_key=key, key_id="reference-key"))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_JURISDICTION_PACK_ROOT", str(root))
     monkeypatch.setenv("NHFL_JURISDICTION_PACK_STATE_ROOT", str(tmp_path / "state"))
     client = TestClient(app)

@@ -59,10 +59,12 @@ def _catalog_fixture(root: Path) -> dict:
     return pack
 
 
-def test_pass191_verifies_external_component_boundary_and_encrypted_matter_selection(tmp_path: Path) -> None:
+def test_pass191_verifies_external_component_boundary_and_encrypted_matter_selection(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-packs"
     _catalog_fixture(root)
-    catalog = JurisdictionPackCatalog(root, project_root=Path(__file__).resolve().parents[1])
+    catalog = JurisdictionPackCatalog(root, project_root=synthetic_repo_copy)
     pack = catalog.get_verified("nh_core")
     assert pack.status == "verified", pack.as_dict()
     assert pack.signature_verified is True
@@ -81,18 +83,22 @@ def test_pass191_verifies_external_component_boundary_and_encrypted_matter_selec
     assert "fictional_matter_001" not in raw
 
 
-def test_pass191_unsigned_or_weakened_pack_fails_closed(tmp_path: Path) -> None:
+def test_pass191_unsigned_or_weakened_pack_fails_closed(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-packs"
     pack = _catalog_fixture(root)
     pack["controls"]["local_only"] = False
     _write_json(root / "packs" / "nh_core.json", pack)
-    report = JurisdictionPackCatalog(root, project_root=Path(__file__).resolve().parents[1]).get_verified("nh_core").as_dict()
+    report = JurisdictionPackCatalog(root, project_root=synthetic_repo_copy).get_verified("nh_core").as_dict()
     assert report["status"] == "blocked"
     assert "jurisdiction_pack_control_required:local_only" in report["blockers"]
     assert "jurisdiction_pack_signature_invalid" in report["blockers"]
 
 
-def test_pass191_production_routes_enforce_tenant_scope_and_keep_paths_out(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pass191_production_routes_enforce_tenant_scope_and_keep_paths_out(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
 
@@ -101,6 +107,7 @@ def test_pass191_production_routes_enforce_tenant_scope_and_keep_paths_out(tmp_p
 
     root = tmp_path / "external-packs"
     _catalog_fixture(root)
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_JURISDICTION_PACK_ROOT", str(root))
     monkeypatch.setenv("NHFL_JURISDICTION_PACK_STATE_ROOT", str(tmp_path / "selection-state"))
     client = TestClient(app)

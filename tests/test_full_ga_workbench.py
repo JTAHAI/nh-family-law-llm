@@ -82,8 +82,10 @@ def seed_complete_external_evidence(data_root: Path) -> None:
     write_json(data_root / "release_evidence" / "rollback_package_manifest.json", {"rollback_package_ready": True})
 
 
-def test_full_ga_workbench_blocks_empty_external_data(tmp_path):
-    report = FullGAWorkbenchBuilder(ROOT, tmp_path / "empty_data_root").build(create_external_dirs=False).as_dict()
+def test_full_ga_workbench_blocks_empty_external_data(tmp_path, synthetic_repo_copy):
+    report = FullGAWorkbenchBuilder(
+        synthetic_repo_copy, tmp_path / "empty_data_root"
+    ).build(create_external_dirs=False).as_dict()
     assert report["status"] == "fail"
     assert report["ready_for_local_testing"] is True
     assert report["networked_source_ready"] is False
@@ -92,10 +94,14 @@ def test_full_ga_workbench_blocks_empty_external_data(tmp_path):
     assert any(item["present"] is False for item in report["evidence_inventory"])
 
 
-def test_full_ga_workbench_passes_with_complete_non_fixture_external_evidence(tmp_path):
+def test_full_ga_workbench_passes_with_complete_non_fixture_external_evidence(
+    tmp_path, synthetic_repo_copy
+):
     data_root = tmp_path / "NH_FAMILY_LAW_LLM_data"
     seed_complete_external_evidence(data_root)
-    report = FullGAWorkbenchBuilder(ROOT, data_root).build(create_external_dirs=False).as_dict()
+    report = FullGAWorkbenchBuilder(
+        synthetic_repo_copy, data_root
+    ).build(create_external_dirs=False).as_dict()
     assert report["status"] == "pass"
     assert report["ready_for_local_testing"] is True
     assert report["networked_source_ready"] is True
@@ -104,14 +110,16 @@ def test_full_ga_workbench_passes_with_complete_non_fixture_external_evidence(tm
     assert report["production_promotion_gate"]["status"] == "pass"
 
 
-def test_full_ga_workbench_rejects_fixture_evidence(tmp_path):
+def test_full_ga_workbench_rejects_fixture_evidence(tmp_path, synthetic_repo_copy):
     data_root = tmp_path / "NH_FAMILY_LAW_LLM_data"
     seed_complete_external_evidence(data_root)
     metrics_path = data_root / "eval_store" / "release_metrics_evidence.json"
     metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
     metrics["note"] = "synthetic-only smoke result must stay blocked"
     metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
-    report = build_full_ga_workbench(ROOT, data_root, create_external_dirs=False)
+    report = build_full_ga_workbench(
+        synthetic_repo_copy, data_root, create_external_dirs=False
+    )
     assert report["status"] == "fail"
     assert report["production_legal_ready"] is False
     assert "fixture_marker_detected" in report["blockers"]

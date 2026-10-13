@@ -268,14 +268,21 @@ class AuthorityLibraryService:
         fixture_dir: str | Path | None = None,
     ) -> None:
         runtime_mode = str(os.environ.get("NHFL_RUNTIME_MODE") or "source").strip().lower()
+        configured_repo_root = repo_root or os.environ.get("NHFL_PROJECT_ROOT")
+        self.repo_root = (
+            Path(configured_repo_root).expanduser().resolve()
+            if configured_repo_root
+            else Path(__file__).resolve().parents[2]
+        )
         configured = data_root
         if configured is None and runtime_mode == "store":
             configured = os.environ.get("NHFL_AUTHORITY_DATA_ROOT") or os.environ.get("NH_FAMILY_LAW_DATA_ROOT")
         if configured is None:
             configured = os.environ.get("NH_FAMILY_LAW_DATA_ROOT") or os.environ.get("NHFL_AUTHORITY_DATA_ROOT")
         configured = configured or default_external_data_root()
-        self.data_root = ensure_external_authority_root(configured)
-        self.repo_root = Path(repo_root).expanduser().resolve() if repo_root else Path(__file__).resolve().parents[2]
+        self.data_root = ensure_external_authority_root(
+            configured, project_root=self.repo_root
+        )
         self.fixture_dir = Path(fixture_dir).expanduser().resolve() if fixture_dir else self.repo_root / "data" / "fixtures"
 
     @classmethod

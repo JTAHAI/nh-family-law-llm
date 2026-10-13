@@ -222,7 +222,9 @@ def test_matter_encryption_isolation_backup_restore_and_audit_tamper_detection(t
     assert fortress.audit_status()["status"] == "blocked"
 
 
-def test_local_only_core_workflows_make_no_external_request(monkeypatch, tmp_path: Path) -> None:
+def test_local_only_core_workflows_make_no_external_request(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     case_root = tmp_path / "fictional-matter"
     case_root.mkdir()
     source = case_root / "record.txt"
@@ -303,7 +305,10 @@ def test_local_only_core_workflows_make_no_external_request(monkeypatch, tmp_pat
     scan.write_bytes(stream.getvalue())
     ocr = create_ocr_preservation_copy(case_root=case_root, source_path=scan, approved=True)
 
-    authority = AuthorityLibraryService(data_root=Path(r"C:\dev\NH_FAMILY_LAW_LLM_data"), repo_root=ROOT)
+    authority = AuthorityLibraryService(
+        data_root=tmp_path / "external-authority-data",
+        repo_root=synthetic_repo_copy,
+    )
     authority_rows = authority.list_sources(query="parental rights", limit=3)
     assert intelligence["network_used"] is False
     assert draft["review_required"] is True

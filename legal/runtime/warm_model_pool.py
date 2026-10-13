@@ -239,11 +239,48 @@ class WarmModelPoolStore:
         task = str(payload.get("task") or "").strip()
         if not task or len(task) > 256:
             raise IntakeWorkbenchError("warm_model_pool_task_invalid")
-        thermal = str(payload.get("thermal_state") or "unknown")
-        pressure = self._pressure(thermal)
+        thermal = str(payload.get("thermal_state") or "unknown").strip().casefold()
+        if thermal not in _THERMAL_STATES:
+            raise IntakeWorkbenchError("warm_model_pool_thermal_state_invalid")
         model_id = _safe_id((model or {}).get("model_id") or "no_admitted_model", "warm_model_pool_model_id")
         with exclusive_file_lock(self.lock):
             state = self._load()
+            # Admission and explicit release support are structural prerequisites.
+            # Report those deterministically before probing momentary host pressure;
+            # an absent model or unreleasable worker can never be warmed anyway.
+            if not model or model.get("installation_status") != "admitted_for_task_review_required":
+                event = self._event(
+                    state,
+                    "warm_refused_no_task_admission",
+                    model_id,
+                    {"task": task},
+                )
+                self._write(state)
+                return {
+                    "status": "not_warmed_no_task_admission_review_required",
+                    "model_id": model_id,
+                    "receipt": self._public_event(event),
+                    "review_required": True,
+                    "local_only": True,
+                    "network_used": False,
+                }
+            if worker is None or not bool(getattr(worker, "supports_explicit_release", False)):
+                event = self._event(
+                    state,
+                    "warm_refused_release_capability_missing",
+                    model_id,
+                    {"task": task},
+                )
+                self._write(state)
+                return {
+                    "status": "not_warmed_release_capability_missing_review_required",
+                    "model_id": model_id,
+                    "receipt": self._public_event(event),
+                    "review_required": True,
+                    "local_only": True,
+                    "network_used": False,
+                }
+            pressure = self._pressure(thermal)
             if pressure["release_required"]:
                 event = self._event(
                     state,
@@ -256,22 +293,6 @@ class WarmModelPoolStore:
                     "status": "not_warmed_pressure_review_required",
                     "model_id": model_id,
                     "pressure": pressure,
-                    "receipt": self._public_event(event),
-                    "review_required": True,
-                    "local_only": True,
-                    "network_used": False,
-                }
-            if not model or model.get("installation_status") != "admitted_for_task_review_required":
-                event = self._event(
-                    state,
-                    "warm_refused_no_task_admission",
-                    model_id,
-                    {"task": task},
-                )
-                self._write(state)
-                return {
-                    "status": "not_warmed_no_task_admission_review_required",
-                    "model_id": model_id,
                     "receipt": self._public_event(event),
                     "review_required": True,
                     "local_only": True,
@@ -290,22 +311,6 @@ class WarmModelPoolStore:
                     "status": "not_warmed_incompatible_hardware_review_required",
                     "model_id": model_id,
                     "hardware_fit": hardware_fit,
-                    "receipt": self._public_event(event),
-                    "review_required": True,
-                    "local_only": True,
-                    "network_used": False,
-                }
-            if worker is None or not bool(getattr(worker, "supports_explicit_release", False)):
-                event = self._event(
-                    state,
-                    "warm_refused_release_capability_missing",
-                    model_id,
-                    {"task": task},
-                )
-                self._write(state)
-                return {
-                    "status": "not_warmed_release_capability_missing_review_required",
-                    "model_id": model_id,
                     "receipt": self._public_event(event),
                     "review_required": True,
                     "local_only": True,

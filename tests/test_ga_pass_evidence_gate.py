@@ -127,7 +127,9 @@ def test_completed_true_ga_pass_without_real_external_evidence_is_blocked(tmp_pa
     assert any("pass_19:missing_artifact" in blocker for blocker in report["blockers"])
 
 
-def test_completed_pass19_with_required_external_evidence_passes(tmp_path: Path) -> None:
+def test_completed_pass19_with_required_external_evidence_passes(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     tracker = tmp_path / "tracker.json"
     _write_tracker(tracker, [19])
     data_root = tmp_path / "external_data"
@@ -138,7 +140,7 @@ def test_completed_pass19_with_required_external_evidence_passes(tmp_path: Path)
     requirements = tmp_path / "requirements.json"
     _write_pass19_external_requirements(requirements)
     report = GAPassEvidenceAuditor(
-        project_root=ROOT,
+        project_root=synthetic_repo_copy,
         data_root=data_root,
         tracker_path=tracker,
         requirements_path=requirements,
@@ -239,7 +241,9 @@ def test_completed_pass19_rejects_minimal_placeholder_manifest_record(tmp_path: 
     assert any("source_manifest_record_missing" in blocker for blocker in report["blockers"])
 
 
-def test_completed_pass19_rejects_manifest_with_missing_snapshot(tmp_path: Path) -> None:
+def test_completed_pass19_rejects_manifest_with_missing_snapshot(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     tracker = tmp_path / "tracker.json"
     _write_tracker(tracker, [19])
     data_root = tmp_path / "external_data"
@@ -252,7 +256,7 @@ def test_completed_pass19_rejects_manifest_with_missing_snapshot(tmp_path: Path)
     requirements = tmp_path / "requirements.json"
     _write_pass19_external_requirements(requirements)
     report = GAPassEvidenceAuditor(
-        project_root=ROOT,
+        project_root=synthetic_repo_copy,
         data_root=data_root,
         tracker_path=tracker,
         requirements_path=requirements,
@@ -380,7 +384,9 @@ def test_completed_pass50_rejects_signed_report_with_blocked_status(tmp_path: Pa
     assert any("artifact_status_not_accepted:pilot:ga_release_candidate_signoff.json" in blocker for blocker in report["blockers"])
 
 
-def test_completed_pass50_accepts_signed_report_without_negative_status(tmp_path: Path) -> None:
+def test_completed_pass50_accepts_signed_report_without_negative_status(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     tracker = tmp_path / "tracker.json"
     _write_tracker(tracker, [50])
     pilot_root = tmp_path / "pilot_root"
@@ -397,7 +403,7 @@ def test_completed_pass50_accepts_signed_report_without_negative_status(tmp_path
         encoding="utf-8",
     )
     report = GAPassEvidenceAuditor(
-        project_root=ROOT,
+        project_root=synthetic_repo_copy,
         pilot_root=pilot_root,
         tracker_path=tracker,
     ).run().as_dict()

@@ -55,8 +55,10 @@ def _signed(payload: dict, *, key: Ed25519PrivateKey, key_id: str = "external-re
     return payload, {"trusted_keys": {key_id: base64.b64encode(public).decode("ascii")}}
 
 
-def _closure_bundle(root: Path, package: Path) -> tuple[dict, Ed25519PrivateKey]:
-    gate = PackageSbomGate(project_root=ROOT)
+def _closure_bundle(
+    root: Path, package: Path, project_root: Path
+) -> tuple[dict, Ed25519PrivateKey]:
+    gate = PackageSbomGate(project_root=project_root)
     preliminary = gate.audit(package=package, evidence_root=root).as_dict()
     _write(
         root / "release_vulnerability_audit.json",
@@ -95,17 +97,19 @@ def _closure_bundle(root: Path, package: Path) -> tuple[dict, Ed25519PrivateKey]
     return package_report, key
 
 
-def test_pass196_197_exact_package_sbom_and_signed_reproducibility_contract(tmp_path: Path) -> None:
+def test_pass196_197_exact_package_sbom_and_signed_reproducibility_contract(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     package = tmp_path / "Fictional_8.0.0.0_x64.msix"; _package(package)
-    external = tmp_path / "external-release-evidence"; package_report, _key = _closure_bundle(external, package)
+    external = tmp_path / "external-release-evidence"; package_report, _key = _closure_bundle(external, package, synthetic_repo_copy)
     assert package_report["license_status"] == "pass"
     assert package_report["vulnerability_status"] == "pass"
     assert set(package_report["sbom_artifacts"]) == {"exact-source-sbom.json", "exact-msix-sbom.json"}
     exact_msix = json.loads((external / "exact-msix-sbom.json").read_text(encoding="utf-8"))
     assert exact_msix["package_sha256"] == package_report["package_sha256"]
     assert exact_msix["license_notice_members"] == ["THIRD_PARTY_NOTICES.txt"]
-    report = ReleaseReproducibilityGate(project_root=ROOT).verify(
-        evidence_root=external, package_report=PackageSbomGate(project_root=ROOT).audit(package=package, evidence_root=external)
+    report = ReleaseReproducibilityGate(project_root=synthetic_repo_copy).verify(
+        evidence_root=external, package_report=PackageSbomGate(project_root=synthetic_repo_copy).audit(package=package, evidence_root=external)
     ).as_dict()
     assert report["status"] == "pass", report
     assert report["independent_run_count"] == 2
@@ -113,32 +117,36 @@ def test_pass196_197_exact_package_sbom_and_signed_reproducibility_contract(tmp_
     altered = json.loads((external / "release_reproducibility_runs.json").read_text(encoding="utf-8"))
     altered["runs"][1]["package_sha256"] = "0" * 64
     _write(external / "release_reproducibility_runs.json", altered)
-    blocked = ReleaseReproducibilityGate(project_root=ROOT).verify(
-        evidence_root=external, package_report=PackageSbomGate(project_root=ROOT).audit(package=package, evidence_root=external)
+    blocked = ReleaseReproducibilityGate(project_root=synthetic_repo_copy).verify(
+        evidence_root=external, package_report=PackageSbomGate(project_root=synthetic_repo_copy).audit(package=package, evidence_root=external)
     ).as_dict()
     assert blocked["status"] == "blocked"
     assert "release_reproducibility_package_hash_mismatch" in blocked["blockers"]
 
 
-def test_pass198_200_incident_signoffs_and_decision_remain_honest(tmp_path: Path) -> None:
+def test_pass198_200_incident_signoffs_and_decision_remain_honest(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     package = tmp_path / "Fictional_8.0.0.0_x64.msix"; _package(package)
-    external = tmp_path / "external-release-evidence"; _closure_bundle(external, package)
+    external = tmp_path / "external-release-evidence"; _closure_bundle(external, package, synthetic_repo_copy)
     tabletop = IncidentResponseProgram().tabletop("fictional_private_record_exposure")
     assert tabletop["status"] == "fictional_tabletop_completed_review_required"
     assert tabletop["operational_drill_verified"] is False
-    signoffs = OrganizationalSignoffGate(project_root=ROOT).verify(evidence_root=external).as_dict()
+    signoffs = OrganizationalSignoffGate(project_root=synthetic_repo_copy).verify(evidence_root=external).as_dict()
     assert set(signoffs["approved_lanes"]) == set(REQUIRED_SIGNOFF_LANES)
     assert signoffs["attestation_verified"] is True
     assert signoffs["status"] == "blocked"
     assert "external_organizational_authority_validation_required" in signoffs["blockers"]
-    decision = EnterpriseDecisionPacket(project_root=ROOT).assemble(evidence_root=external).as_dict()
+    decision = EnterpriseDecisionPacket(project_root=synthetic_repo_copy).assemble(evidence_root=external).as_dict()
     assert set(decision["evidence_categories_present"]) == set(REQUIRED_DECISION_EVIDENCE)
     assert decision["attestation_verified"] is True
     assert decision["store_ga_decision"] == "STORE_GA_BLOCKED"
     assert decision["enterprise_ga_decision"] == "ENTERPRISE_GA_BLOCKED"
 
 
-def test_pass196_200_production_routes_protect_tenant_and_redact_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pass196_200_production_routes_protect_tenant_and_redact_paths(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
 
@@ -146,7 +154,8 @@ def test_pass196_200_production_routes_protect_tenant_and_redact_paths(tmp_path:
     from app.api.production import app
 
     package = tmp_path / "Fictional_8.0.0.0_x64.msix"; _package(package)
-    external = tmp_path / "external-release-evidence"; _closure_bundle(external, package)
+    external = tmp_path / "external-release-evidence"; _closure_bundle(external, package, synthetic_repo_copy)
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_RELEASE_CLOSURE_MSIX_PATH", str(package))
     monkeypatch.setenv("NHFL_RELEASE_CLOSURE_EVIDENCE_ROOT", str(external))
     client = TestClient(app)

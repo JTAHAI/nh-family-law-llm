@@ -89,9 +89,10 @@ def test_matter_store_and_fortress_keep_hierarchy_scoped_and_audited(tmp_path: P
     assert denied["blockers"] == ["matter_access_denied"]
 
 
-def test_canonical_key_routes_require_scope_admin_session_and_review(monkeypatch, tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
+def test_canonical_key_routes_require_scope_admin_session_and_review(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
+    repo = synthetic_repo_copy
     store_root = tmp_path / "fictional-matter-store"
     store = MatterStore(store_root, project_root=repo, encryption_key="fictional-api-key-131")
     matter = Matter(matter_id="matter-api", tenant_id="local-desktop", title="Fictional API Matter")
@@ -99,7 +100,7 @@ def test_canonical_key_routes_require_scope_admin_session_and_review(monkeypatch
     monkeypatch.setattr(api_module, "active_case_root", lambda: matter_dir)
     # The canonical route loads the checked-in injection policy from the
     # project root; the fictional matter store remains outside that root.
-    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(Path(__file__).resolve().parents[1]))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_SECURITY_BACKUP_ROOT", str(tmp_path / "security-backups"))
     monkeypatch.setenv("NH_MATTER_STORE_KEY", "fictional-api-key-131")
     client = TestClient(api_module.app)

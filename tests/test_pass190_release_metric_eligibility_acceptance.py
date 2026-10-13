@@ -88,10 +88,12 @@ def _external_bundle(root: Path) -> None:
     _write_json(root / "release_metric_eligibility_attestation.json", attestation)
 
 
-def test_pass190_external_license_reproducibility_and_signature_contract_passes(tmp_path: Path) -> None:
+def test_pass190_external_license_reproducibility_and_signature_contract_passes(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-release-evidence"
     _external_bundle(root)
-    report = ReleaseMetricEligibilityGate(project_root=Path(__file__).resolve().parents[1]).run(eval_root=root).as_dict()
+    report = ReleaseMetricEligibilityGate(project_root=synthetic_repo_copy).run(eval_root=root).as_dict()
 
     assert report["status"] == "pass", report
     assert report["measurement_audit_status"] == "pass"
@@ -104,21 +106,25 @@ def test_pass190_external_license_reproducibility_and_signature_contract_passes(
     assert report["network_used"] is False
 
 
-def test_pass190_synthetic_or_unmanifested_evidence_fails_closed(tmp_path: Path) -> None:
+def test_pass190_synthetic_or_unmanifested_evidence_fails_closed(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-release-evidence"
     _external_bundle(root)
     measurement_path = root / "release_metric_measurements.json"
     payload = json.loads(measurement_path.read_text(encoding="utf-8"))
     payload["metrics"][0]["evidence"]["data_class"] = "synthetic"
     _write_json(measurement_path, payload)
-    report = ReleaseMetricEligibilityGate(project_root=Path(__file__).resolve().parents[1]).run(eval_root=root).as_dict()
+    report = ReleaseMetricEligibilityGate(project_root=synthetic_repo_copy).run(eval_root=root).as_dict()
 
     assert report["status"] == "blocked"
     assert any(item.startswith("metric_data_class_not_external_attorney_reviewed:") for item in report["blockers"])
     assert "release_metric_attestation_measurement_hash_mismatch" in report["blockers"]
 
 
-def test_pass190_production_route_requires_tenant_and_redacts_external_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pass190_production_route_requires_tenant_and_redacts_external_paths(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
 
@@ -127,6 +133,7 @@ def test_pass190_production_route_requires_tenant_and_redacts_external_paths(tmp
 
     root = tmp_path / "external-release-evidence"
     _external_bundle(root)
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_RELEASE_METRIC_ELIGIBILITY_ROOT", str(root))
     client = TestClient(app)
     denied = client.get("/api/evals/release-metric-eligibility", headers={"X-User-Role": "reviewer"})

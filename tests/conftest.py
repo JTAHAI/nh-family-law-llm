@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import sys
 from pathlib import Path
 
@@ -37,6 +38,38 @@ def synthetic_source_project(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) ->
     project = tmp_path / "synthetic-source"
     project.mkdir()
     monkeypatch.chdir(project)
+    return project
+
+
+@pytest.fixture(scope="session")
+def synthetic_repo_copy(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Copy the tracked-style source tree for audits that require a full checkout.
+
+    The real test basetemp must remain under ``dist`` per AGENTS.md, while the
+    production guards correctly reject data stores beneath the source root.
+    A single session-owned source copy lets those audits exercise their real
+    policies with sibling synthetic data roots.  Generated artifacts, Git
+    metadata, release evidence, and caches are deliberately not copied.
+    """
+
+    parent = tmp_path_factory.mktemp("synthetic-full-source")
+    project = parent / "source"
+    shutil.copytree(
+        ROOT,
+        project,
+        ignore=shutil.ignore_patterns(
+            ".git",
+            "dist",
+            "artifacts",
+            "build",
+            "__pycache__",
+            ".pytest_cache",
+            ".ruff_cache",
+            ".mypy_cache",
+            ".venv",
+            "*.egg-info",
+        ),
+    )
     return project
 
 
