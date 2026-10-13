@@ -176,8 +176,12 @@ class AuthorityArchiveImportRequest(BaseModel):
 _MAX_AUTHORITY_ARCHIVE_UPLOAD_BYTES = 512 * 1024 * 1024
 
 
+def _project_root() -> Path:
+    return Path(os.environ.get("NHFL_PROJECT_ROOT") or Path(__file__).resolve().parents[2]).resolve()
+
+
 def authority_update_channel() -> AuthorityUpdateChannel:
-    project_root = Path(os.environ.get("NHFL_PROJECT_ROOT") or Path(__file__).resolve().parents[2])
+    project_root = _project_root()
     trust_path = Path(
         os.environ.get("NHFL_AUTHORITY_TRUST_STORE")
         or project_root / "configs" / "authority_update_trust.json"
@@ -942,7 +946,7 @@ def _ensure_control_routes() -> None:
                 "blockers": ["external_release_metric_evidence_root_not_configured"],
                 **context,
             }
-        report = ReleaseMetricEligibilityGate(project_root=Path(__file__).resolve().parents[2]).run(eval_root=root).as_dict()
+        report = ReleaseMetricEligibilityGate(project_root=_project_root()).run(eval_root=root).as_dict()
         # The evidence gate has no business exposing the location of its external
         # evidence, its reviewer credentials, or its source content to the UI.
         report.pop("eval_root", None)
@@ -971,7 +975,7 @@ def _ensure_control_routes() -> None:
                 **context,
             }
         try:
-            packs = [row.as_dict() for row in JurisdictionPackCatalog(root, project_root=Path(__file__).resolve().parents[2]).list_verified()]
+            packs = [row.as_dict() for row in JurisdictionPackCatalog(root, project_root=_project_root()).list_verified()]
         except JurisdictionPackError as exc:
             return {
                 "status": "blocked",
@@ -1025,7 +1029,7 @@ def _ensure_control_routes() -> None:
         if not root:
             raise HTTPException(status_code=409, detail="external_jurisdiction_pack_root_not_configured")
         try:
-            pack = JurisdictionPackCatalog(root, project_root=Path(__file__).resolve().parents[2]).get_verified(pack_id)
+            pack = JurisdictionPackCatalog(root, project_root=_project_root()).get_verified(pack_id)
             report = jurisdiction_pack_selection_store().select(
                 tenant_id=str(x_tenant_id or ""),
                 matter_id=str(payload.get("matter_id") or ""),
@@ -1053,7 +1057,7 @@ def _ensure_control_routes() -> None:
             endpoint="GET /api/api-stability/status",
             action="api_contract_status_inspected",
         )
-        snapshot = ApiStabilityProgram(project_root=Path(__file__).resolve().parents[2]).snapshot()
+        snapshot = ApiStabilityProgram(project_root=_project_root()).snapshot()
         return {
             "status": "configured" if api_contract_baseline_root() else "blocked",
             "readiness": "public_api_contract_baseline_configured" if api_contract_baseline_root() else "public_api_contract_baseline_required",
@@ -1075,7 +1079,7 @@ def _ensure_control_routes() -> None:
             endpoint="POST /api/api-stability/compare",
             action="api_contract_baseline_compared",
         )
-        report = ApiStabilityProgram(project_root=Path(__file__).resolve().parents[2]).compare(
+        report = ApiStabilityProgram(project_root=_project_root()).compare(
             baseline_root=api_contract_baseline_root()
         ).as_dict()
         return {**report, **context}
@@ -1114,7 +1118,7 @@ def _ensure_control_routes() -> None:
             endpoint="POST /api/release-provenance/audit",
             action="exact_package_provenance_audited",
         )
-        report = PackageSbomGate(project_root=Path(__file__).resolve().parents[2]).audit(
+        report = PackageSbomGate(project_root=_project_root()).audit(
             package=release_closure_package_path(),
             evidence_root=release_closure_evidence_root(),
         ).as_dict()
@@ -1151,10 +1155,10 @@ def _ensure_control_routes() -> None:
             endpoint="POST /api/release-reproducibility/verify",
             action="release_reproducibility_verified",
         )
-        package_report = PackageSbomGate(project_root=Path(__file__).resolve().parents[2]).audit(
+        package_report = PackageSbomGate(project_root=_project_root()).audit(
             package=release_closure_package_path(), evidence_root=release_closure_evidence_root()
         )
-        report = ReleaseReproducibilityGate(project_root=Path(__file__).resolve().parents[2]).verify(
+        report = ReleaseReproducibilityGate(project_root=_project_root()).verify(
             evidence_root=release_closure_evidence_root(), package_report=package_report
         ).as_dict()
         return {**report, **context}
@@ -1217,7 +1221,7 @@ def _ensure_control_routes() -> None:
             endpoint="POST /api/organizational-signoffs/verify",
             action="organizational_signoff_evidence_verified",
         )
-        report = OrganizationalSignoffGate(project_root=Path(__file__).resolve().parents[2]).verify(
+        report = OrganizationalSignoffGate(project_root=_project_root()).verify(
             evidence_root=release_closure_evidence_root()
         ).as_dict()
         return {**report, **context}
@@ -1255,7 +1259,7 @@ def _ensure_control_routes() -> None:
             endpoint="POST /api/enterprise-ga-decision/assemble",
             action="enterprise_ga_decision_packet_assembled",
         )
-        report = EnterpriseDecisionPacket(project_root=Path(__file__).resolve().parents[2]).assemble(
+        report = EnterpriseDecisionPacket(project_root=_project_root()).assemble(
             evidence_root=release_closure_evidence_root()
         ).as_dict()
         return {**report, **context}

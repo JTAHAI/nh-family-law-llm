@@ -81,14 +81,15 @@ def test_failed_presence_never_creates_an_unlock_grant(tmp_path: Path) -> None:
     assert status["fallback_policy"] == "admin_recovery_required"
 
 
-def test_canonical_unlock_routes_scope_role_session_and_safe_degraded_state(monkeypatch, tmp_path: Path) -> None:
-    repo = tmp_path / "repo"
-    repo.mkdir()
+def test_canonical_unlock_routes_scope_role_session_and_safe_degraded_state(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
+    repo = synthetic_repo_copy
     store_root = tmp_path / "fictional-matter-store"
     store = MatterStore(store_root, project_root=repo, encryption_key="fictional-api-unlock-key-132")
     matter_dir = store.create_matter(Matter(matter_id="matter-api-unlock", tenant_id="local-desktop", title="Fictional API unlock"))
     monkeypatch.setattr(api_module, "active_case_root", lambda: matter_dir)
-    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(Path(__file__).resolve().parents[1]))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_SECURITY_BACKUP_ROOT", str(tmp_path / "security-backups"))
     monkeypatch.setenv("NH_MATTER_STORE_KEY", "fictional-api-unlock-key-132")
     client = TestClient(api_module.app)

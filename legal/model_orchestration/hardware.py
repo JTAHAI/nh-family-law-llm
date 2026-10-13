@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes
 import os
 import platform
+import struct
 import shutil
 import subprocess
 from dataclasses import dataclass, field
@@ -235,7 +236,11 @@ def profile_hardware(root: str | Path) -> HardwareProfile:
         os_name=platform.system() or "unknown",
         os_version=platform.version() or "unknown",
         machine=platform.machine() or "unknown",
-        architecture=platform.architecture()[0] if platform.architecture() else "unknown",
+        # ``platform.architecture`` may invoke an external ``file`` process on
+        # POSIX.  Hardware profiling is local-only and already knows the
+        # running interpreter's pointer width, so avoid the subprocess and its
+        # platform-dependent output contract entirely.
+        architecture=f"{struct.calcsize('P') * 8}bit",
         logical_cpu_count=cpu_count,
         total_memory_bytes=total_memory,
         available_memory_bytes=available_memory,

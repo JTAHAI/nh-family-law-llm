@@ -71,13 +71,19 @@ def test_pass31_staged_builds_diff_activate_and_restore_atomically(monkeypatch, 
     assert [row["operation"] for row in receipts] == ["activate", "activate", "rollback"]
 
 
-def test_pass31_fixture_update_refuses_nonqualifying_authority_without_activation(monkeypatch, tmp_path: Path) -> None:
+def test_pass31_fixture_update_refuses_nonqualifying_authority_without_activation(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     root = tmp_path / "external-authority"
     from legal.connectors import load_official_source_targets
 
     fixture_target = next(item for item in load_official_source_targets() if item.target_id == "NH-0032")
     monkeypatch.setattr("app.services.authority_library_service.load_official_source_targets", lambda: [fixture_target])
-    service = AuthorityLibraryService(data_root=root, repo_root=ROOT, fixture_dir=ROOT / "data" / "fixtures")
+    service = AuthorityLibraryService(
+        data_root=root,
+        repo_root=synthetic_repo_copy,
+        fixture_dir=synthetic_repo_copy / "data" / "fixtures",
+    )
     queued = service.update(fixture_mode=True, max_targets=1)
     deadline = time.monotonic() + 20
     job = service.get_job(queued["job_id"])
@@ -93,7 +99,9 @@ def test_pass31_fixture_update_refuses_nonqualifying_authority_without_activatio
     assert job.result["publication"]["status"] == "blocked"
 
 
-def test_pass31_canonical_activation_requires_role_acknowledgement_and_audit(monkeypatch) -> None:
+def test_pass31_canonical_activation_requires_role_acknowledgement_and_audit(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     monkeypatch.setattr(
         authority_routes.AuthorityLibraryService,
         "activate_build",
@@ -105,6 +113,8 @@ def test_pass31_canonical_activation_requires_role_acknowledgement_and_audit(mon
             "review_required": True,
         },
     )
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
+    monkeypatch.setenv("NHFL_AUTHORITY_DATA_ROOT", str(tmp_path / "external-authority"))
     client = TestClient(canonical_app)
 
     denied = client.post("/api/authority/activate", json={"build_id": SECOND_BUILD, "acknowledged": True})
@@ -121,7 +131,9 @@ def test_pass31_canonical_activation_requires_role_acknowledgement_and_audit(mon
     assert activated.json()["audit_event"]["action"] == "authority_build_activation"
 
 
-def test_pass31_frozen_runtime_activation_route_requires_acknowledgement(monkeypatch) -> None:
+def test_pass31_frozen_runtime_activation_route_requires_acknowledgement(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     monkeypatch.setattr(
         frozen_api.AuthorityLibraryService,
         "activate_build",
@@ -132,6 +144,8 @@ def test_pass31_frozen_runtime_activation_route_requires_acknowledgement(monkeyp
             "review_required": True,
         },
     )
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
+    monkeypatch.setenv("NHFL_AUTHORITY_DATA_ROOT", str(tmp_path / "external-authority"))
     client = TestClient(frozen_api.app)
 
     blocked = client.post("/api/authority/activate", json={"build_id": SECOND_BUILD, "acknowledged": False})

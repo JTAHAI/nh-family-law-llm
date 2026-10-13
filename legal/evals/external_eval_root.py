@@ -52,7 +52,9 @@ def _contains_forbidden_segment(path: Path, forbidden: Iterable[str]) -> str:
     for candidate in forbidden:
         folded = candidate.casefold()
         for part in parts:
-            if folded == part or folded in part or part in folded:
+            # Never reverse this comparison: a harmless component such as
+            # "data" is a substring of "programdata", not the protected folder.
+            if folded == part or folded in part:
                 return candidate
     return ""
 

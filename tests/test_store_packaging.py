@@ -115,6 +115,7 @@ def test_authority_services_prefer_store_external_authority_boundary(monkeypatch
     bundle_root = tmp_path / "fictional-bundle"
     bundle_root.mkdir()
     monkeypatch.chdir(bundle_root)
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(bundle_root))
     runtime_root = tmp_path / "runtime-data"
     authority_root = tmp_path / "external-authority"
     monkeypatch.setenv("NH_FAMILY_LAW_DATA_ROOT", str(runtime_root))

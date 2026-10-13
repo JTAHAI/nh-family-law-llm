@@ -14,16 +14,21 @@ from nh_family_law_llm import api as api_module
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _service(tmp_path: Path) -> GovernanceControlCenterService:
-    return GovernanceControlCenterService(ROOT, evidence_root=tmp_path / "governance-evidence")
+def _service(tmp_path: Path, project_root: Path) -> GovernanceControlCenterService:
+    return GovernanceControlCenterService(
+        project_root, evidence_root=tmp_path / "governance-evidence"
+    )
 
 
 def _headers(role: str = "reviewer") -> dict[str, str]:
     return {"X-User-Role": role, "X-Tenant-Id": "tenant-a", "host": "testserver"}
 
 
-def test_governance_control_registry_framework_mapping_and_cards(tmp_path: Path) -> None:
-    service = _service(tmp_path)
+def test_governance_control_registry_framework_mapping_and_cards(
+    tmp_path: Path, synthetic_repo_copy: Path, monkeypatch
+) -> None:
+    monkeypatch.setenv("NHFL_MODEL_STORE_ROOT", str(tmp_path / "model-store"))
+    service = _service(tmp_path, synthetic_repo_copy)
 
     controls = service.control_registry()
     assert controls["status"] == "pass"
@@ -58,8 +63,10 @@ def test_governance_control_registry_framework_mapping_and_cards(tmp_path: Path)
     assert any(row["vendor_project"] == "openai" for row in vendors["vendor_risks"])
 
 
-def test_policy_pack_workflow_blocks_weakening_and_keeps_history(tmp_path: Path) -> None:
-    service = _service(tmp_path)
+def test_policy_pack_workflow_blocks_weakening_and_keeps_history(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
+    service = _service(tmp_path, synthetic_repo_copy)
 
     weakened = service.draft_policy_pack("attorney", {"baseline_guardrails": {"no_fake_authority": False}})
     assert weakened["status"] == "failed"
@@ -90,8 +97,11 @@ def test_policy_pack_workflow_blocks_weakening_and_keeps_history(tmp_path: Path)
     assert history["history"]["event_count"] >= 4
 
 
-def test_exceptions_signoffs_and_diligence_packet_are_redacted(tmp_path: Path) -> None:
-    service = _service(tmp_path)
+def test_exceptions_signoffs_and_diligence_packet_are_redacted(
+    tmp_path: Path, synthetic_repo_copy: Path, monkeypatch
+) -> None:
+    monkeypatch.setenv("NHFL_MODEL_STORE_ROOT", str(tmp_path / "model-store"))
+    service = _service(tmp_path, synthetic_repo_copy)
 
     exceptions = service.exceptions()
     assert any(row["expired"] for row in exceptions["exceptions"])
@@ -119,8 +129,12 @@ def test_exceptions_signoffs_and_diligence_packet_are_redacted(tmp_path: Path) -
     assert "password" not in serialized.casefold()
 
 
-def test_governance_api_roles_and_ui_markers(monkeypatch, tmp_path: Path) -> None:
+def test_governance_api_roles_and_ui_markers(
+    monkeypatch, tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     monkeypatch.setenv("NHFL_GOVERNANCE_EVIDENCE_ROOT", str(tmp_path / "governance-evidence"))
+    monkeypatch.setenv("NHFL_MODEL_STORE_ROOT", str(tmp_path / "model-store"))
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     client = TestClient(api_module.app)
     reviewer_headers = _headers("reviewer")
     admin_headers = _headers("admin")

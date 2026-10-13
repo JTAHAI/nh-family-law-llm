@@ -16,8 +16,10 @@ def _baseline(root: Path, snapshot: dict) -> None:
     )
 
 
-def test_pass195_external_frozen_contract_detects_breaking_changes(tmp_path: Path) -> None:
-    program = ApiStabilityProgram(project_root=Path(__file__).resolve().parents[1])
+def test_pass195_external_frozen_contract_detects_breaking_changes(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
+    program = ApiStabilityProgram(project_root=synthetic_repo_copy)
     snapshot = program.snapshot(); root = tmp_path / "external-api-contract"; _baseline(root, snapshot)
     compatible = program.compare(baseline_root=root).as_dict()
     assert compatible["status"] == "pass", compatible
@@ -31,14 +33,17 @@ def test_pass195_external_frozen_contract_detects_breaking_changes(tmp_path: Pat
     assert broken["migration_actions"]
 
 
-def test_pass195_production_route_requires_tenant_and_redacts_baseline_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_pass195_production_route_requires_tenant_and_redacts_baseline_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
     pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
 
     from app.api.contracts import EndpointInventory
     from app.api.production import app
 
-    program = ApiStabilityProgram(project_root=Path(__file__).resolve().parents[1]); root = tmp_path / "external-api-contract"; _baseline(root, program.snapshot())
+    program = ApiStabilityProgram(project_root=synthetic_repo_copy); root = tmp_path / "external-api-contract"; _baseline(root, program.snapshot())
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
     monkeypatch.setenv("NHFL_PUBLIC_API_CONTRACT_ROOT", str(root))
     client = TestClient(app)
     assert client.get("/api/api-stability/status", headers={"X-User-Role": "reviewer"}).status_code == 403

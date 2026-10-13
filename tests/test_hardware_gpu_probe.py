@@ -25,6 +25,7 @@ def test_local_nvidia_probe_is_bounded_and_reports_available_vram(monkeypatch, t
     assert profile.details["gpus"][1]["compute_capability"] == 8.6
     assert calls[0][1]["timeout"] == 3
     assert calls[0][1]["capture_output"] is True
+    assert len(calls) == 1
     assert "no_gpu_hint_detected" not in profile.warnings
 
 

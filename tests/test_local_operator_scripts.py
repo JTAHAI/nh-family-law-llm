@@ -33,9 +33,15 @@ def test_required_corpus_source_package_is_present_in_release_tree():
     assert {"source_id", "jurisdiction", "hash", "retrieved_at"}.issubset(schema["items"]["required"])
 
 
-def test_local_smoke_report_passes_without_external_corpus_or_pytest(tmp_path):
+def test_local_smoke_report_passes_without_external_corpus_or_pytest(
+    tmp_path, synthetic_repo_copy
+):
     module = _load_script_module("scripts/run-local-smoke.py")
-    report = module.build_report(ROOT, tmp_path / "NH_FAMILY_LAW_LLM_data", run_pytest=False).as_dict()
+    report = module.build_report(
+        synthetic_repo_copy,
+        tmp_path / "NH_FAMILY_LAW_LLM_data",
+        run_pytest=False,
+    ).as_dict()
     assert report["status"] == "pass"
     assert report["production_legal_ga"] is False
     assert "http://127.0.0.1:8000/docs" in report["api_endpoints"]
@@ -46,10 +52,10 @@ def test_local_smoke_report_passes_without_external_corpus_or_pytest(tmp_path):
     assert checks["pytest"]["status"] == "skipped"
 
 
-def test_local_smoke_cli_writes_json(tmp_path):
+def test_local_smoke_cli_writes_json(tmp_path, synthetic_repo_copy):
     module = _load_script_module("scripts/run-local-smoke.py")
     output = tmp_path / "local_smoke_report.json"
-    report = module.build_report(ROOT, tmp_path / "data", run_pytest=False)
+    report = module.build_report(synthetic_repo_copy, tmp_path / "data", run_pytest=False)
     output.write_text(json.dumps(report.as_dict(), indent=2), encoding="utf-8")
     loaded = json.loads(output.read_text(encoding="utf-8"))
     assert loaded["status"] == "pass"

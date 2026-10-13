@@ -6,8 +6,9 @@ from legal.ops import OperatorTestBatteryAuditor, run_operator_test_battery
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_operator_test_battery_passes_for_local_source_testing(tmp_path):
-    report = OperatorTestBatteryAuditor(ROOT, tmp_path / "NH_FAMILY_LAW_LLM_data").audit()
+def test_operator_test_battery_passes_for_local_source_testing(synthetic_repo_copy):
+    data_root = synthetic_repo_copy.parent / "NH_FAMILY_LAW_LLM_data"
+    report = OperatorTestBatteryAuditor(synthetic_repo_copy, data_root).audit()
     as_dict = report.as_dict()
     assert as_dict["status"] == "pass"
     assert as_dict["ready_for_operator_local_test"] is True

@@ -57,11 +57,13 @@ def test_release_metrics_require_ready_exits_nonzero_until_real_metrics_pass(tmp
     assert report["readiness"] == "release_metrics_blocked_until_real_attorney_reviewed_gold_evidence"
 
 
-def test_authority_harness_plan_can_make_gold_and_release_metrics_required(tmp_path: Path) -> None:
+def test_authority_harness_plan_can_make_gold_and_release_metrics_required(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
     completed = subprocess.run(
         [
             sys.executable,
-            str(ROOT / "scripts" / "run-authority-data-product.py"),
+            str(synthetic_repo_copy / "scripts" / "run-authority-data-product.py"),
             "--data-root",
             str(tmp_path / "data"),
             "--eval-root",
@@ -70,7 +72,7 @@ def test_authority_harness_plan_can_make_gold_and_release_metrics_required(tmp_p
             "--require-gold-eval-pack",
             "--require-release-metrics",
         ],
-        cwd=ROOT,
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=30,
