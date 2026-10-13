@@ -1,0 +1,90 @@
+name: NH Pass 06 regression closure
+on:
+  push:
+    branches: [master, 'hardening/pass06-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  regression-closure:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare repository-owned synthetic workspace
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          root = Path.cwd() / 'dist' / 'pass06-ci'
+          paths = {
+              'HOME': 'profile', 'USERPROFILE': 'profile',
+              'LOCALAPPDATA': 'profile', 'TEMP': 'tmp', 'TMP': 'tmp',
+              'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache',
+              'NHFL_VAULT_KEY_ROOT': 'profile/vault',
+          }
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              for key, leaf in paths.items():
+                  path = root / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\n')
+      - name: Install declared dependencies and synthetic PDF fixtures
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13" "jsonschema>=4,<5"
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Run repaired regression families
+        run: >-
+          python -m pytest
+          tests/test_pass06_authority_root_binding.py
+          tests/test_pass06_regression_closure.py
+          tests/test_fast_interchange_worker_device_policy.py
+          tests/test_full_ga_workbench.py
+          tests/test_ga_pass_evidence_gate.py
+          tests/test_ga_security_privacy_audit_slice.py
+          tests/test_gold_release_gates_pass.py
+          tests/test_governance_policy_center.py
+          tests/test_hardware_gpu_probe.py
+          tests/test_installer_launchers.py::test_launcher_startup_keeps_intake_available_without_blocking
+          tests/test_local_operator_scripts.py
+          tests/test_local_test_readiness.py
+          tests/test_operator_handoff_bundle.py
+          tests/test_operator_test_battery.py
+          tests/test_pass104_warm_model_pool_acceptance.py
+          tests/test_pass131_matter_key_hierarchy_acceptance.py
+          tests/test_pass132_windows_hello_matter_unlock_acceptance.py
+          tests/test_pass151_incremental_encrypted_backups_acceptance.py
+          tests/test_pass152_point_in_time_restore_acceptance.py
+          tests/test_pass190_release_metric_eligibility_acceptance.py
+          tests/test_pass191_jurisdiction_pack_interface_acceptance.py
+          tests/test_pass192_fictional_second_state_reference_acceptance.py
+          tests/test_pass195_public_api_stability_acceptance.py
+          tests/test_pass196_200_enterprise_release_closure_acceptance.py
+          tests/test_pass31_atomic_authority_update_center.py
+          tests/test_pass33_freshness_dashboard.py
+          tests/test_store_packaging.py
+          --basetemp=dist/pass06-ci/pytest
+          --junitxml=dist/pass06-ci/results.xml
+          -ra --tb=short
+      - name: Verify exact publication tree
+        run: python scripts/run-public-source-preflight.py --index --require-ready --output dist/pass06-ci/public-source-index.json
+      - name: Preserve compact engineering evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass06-regression-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/pass06-ci/results.xml
+            dist/pass06-ci/public-source-index.json
+          if-no-files-found: warn
+          retention-days: 14
