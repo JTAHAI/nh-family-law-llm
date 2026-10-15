@@ -156,7 +156,13 @@ def _bounded_zip(path: Path) -> zipfile.ZipFile:
     total = 0
     try:
         for item in archive.infolist():
-            name = _relative(item.filename, "model_pack_archive_path_invalid")
+            # ZipInfo can normalize backslashes or truncate a NUL. A signed
+            # inventory binds canonical paths, not an ambiguous original name.
+            # Check before any metadata or model bytes are read or extracted.
+            original = item.orig_filename
+            if original != item.filename or "\\" in original or "\x00" in original:
+                raise ModelPackError("model_pack_archive_path_invalid")
+            name = _relative(original, "model_pack_archive_path_invalid")
             mode = item.external_attr >> 16
             if (
                 name != item.filename

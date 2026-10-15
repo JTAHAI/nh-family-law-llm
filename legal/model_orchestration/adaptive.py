@@ -47,7 +47,8 @@ def runtime_budget(profile: HardwareProfile) -> RuntimeBudget:
     """Reserve RAM for Windows and the workbench before admitting a model."""
 
     total = max(0, profile.total_memory_bytes)
-    available = max(0, profile.available_memory_bytes or total)
+    # Missing/zero availability must not be promoted to installed capacity.
+    available = min(total, max(0, profile.available_memory_bytes))
     if total and total < 8 * GIB:
         tier, ratio, context, concurrency = "essential", 0.42, 2048, 1
     elif total and total < 16 * GIB:
@@ -57,9 +58,12 @@ def runtime_budget(profile: HardwareProfile) -> RuntimeBudget:
     else:
         tier, ratio, context, concurrency = "performance", 0.70, 16384, 2
     reserve = max(2 * GIB, int(total * 0.2)) if total else 2 * GIB
-    memory_budget = max(0, min(int(available * ratio), max(0, total - reserve) or available))
-    accelerator = "gpu" if profile.vram_bytes else ("hinted" if profile.gpu_hint else "cpu")
-    if accelerator == "cpu":
+    # Reserve must remain free now, not merely fit inside installed RAM.
+    memory_budget = max(0, min(int(available * ratio), available - reserve, total - reserve))
+    accelerator = "gpu" if profile.available_vram_bytes > 0 else (
+        "hinted" if profile.gpu_hint or profile.vram_bytes else "cpu"
+    )
+    if accelerator != "gpu":
         concurrency = 1
     return RuntimeBudget(
         tier=tier,
@@ -133,7 +137,7 @@ class AdaptiveRuntimePlanner:
                     reasons.append("model_context_limit_exceeded")
                 else:
                     model_context = model.context_limit_tokens
-            available_vram = self.profile.available_vram_bytes or self.profile.vram_bytes
+            available_vram = max(0, self.profile.available_vram_bytes)
             if model.min_vram_bytes and model.min_vram_bytes > available_vram:
                 reasons.append("insufficient_vram")
             peak = estimate_peak_memory(model, model_context)
