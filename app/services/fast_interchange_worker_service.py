@@ -87,7 +87,7 @@ def _device_environment(readiness: dict[str, Any]) -> dict[str, str]:
             "NHFL_FAST_INTERCHANGE_CPU_THREADS": str(max(1, min(4, (os.cpu_count() or 2) // 2))),
         }
     index = recommended.get("index")
-    if not isinstance(index, int) or not 0 <= index <= 31:
+    if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index <= 31:
         raise ManagedWorkerError("fast_interchange_hardware_not_ready")
     return {
         # Driver inventory can find a GPU even when this installed runtime is

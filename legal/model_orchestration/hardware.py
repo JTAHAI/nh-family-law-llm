@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ctypes
+import math
 import os
 import platform
 import struct
@@ -111,7 +112,8 @@ def _nvidia_inventory() -> tuple[dict[str, Any], ...]:
             capability = float(parts[5])
         except ValueError:
             continue
-        if index < 0 or total_mib <= 0 or not 0 <= free_mib <= total_mib:
+        if (not 0 <= index <= 31 or total_mib <= 0 or not 0 <= free_mib <= total_mib
+                or not math.isfinite(capability) or capability <= 0):
             continue
         rows.append(
             {
@@ -199,12 +201,17 @@ def profile_hardware(root: str | Path) -> HardwareProfile:
         except Exception:
             disk_free = 0
 
-    total_memory = _total_memory_bytes()
-    available_memory = _available_memory_bytes() or total_memory
+    # Zero means no measured headroom, not permission to spend total RAM.
+    total_memory = max(0, _total_memory_bytes())
+    available_memory = max(0, _available_memory_bytes())
+    if total_memory:
+        available_memory = min(available_memory, total_memory)
     cpu_count = os.cpu_count() or 1
     instruction_sets = _instruction_sets()
     warnings: list[str] = []
-    if available_memory and available_memory < 4 * 1024**3:
+    if not available_memory:
+        warnings.append("available_memory_unavailable")
+    if available_memory < 4 * 1024**3:
         warnings.append("low_available_memory")
     if disk_free and disk_free < 10 * 1024**3:
         warnings.append("low_disk_space")
@@ -218,18 +225,37 @@ def profile_hardware(root: str | Path) -> HardwareProfile:
             row["total_vram_bytes"],
         ),
     ) if gpus else None
-    configured_vram = int(os.environ.get("NHFL_VRAM_BYTES", "0") or 0)
+    raw_vram = os.environ.get("NHFL_VRAM_BYTES", "").strip()
+    try:
+        configured_vram = int(raw_vram) if raw_vram else 0
+        if configured_vram < 0:
+            raise ValueError("negative_vram_hint")
+    except ValueError:
+        configured_vram = 0
+        warnings.append("invalid_vram_hint")
     configured_name = os.environ.get("NHFL_GPU_NAME", "").strip()
-    vram_bytes = configured_vram or int((best_gpu or {}).get("total_vram_bytes") or 0)
-    available_vram_bytes = int((best_gpu or {}).get("available_vram_bytes") or vram_bytes)
-    gpu_name = configured_name or str((best_gpu or {}).get("name") or "")
+    # Operator hints are display metadata, not observed free GPU memory.
+    # A detected device supplies a coherent name/total/free tuple and wins
+    # over unrelated environment hints. In particular, free=0 stays zero.
+    if best_gpu is not None:
+        vram_bytes = int(best_gpu["total_vram_bytes"])
+        available_vram_bytes = int(best_gpu["available_vram_bytes"])
+        gpu_name = str(best_gpu["name"])
+        gpu_capacity_source = "local_driver"
+    else:
+        vram_bytes = configured_vram
+        available_vram_bytes = 0
+        gpu_name = configured_name
+        gpu_capacity_source = "operator_hint" if configured_vram or configured_name else "unavailable"
+        if configured_vram:
+            warnings.append("gpu_capacity_hint_unverified")
     if not gpu_hint and gpus:
         gpu_hint = "local_nvidia_driver"
     if not gpu_hint and not vram_bytes:
         warnings.append("no_gpu_hint_detected")
 
-    recommended_concurrency = 1 if available_memory and available_memory < 8 * 1024**3 else max(1, min(4, cpu_count // 2 or 1))
-    recommended_context_limit = 4096 if available_memory and available_memory < 8 * 1024**3 else 8192
+    recommended_concurrency = 1 if available_memory < 8 * 1024**3 else max(1, min(4, cpu_count // 2 or 1))
+    recommended_context_limit = 4096 if available_memory < 8 * 1024**3 else 8192
     estimated_peak_memory_bytes = max(0, min(total_memory or available_memory, int(available_memory * 0.65))) if available_memory else 0
 
     return HardwareProfile(
@@ -261,5 +287,6 @@ def profile_hardware(root: str | Path) -> HardwareProfile:
             "processor": platform.processor() or "",
             "python": platform.python_version(),
             "gpus": list(gpus),
+            "gpu_capacity_source": gpu_capacity_source,
         },
     )

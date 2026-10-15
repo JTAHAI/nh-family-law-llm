@@ -3,19 +3,47 @@ name: Pass 6 NH legal behavior
 on:
   push:
   pull_request:
-
+permissions:
+  contents: read
 jobs:
   legal-behavior-source-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install -e ".[api,dev]"
+      - name: Prepare owned test profile and caches
+        run: |
+          mkdir -p dist/behavior-ci/profile dist/behavior-ci/tmp dist/behavior-ci/cache
+          echo "HOME=$GITHUB_WORKSPACE/dist/behavior-ci/profile" >> "$GITHUB_ENV"
+          echo "TMPDIR=$GITHUB_WORKSPACE/dist/behavior-ci/tmp" >> "$GITHUB_ENV"
+          echo "PIP_CACHE_DIR=$GITHUB_WORKSPACE/dist/behavior-ci/cache" >> "$GITHUB_ENV"
+          echo "PYTHONPYCACHEPREFIX=$GITHUB_WORKSPACE/dist/behavior-ci/cache/bytecode" >> "$GITHUB_ENV"
+          echo "NHFL_VAULT_KEY_ROOT=$GITHUB_WORKSPACE/dist/behavior-ci/profile/vault" >> "$GITHUB_ENV"
+      - run: python -m pip install -e ".[api,dev]" "jsonschema>=4,<5"
+      - run: python -m pip check
       - run: python -m compileall -q legal app src nh_family_law_llm tests
       - run: python scripts/verify_pass_04.py
-      - run: python scripts/verify_pass_06.py
+      - name: Retained behavior contract against active release metadata
+        run: python scripts/verify_pass_06.py > dist/behavior-ci/behavior-gate.json
       - run: python scripts/scan_for_maine_authority.py
       - run: python scripts/scan_legacy_runtime_identifiers.py
-      - run: python -m pytest -q tests/test_pass04_authority_snapshot.py tests/test_nh_authority_manifest.py tests/test_pass06_nh_legal_behavior.py
+      - run: >-
+          python -m pytest -q tests/test_pass04_authority_snapshot.py
+          tests/test_nh_authority_manifest.py tests/test_pass06_nh_legal_behavior.py
+          tests/test_pass07_behavior_gate.py --basetemp=dist/behavior-ci/pytest
+          --junitxml=dist/behavior-ci/results.xml -ra --tb=short
+      - name: Preserve behavior engineering evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-behavior-contract-${{ github.sha }}
+          path: |
+            dist/behavior-ci/behavior-gate.json
+            dist/behavior-ci/results.xml
+          retention-days: 14
+          if-no-files-found: warn
