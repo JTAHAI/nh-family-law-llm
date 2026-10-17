@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -11,6 +13,7 @@ from nh_family_law_llm import api as frozen_api
 
 
 ROOT = Path(__file__).resolve().parents[1]
+pytestmark = pytest.mark.usefixtures("synthetic_authority_context")
 HEADERS = {"X-User-Role": "reviewer", "X-Tenant-Id": "tenant-form-sync"}
 
 

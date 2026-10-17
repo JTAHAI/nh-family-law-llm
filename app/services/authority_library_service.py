@@ -320,7 +320,7 @@ class AuthorityLibraryService:
         root = self._require_data_root()
         active = AuthorityProductVerifier(data_root=root, repo_root=self.repo_root).verify()
         try:
-            direct_authority = AuthorityProductService(data_root=root).direct_authority_coverage()
+            direct_authority = AuthorityProductService(data_root=root, repo_root=self.repo_root).direct_authority_coverage()
         except (FileNotFoundError, OSError, ValueError):
             direct_authority = {
                 "status": "blocked",
@@ -1140,7 +1140,7 @@ class AuthorityLibraryService:
         remain review-required rather than silently falling back to staging.
         """
         try:
-            product = AuthorityProductService(data_root=root)
+            product = AuthorityProductService(data_root=root, repo_root=self.repo_root)
             active = product._active_product(verify_all=True)
             return list(product._iter_active_parsed_rows(active))
         except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError):

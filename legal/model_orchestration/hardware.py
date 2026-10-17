@@ -141,6 +141,16 @@ def _instruction_sets() -> tuple[str, ...]:
     return tuple(sorted(set(hints)))
 
 
+def measured_capacity_bytes(value: object) -> int:
+    """Return measured nonnegative bytes, or zero when not safely known.
+
+    Capacity hints, booleans, strings and nonfinite numbers cannot stand in for
+    free memory. Zero remains zero; callers must never fall back to total RAM
+    or VRAM when this conservative result cannot fund a requested operation.
+    """
+    return value if type(value) is int and value >= 0 else 0
+
+
 @dataclass(frozen=True)
 class HardwareProfile:
     os_name: str

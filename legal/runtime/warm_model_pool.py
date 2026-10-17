@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from legal.matter.intake_workbench import IntakeWorkbenchError
-from legal.model_orchestration.hardware import profile_hardware
+from legal.model_orchestration.hardware import measured_capacity_bytes, profile_hardware
 from legal.security.durable_io import atomic_write_bytes, exclusive_file_lock
 from legal.security.local_encryption import LocalEnvelopeEncryptor
 from legal.security.strict_json import strict_json_load_path
@@ -122,8 +122,8 @@ class WarmModelPoolStore:
         if thermal not in _THERMAL_STATES:
             raise IntakeWorkbenchError("warm_model_pool_thermal_state_invalid")
         profile = profile_hardware(self.root).as_dict()
-        available = int(profile.get("available_memory_bytes") or 0)
-        memory_pressure = bool(available and available < _LOW_MEMORY_BYTES)
+        available = measured_capacity_bytes(profile.get("available_memory_bytes"))
+        memory_pressure = available < _LOW_MEMORY_BYTES
         thermal_pressure = thermal in {"elevated", "critical"}
         return {
             "available_memory_bytes": available,
@@ -138,10 +138,8 @@ class WarmModelPoolStore:
         """Check declared requirements immediately before a warm-up model load."""
 
         profile = profile_hardware(self.root).as_dict()
-        available_memory = int(profile.get("available_memory_bytes") or 0)
-        available_vram = int(
-            profile.get("available_vram_bytes") or profile.get("vram_bytes") or 0
-        )
+        available_memory = measured_capacity_bytes(profile.get("available_memory_bytes"))
+        available_vram = measured_capacity_bytes(profile.get("available_vram_bytes"))
         gpus = [row for row in (profile.get("details") or {}).get("gpus", []) if isinstance(row, dict)]
         required_memory = max(
             0,
@@ -168,14 +166,14 @@ class WarmModelPoolStore:
         if quantization in {"bf16", "fp16"} and not compatible_gpus:
             blockers.append("compatible_gpu_required_for_specialist_precision")
         if required_vram and not any(
-            int(gpu.get("available_vram_bytes") or 0) >= required_vram
+            measured_capacity_bytes(gpu.get("available_vram_bytes")) >= required_vram
             for gpu in compatible_gpus
         ):
             blockers.append("insufficient_available_vram_for_specialist")
         recommended_gpu = max(
             compatible_gpus,
             key=lambda gpu: (
-                int(gpu.get("available_vram_bytes") or 0),
+                measured_capacity_bytes(gpu.get("available_vram_bytes")),
                 float(gpu.get("compute_capability") or 0),
             ),
             default=None,

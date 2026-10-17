@@ -15,7 +15,7 @@ def test_strict_content_type_matching_accepts_common_official_variants() -> None
     assert not OfficialSourceFetcher._content_type_matches("application/pdf", "text/html", b"<html></html>")
 
 
-def test_ingest_script_dry_run_validates_catalog_without_fetching(tmp_path) -> None:
+def test_ingest_script_dry_run_validates_catalog_without_fetching(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -27,20 +27,21 @@ def test_ingest_script_dry_run_validates_catalog_without_fetching(tmp_path) -> N
             "--max-targets",
             "2",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     assert payload["status"] == "pass"
     assert payload["mode"] == "dry_run"
     assert payload["target_count"] == 2
     assert payload["target_problems"] == {}
 
 
-def test_authority_data_product_harness_plan_only_lists_required_steps(tmp_path) -> None:
+def test_authority_data_product_harness_plan_only_lists_required_steps(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -52,13 +53,14 @@ def test_authority_data_product_harness_plan_only_lists_required_steps(tmp_path)
             "--max-targets",
             "1",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     assert payload["status"] == "pass"
     step_names = [step["name"] for step in payload["steps"]]
     assert step_names[:4] == [
@@ -72,7 +74,7 @@ def test_authority_data_product_harness_plan_only_lists_required_steps(tmp_path)
     assert all(str(data_root) in " ".join(step["command"]) for step in payload["steps"][:8])
 
 
-def test_authority_data_product_harness_plan_can_require_direct_authority(tmp_path) -> None:
+def test_authority_data_product_harness_plan_can_require_direct_authority(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -83,19 +85,20 @@ def test_authority_data_product_harness_plan_can_require_direct_authority(tmp_pa
             "--plan-only",
             "--require-direct-authority",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     audit_steps = [step for step in payload["steps"] if step["name"] == "audit_parsed_authority_store"]
     assert audit_steps
     assert "--require-direct-authority" in audit_steps[0]["command"]
 
 
-def test_followup_ingest_defers_direct_authority_gate_until_after_rebuild(tmp_path) -> None:
+def test_followup_ingest_defers_direct_authority_gate_until_after_rebuild(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -107,13 +110,14 @@ def test_followup_ingest_defers_direct_authority_gate_until_after_rebuild(tmp_pa
             "--require-direct-authority",
             "--ingest-followup-targets",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     first_audit = next(step for step in payload["steps"] if step["name"] == "audit_parsed_authority_store")
     re_audit = next(step for step in payload["steps"] if step["name"] == "reaudit_parsed_authority_store")
     assert "--require-direct-authority" not in first_audit["command"]
@@ -135,7 +139,7 @@ def test_followup_ingest_defers_direct_authority_gate_until_after_rebuild(tmp_pa
     ]
 
 
-def test_authority_data_product_harness_can_require_measured_retrieval_smoke(tmp_path) -> None:
+def test_authority_data_product_harness_can_require_measured_retrieval_smoke(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -150,13 +154,14 @@ def test_authority_data_product_harness_can_require_measured_retrieval_smoke(tmp
             "--retrieval-min-recall-at-20",
             "0.95",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     smoke_steps = [step for step in payload["steps"] if step["name"] == "run_retrieval_smoke_eval"]
     assert smoke_steps
     assert smoke_steps[0]["required"] is True
@@ -195,7 +200,7 @@ def test_ingest_append_merge_preserves_first_wave_manifest_rows() -> None:
     assert merged[1]["hash"] == "new"
 
 
-def test_authority_data_product_followup_ingest_appends_not_replaces(tmp_path) -> None:
+def test_authority_data_product_followup_ingest_appends_not_replaces(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -208,18 +213,19 @@ def test_authority_data_product_followup_ingest_appends_not_replaces(tmp_path) -
             "--max-derived-targets",
             "3",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     followup = next(step for step in payload["steps"] if step["name"] == "ingest_derived_authority_targets")
     assert "--append-existing-manifest" in followup["command"]
 
 
-def test_followup_ingest_uses_resumable_chunked_runner(tmp_path) -> None:
+def test_followup_ingest_uses_resumable_chunked_runner(tmp_path, synthetic_repo_copy) -> None:
     data_root = tmp_path / "external_data"
     result = subprocess.run(
         [
@@ -234,13 +240,14 @@ def test_followup_ingest_uses_resumable_chunked_runner(tmp_path) -> None:
             "--derived-batch-timeout",
             "120",
         ],
+        cwd=synthetic_repo_copy,
         text=True,
         capture_output=True,
         timeout=45,
         check=False,
     )
-    payload = json.loads(result.stdout)
     assert result.returncode == 0, result.stderr + result.stdout
+    payload = json.loads(result.stdout)
     followup = next(step for step in payload["steps"] if step["name"] == "ingest_derived_authority_targets")
     assert "ingest-derived-authority-targets.py" in " ".join(followup["command"])
     assert "--batch-size" in followup["command"]

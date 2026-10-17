@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 import shutil
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from nh_family_law_llm import api as frozen_api
 
 
 ROOT = Path(__file__).resolve().parents[1]
+pytestmark = pytest.mark.usefixtures("synthetic_authority_context")
 HEADERS = {"X-User-Role": "reviewer", "X-Tenant-Id": "tenant-parser-regression"}
 
 
@@ -134,8 +137,8 @@ def test_pass35_store_build_pipeline_includes_parser_fixture_data() -> None:
     assert (ROOT / "data" / "fixtures" / "parser_regression" / "manifest.json").is_file()
 
 
-def test_pass35_invalid_fixture_id_fails_closed() -> None:
-    service = AuthorityLibraryService(repo_root=ROOT)
+def test_pass35_invalid_fixture_id_fails_closed(synthetic_authority_context) -> None:
+    service = AuthorityLibraryService(repo_root=synthetic_authority_context)
     result = service.parser_regression_fixture("../../not-a-fixture")
     assert result["status"] == "blocked"
     assert result["blockers"] == ["parser_regression_fixture_id_invalid"]
