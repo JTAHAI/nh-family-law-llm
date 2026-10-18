@@ -25,3 +25,7 @@
 
 # Keep raw command transcripts byte-for-byte; source whitespace checks still apply.
 artifacts/pass-08/*.log -whitespace
+
+# Parser-regression hashes bind raw bytes, including text-shaped negative fixtures.
+# Preserve those bytes on every checkout; never normalize them during verification.
+data/fixtures/parser_regression/** -text

@@ -122,6 +122,7 @@ jobs:
               'tests/test_fast_interchange_pack_recovery_http.py',
               'tests/test_fast_interchange_hardware_readiness.py',
               'tests/test_pass08_memory_consumers.py',
+              'tests/test_pass08_parser_fixture_integrity.py',
               'tests/test_pass08_authority_identity.py',
               'tests/test_pass107_context_budget_acceptance.py',
               'tests/test_pass109_low_memory_mode_acceptance.py',
