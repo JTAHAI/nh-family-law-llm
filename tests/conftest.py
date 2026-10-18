@@ -38,6 +38,7 @@ def synthetic_source_project(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) ->
     project = tmp_path / "synthetic-source"
     project.mkdir()
     monkeypatch.chdir(project)
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(project))
     return project
 
 
@@ -89,3 +90,16 @@ def synthetic_authority_services(synthetic_source_project, monkeypatch):
         str(synthetic_source_project.parent / "synthetic-authority-data"),
     )
     return synthetic_source_project
+
+
+@pytest.fixture
+def synthetic_authority_context(synthetic_repo_copy, monkeypatch, tmp_path):
+    """Opted-in API tests keep real service guards and a complete source identity.
+
+    Only fictional data is used. Source files are copied once per session; the
+    sibling data store cannot appear inside that synthetic source directory.
+    The real process cwd remains unchanged for source/UI contract checks.
+    """
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(synthetic_repo_copy))
+    monkeypatch.setenv("NH_FAMILY_LAW_DATA_ROOT", str(tmp_path / "authority-data"))
+    return synthetic_repo_copy

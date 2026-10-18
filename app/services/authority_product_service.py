@@ -61,7 +61,16 @@ class ActiveAuthorityProduct:
 class AuthorityProductService:
     """Read-only API facade over the verified active external authority generation."""
 
-    def __init__(self, *, data_root: str | Path | None = None) -> None:
+    def __init__(
+        self, *, data_root: str | Path | None = None,
+        repo_root: str | Path | None = None,
+    ) -> None:
+        # Never let a changed process cwd redefine the protected source tree.
+        configured_repo_root = repo_root or os.environ.get("NHFL_PROJECT_ROOT")
+        self.repo_root = (
+            Path(configured_repo_root).expanduser().resolve()
+            if configured_repo_root else Path(__file__).resolve().parents[2]
+        )
         runtime_mode = str(os.environ.get("NHFL_RUNTIME_MODE") or "source").strip().lower()
         configured = data_root
         if configured is None and runtime_mode == "store":
@@ -69,10 +78,10 @@ class AuthorityProductService:
         if configured is None:
             configured = os.environ.get("NH_FAMILY_LAW_DATA_ROOT") or os.environ.get("NHFL_AUTHORITY_DATA_ROOT")
         configured = configured or default_external_data_root()
-        self.data_root = ensure_external_authority_root(configured)
+        self.data_root = ensure_external_authority_root(configured, project_root=self.repo_root)
 
     def status(self) -> dict[str, Any]:
-        report = AuthorityProductVerifier(data_root=self.data_root).verify()
+        report = AuthorityProductVerifier(data_root=self.data_root, repo_root=self.repo_root).verify()
         payload = report.as_dict()
         payload["active"] = report.status == "pass"
         payload["review_required"] = True
@@ -1619,7 +1628,7 @@ class AuthorityProductService:
         if self.data_root is None:
             raise FileNotFoundError("authority data root is not configured")
         if verify_all:
-            verification = AuthorityProductVerifier(data_root=self.data_root).verify()
+            verification = AuthorityProductVerifier(data_root=self.data_root, repo_root=self.repo_root).verify()
             if verification.status != "pass" or not verification.build_id or not verification.build_manifest_path:
                 raise ValueError(f"active authority product is not verified: {verification.blockers}")
             manifest_path = Path(verification.build_manifest_path).resolve()

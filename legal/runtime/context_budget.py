@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from legal.matter.intake_workbench import IntakeWorkbenchError
-from legal.model_orchestration.hardware import profile_hardware
+from legal.model_orchestration.hardware import measured_capacity_bytes, profile_hardware
 from legal.security.durable_io import atomic_write_bytes, exclusive_file_lock
 from legal.security.local_encryption import LocalEnvelopeEncryptor
 from legal.security.strict_json import strict_json_load_path
@@ -117,9 +117,9 @@ class ContextBudgetStore:
         verifier = dict(payload.get("verifier_requirements") or {})
         requirements = {name: bool(verifier.get(name, False)) for name in ("citation", "quote", "claim")}
         profile = profile_hardware(self.root).as_dict()
-        available_memory = int(profile.get("available_memory_bytes") or 0)
+        available_memory = measured_capacity_bytes(profile.get("available_memory_bytes"))
         hardware_limit = max(512, int(profile.get("recommended_context_limit") or 4096))
-        if available_memory and available_memory < 4 * 1024**3:
+        if available_memory < 4 * 1024**3:
             hardware_limit = min(hardware_limit, 2048)
         requested = max(0, int(payload.get("requested_context_tokens") or 0))
         source_chars = sum(row["char_count"] for row in refs)
@@ -133,7 +133,7 @@ class ContextBudgetStore:
             blockers.append("requested_context_capped_by_hardware")
         if allocation <= verifier_reserve:
             blockers.append("verifier_reserve_exhausts_context")
-        if available_memory and available_memory < 4 * 1024**3:
+        if available_memory < 4 * 1024**3:
             blockers.append("low_memory_context_cap_active")
         record = {"budget_id": budget_id, "task": task, "source_refs": refs, "source_density": {"source_count": len(refs), "total_chars": source_chars, "estimated_tokens": source_density_tokens}, "verifier_requirements": requirements, "hardware": {"recommended_context_limit": hardware_limit, "available_memory_bytes": available_memory}, "allocation": {"context_tokens": allocation, "verifier_reserve_tokens": verifier_reserve, "source_content_tokens": max(0, allocation - verifier_reserve), "task_floor_tokens": task_floor}, "blockers": blockers, "status": "allocated_review_required" if not blockers else "allocated_with_limits_review_required", "created_at": _now(), "review_required": True, "local_only": True, "network_used": False}
         with exclusive_file_lock(self.lock):

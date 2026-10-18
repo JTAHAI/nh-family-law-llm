@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .adapters import LocalRuntimeAdapter
-from .hardware import HardwareProfile, profile_hardware
+from .hardware import HardwareProfile, measured_capacity_bytes, profile_hardware
 from .orchestrator import ModelOrchestrator
 from .registry import ModelAdmissionRecord, ModelRegistry
 from .roles import RoleCatalog
@@ -271,9 +271,15 @@ class ModelControlCenter:
             "supports_streaming": supports_streaming,
             "hardware": self.hardware_profile.as_dict(),
         }
-        if self.hardware_profile.available_memory_bytes and estimate["estimated_peak_memory_bytes"] > self.hardware_profile.available_memory_bytes:
+        available = measured_capacity_bytes(self.hardware_profile.available_memory_bytes)
+        estimate["hardware"]["available_memory_bytes"] = available
+        if available == 0 or estimate["estimated_peak_memory_bytes"] > available:
             estimate["status"] = "constrained"
-            estimate["warnings"] = ["estimated_peak_memory_exceeds_available_memory"]
+            estimate["warnings"] = [
+                "estimated_peak_memory_exceeds_available_memory"
+                if estimate["estimated_peak_memory_bytes"] > available
+                else "available_memory_unavailable"
+            ]
         else:
             estimate["status"] = "pass"
             estimate["warnings"] = list(self.hardware_profile.warnings)

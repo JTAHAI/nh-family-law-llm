@@ -9,15 +9,39 @@ source.
 from __future__ import annotations
 
 import hashlib
-import json
+import re
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from legal.security.durable_io import DurableIOError, read_bounded_regular_file
+from legal.security.strict_json import StrictJSONError, strict_json_load_path
 
 from legal.connectors.nh_forms import parse_forms_index
 from legal.connectors.nh_general_court import parse_general_court_section_html, parse_general_court_chapter_index
 from legal.connectors.nh_rules import parse_rules_text
 from legal.connectors.nh_supreme_court_opinions import parse_supreme_court_opinion_index
+
+
+MAX_FIXTURE_BYTES = 4 * 1024 * 1024
+MAX_MANIFEST_BYTES = 256 * 1024
+MAX_FIXTURES = 256
+_COMPONENT = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]*\Z")
+_SHA256 = re.compile(r"[a-f0-9]{64}\Z")
+
+
+def _reject_linked_path(path: Path) -> None:
+    # Inspect lexical ancestors before resolve() can erase a link or junction.
+    for component in (path, *path.parents):
+        try:
+            metadata = component.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError as exc:
+            raise ValueError("parser_regression_path_unavailable") from exc
+        if stat.S_ISLNK(metadata.st_mode) or getattr(metadata, "st_file_attributes", 0) & 0x400:
+            raise ValueError("parser_regression_linked_path_refused")
 
 
 _SUPPORTED_PARSERS = {
@@ -74,36 +98,77 @@ class ParserRegressionCorpus:
     schema_version = "parser_regression_corpus_v1"
 
     def __init__(self, fixture_root: str | Path) -> None:
-        self.fixture_root = Path(fixture_root).expanduser().resolve()
+        self.fixture_root = Path(fixture_root).expanduser().absolute()
         self.manifest_path = self.fixture_root / "manifest.json"
 
     def _load_manifest(self) -> dict[str, Any]:
-        if self.manifest_path.is_symlink() or not self.manifest_path.is_file():
+        _reject_linked_path(self.manifest_path)
+        if not self.manifest_path.is_file():
             raise ValueError("parser_regression_manifest_unavailable")
         try:
-            loaded = json.loads(self.manifest_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
+            loaded = strict_json_load_path(
+                self.manifest_path, max_bytes=MAX_MANIFEST_BYTES, require_object=True
+            )
+        except (OSError, StrictJSONError) as exc:
             raise ValueError("parser_regression_manifest_invalid") from exc
-        if not isinstance(loaded, dict) or not isinstance(loaded.get("fixtures"), list):
-            raise ValueError("parser_regression_manifest_invalid")
         if loaded.get("schema_version") != self.schema_version:
             raise ValueError("parser_regression_manifest_schema_invalid")
+        fixtures = loaded.get("fixtures")
+        if not isinstance(fixtures, list) or not 0 < len(fixtures) <= MAX_FIXTURES:
+            raise ValueError("parser_regression_manifest_invalid")
+        seen_ids: set[str] = set()
+        seen_files: set[str] = set()
+        for fixture in fixtures:
+            if not isinstance(fixture, dict):
+                raise ValueError("parser_regression_manifest_invalid")
+            identifier = fixture.get("fixture_id")
+            filename = fixture.get("content_file")
+            expected = fixture.get("expected")
+            digest = fixture.get("content_sha256")
+            if (not isinstance(identifier, str) or not _COMPONENT.fullmatch(identifier)
+                    or identifier.casefold() in seen_ids
+                    or not isinstance(filename, str) or not filename
+                    or filename.casefold() in seen_files
+                    or not isinstance(digest, str) or not _SHA256.fullmatch(digest)
+                    or not isinstance(fixture.get("parser_name"), str)
+                    or fixture["parser_name"] not in _SUPPORTED_PARSERS
+                    or not isinstance(expected, dict)):
+                raise ValueError("parser_regression_manifest_invalid")
+            minimum = expected.get("minimum_extracted_count")
+            required_status = (
+                "quarantined" if fixture.get("scenario") == "malformed_download" else "parsed"
+            )
+            if (type(minimum) is not int or minimum < 0
+                    or expected.get("status") != required_status
+                    or not isinstance(expected.get("required_metadata", {}), dict)):
+                raise ValueError("parser_regression_manifest_invalid")
+            seen_ids.add(identifier.casefold())
+            seen_files.add(filename.casefold())
         return loaded
 
     def _fixture_path(self, fixture: dict[str, Any]) -> Path:
-        relative = str(fixture.get("content_file") or "")
-        candidate = (self.fixture_root / relative).resolve()
+        relative = fixture["content_file"]
+        parts = relative.split("/")
+        if any(not _COMPONENT.fullmatch(part) or part.rstrip(" .") != part for part in parts):
+            raise ValueError("parser_regression_fixture_path_invalid")
+        candidate = self.fixture_root.joinpath(*parts)
+        _reject_linked_path(candidate)
         try:
-            candidate.relative_to(self.fixture_root)
+            candidate.resolve().relative_to(self.fixture_root.resolve())
         except ValueError as exc:
             raise ValueError("parser_regression_fixture_path_escape") from exc
         return candidate
 
     @staticmethod
     def _read_fixture(path: Path, expected_hash: str) -> tuple[bytes | None, list[str]]:
-        if path.is_symlink() or not path.is_file():
-            return None, ["fixture_file_missing_or_symlinked"]
-        content = path.read_bytes()
+        try:
+            _reject_linked_path(path)
+        except ValueError as exc:
+            return None, [str(exc)]
+        try:
+            content = read_bounded_regular_file(path, max_bytes=MAX_FIXTURE_BYTES)
+        except (OSError, DurableIOError):
+            return None, ["fixture_file_unavailable_or_oversized"]
         actual_hash = hashlib.sha256(content).hexdigest()
         if not expected_hash or actual_hash != expected_hash:
             return None, ["fixture_content_hash_mismatch"]

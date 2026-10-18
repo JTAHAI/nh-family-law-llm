@@ -1,0 +1,156 @@
+name: NH Pass 08 memory and authority regression hardening
+on:
+  push:
+    branches: [master, 'hardening/pass08-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  runtime-pack-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare repository-owned synthetic workspace
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          work = Path.cwd() / 'dist' / 'pass08-ci'
+          paths = {'HOME': 'profile', 'USERPROFILE': 'profile',
+                   'LOCALAPPDATA': 'profile', 'TEMP': 'tmp', 'TMP': 'tmp',
+                   'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache',
+                   'NHFL_VAULT_KEY_ROOT': 'profile/vault'}
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              for key, leaf in paths.items():
+                  path = work / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\n')
+              output.write('HF_HUB_OFFLINE=1\nTRANSFORMERS_OFFLINE=1\n')
+      - name: Install declared dependencies and synthetic fixtures
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13" "jsonschema>=4,<5"
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Record resolved dependencies
+        run: python -m pip list --format=json > dist/pass08-ci/dependencies.json
+      - name: Run cumulative regressions with unavailable-capacity and source-identity checks
+        shell: python
+        run: |
+          import os, shutil, subprocess, sys
+          from pathlib import Path
+          work = Path.cwd() / 'dist' / 'pass08-ci'
+          targets = [
+              'tests/test_pass05_fixture_contracts.py',
+              'tests/test_cli_api_local_v1.py',
+              'tests/test_compound_claim_filing_boundary.py',
+              'tests/test_enterprise_resource_collection.py',
+              'tests/test_external_audit_cli_fail_closed.py',
+              'tests/test_pass04_wheel_integrity.py',
+              'tests/test_pass04_model_boundary.py',
+              'tests/test_pass04_packaging_checkout.py',
+              'tests/test_v650_local_intelligence_control_center.py',
+              'tests/test_v652_local_intelligence_governance.py',
+              'tests/test_adaptive_local_runtime.py',
+              'tests/test_production_api_gateway.py',
+              'tests/test_pass08_desktop_release.py',
+              'tests/test_pass07_nh_evaluation_hardening.py',
+              'tests/test_pass06_nh_legal_behavior.py',
+              'tests/test_canonical_document_model.py',
+              'tests/test_retrieval_stack_pass5.py',
+              'tests/test_v510_knowledge_bundle.py',
+              'tests/test_pass03_chat_quarantine.py',
+              'tests/test_pass03_ci_contract.py',
+              'tests/test_production_authority_lane_boundary.py',
+              'tests/test_pass02_provider_storage.py',
+              'tests/test_pass02_index_preflight.py',
+              'tests/test_provider_connections.py',
+              'tests/test_public_source_pre_push_gate_v191.py',
+              'tests/test_release_audits_read_only.py',
+              'tests/test_pass01_vault_storage_hardening.py',
+              'tests/test_pass01_deliberation_startup.py',
+              'tests/test_matter_vault_encryption.py',
+              'tests/test_pdf_raster_preview.py',
+              'tests/test_v540_local_agent_runtime.py',
+              'tests/test_v540_local_agent_api_ui.py',
+              'tests/test_deliberation_workspace.py',
+              'tests/test_pass06_authority_root_binding.py',
+              'tests/test_pass06_regression_closure.py',
+              'tests/test_fast_interchange_worker_device_policy.py',
+              'tests/test_full_ga_workbench.py',
+              'tests/test_ga_pass_evidence_gate.py',
+              'tests/test_ga_security_privacy_audit_slice.py',
+              'tests/test_gold_release_gates_pass.py',
+              'tests/test_governance_policy_center.py',
+              'tests/test_hardware_gpu_probe.py',
+              'tests/test_installer_launchers.py',
+              'tests/test_local_operator_scripts.py',
+              'tests/test_local_test_readiness.py',
+              'tests/test_operator_handoff_bundle.py',
+              'tests/test_operator_test_battery.py',
+              'tests/test_pass104_warm_model_pool_acceptance.py',
+              'tests/test_pass131_matter_key_hierarchy_acceptance.py',
+              'tests/test_pass132_windows_hello_matter_unlock_acceptance.py',
+              'tests/test_pass151_incremental_encrypted_backups_acceptance.py',
+              'tests/test_pass152_point_in_time_restore_acceptance.py',
+              'tests/test_pass190_release_metric_eligibility_acceptance.py',
+              'tests/test_pass191_jurisdiction_pack_interface_acceptance.py',
+              'tests/test_pass192_fictional_second_state_reference_acceptance.py',
+              'tests/test_pass195_public_api_stability_acceptance.py',
+              'tests/test_pass196_200_enterprise_release_closure_acceptance.py',
+              'tests/test_pass31_atomic_authority_update_center.py',
+              'tests/test_pass33_freshness_dashboard.py',
+              'tests/test_store_packaging.py',
+              'tests/test_pass07_hardware_headroom.py',
+              'tests/test_pass07_model_pack_archive.py',
+              'tests/test_pass07_behavior_gate.py',
+              'tests/test_fast_interchange_artifact_registry.py',
+              'tests/test_fast_interchange_host_source_binding.py',
+              'tests/test_fast_interchange_model_packs.py',
+              'tests/test_fast_interchange_model_pack_ui.py',
+              'tests/test_fast_interchange_pack_recovery.py',
+              'tests/test_fast_interchange_pack_recovery_http.py',
+              'tests/test_fast_interchange_hardware_readiness.py',
+              'tests/test_pass08_memory_consumers.py',
+              'tests/test_pass08_parser_fixture_integrity.py',
+              'tests/test_pass08_authority_identity.py',
+              'tests/test_pass107_context_budget_acceptance.py',
+              'tests/test_pass109_low_memory_mode_acceptance.py',
+              'tests/test_pass19_authority_execution_harness.py',
+              'tests/test_pass30_authority_gap_vertical.py',
+              'tests/test_pass35_parser_regression_corpus.py',
+              'tests/test_pass37_forms_catalog_synchronizer.py',
+          ]
+          command = [sys.executable, '-B', '-m', 'pytest', *targets,
+                     '--basetemp=' + str(work / 'pytest'),
+                     '--junitxml=' + str(work / 'results.xml'), '-ra', '--tb=short']
+          if os.name != 'nt':
+              display = shutil.which('xvfb-run')
+              if not display:
+                  raise SystemExit('Virtual display required for the graphical launcher regression')
+              command = [display, '--auto-servernum', '--auth-file=' + str(work / 'xauthority'),
+                         '--error-file=' + str(work / 'xvfb.log'), *command]
+          subprocess.run(command, check=True)
+      - name: Verify exact staged source after tests
+        run: python scripts/run-public-source-preflight.py --index --require-ready --output dist/pass08-ci/public-source-index.json
+      - name: Preserve compact engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass08-memory-authority-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/pass08-ci/results.xml
+            dist/pass08-ci/dependencies.json
+            dist/pass08-ci/public-source-index.json
+          retention-days: 14
+          if-no-files-found: warn

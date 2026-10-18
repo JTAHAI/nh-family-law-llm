@@ -350,6 +350,8 @@ def authority_host(bound_host, tmp_path, monkeypatch):
     bundle = tmp_path / "fictional-bundle"
     bundle.mkdir()
     monkeypatch.chdir(bundle)
+    # Changing cwd alone must not redefine the production source boundary.
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(bundle))
     monkeypatch.setenv("NH_FAMILY_LAW_DATA_ROOT", str(root))
     refs = api._local_agent_context_service().references_from_cards(
         [

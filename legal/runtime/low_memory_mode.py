@@ -5,7 +5,7 @@ from datetime import UTC,datetime
 from pathlib import Path
 from typing import Any
 from legal.matter.intake_workbench import IntakeWorkbenchError
-from legal.model_orchestration.hardware import profile_hardware
+from legal.model_orchestration.hardware import measured_capacity_bytes, profile_hardware
 from legal.security.durable_io import atomic_write_bytes,exclusive_file_lock
 from legal.security.local_encryption import LocalEnvelopeEncryptor
 from legal.security.strict_json import strict_json_load_path
@@ -33,7 +33,7 @@ class LowMemoryModeStore:
   return state
  def _write(self,s): atomic_write_bytes(self.path,_canon(self.encryptor.encrypt_json(s)),mode=0o600)
  def evaluate(self):
-  p=profile_hardware(self.root).as_dict();available=int(p.get('available_memory_bytes') or 0);low=bool(available and available<4*1024**3)
+  p=profile_hardware(self.root).as_dict();available=measured_capacity_bytes(p.get('available_memory_bytes'));low=available<4*1024**3
   return {'schema_version':'low_memory_mode_v1','detected_low_memory':low,'hardware':{'available_memory_bytes':available,'recommended_context_limit':int(p.get('recommended_context_limit') or 0)},'fallbacks':{'retrieval':'lexical_only','model':'compact_admitted_only_or_deterministic','max_batch_items':1,'max_context_tokens':2048,'warm_workers':'release'},'review_required':True,'local_only':True,'network_used':False}
  def set_active(self,payload:dict[str,Any]):
   if payload.get('user_confirmed') is not True: raise IntakeWorkbenchError('low_memory_mode_confirmation_required',409)
