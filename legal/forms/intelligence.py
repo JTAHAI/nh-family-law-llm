@@ -5,9 +5,22 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-_FORM_ID_RE = re.compile(r"\b(?:FM|PA|CV|PB)-?\s?\d{3}[A-Z]?\b", re.I)
+_NHJB_FORM_ID_RE = re.compile(
+    r"\bNHJB(?:[-\s]+)?(?P<number>\d{3,5})(?:[-\s]+)?(?P<suffix>[A-Z]{1,3})\b",
+    re.I,
+)
+_LEGACY_FORM_ID_RE = re.compile(
+    r"\b(?P<prefix>FM|PA|CV|PB)[-\s]?(?P<number>\d{3})(?P<suffix>[A-Z]?)\b",
+    re.I,
+)
 _FIELD_RE = re.compile(r"\b([A-Z][A-Za-z /'-]{2,40})(?:\s*[:_]{1,}|\s+\(.*?\)\s*[:_])")
-_CITATION_RE = re.compile(r"\b(?:\d{1,2}-?[A-Z]?\s+M\.R\.S\.\s*§\s*\d+[\w-]*|M\.R\.\s+Civ\.\s+P\.\s*\d+|FM-\d{3}[A-Z]?)\b", re.I)
+_CITATION_RE = re.compile(
+    r"\b(?:NHJB(?:[-\s]+)?\d{3,5}(?:[-\s]+)?[A-Z]{1,3}|"
+    r"(?:FM|PA|CV|PB)[-\s]?\d{3}[A-Z]?|"
+    r"\d{1,2}-?[A-Z]?\s+M\.R\.S\.\s*§\s*\d+[\w-]*|"
+    r"M\.R\.\s+Civ\.\s+P\.\s*\d+)\b",
+    re.I,
+)
 
 
 @dataclass(frozen=True)
@@ -67,10 +80,18 @@ class FormCatalogBuilder:
         *,
         current_versions: dict[str, str] | None = None,
     ) -> FormIntelligenceReport:
-        current_versions = current_versions or {}
+        normalized_current_versions: dict[str, str] = {}
+        for raw_form_id, raw_version in (current_versions or {}).items():
+            normalized = self._normalize_form_id(str(raw_form_id))
+            version = str(raw_version or "").strip()
+            if normalized and version:
+                normalized_current_versions[normalized] = version
         entries: list[FormCatalogEntry] = []
         for record in records:
-            entry = self._entry_from_record(record, current_versions=current_versions)
+            entry = self._entry_from_record(
+                record,
+                current_versions=normalized_current_versions,
+            )
             if entry:
                 entries.append(entry)
         dependency_graph = {entry.form_id: list(entry.dependencies) for entry in entries}
@@ -132,10 +153,14 @@ class FormCatalogBuilder:
         )
 
     def _normalize_form_id(self, value: str) -> str | None:
-        match = _FORM_ID_RE.search(value)
-        if not match:
-            return None
-        return match.group(0).replace(" ", "").upper().replace("FM", "FM-").replace("PA", "PA-").replace("CV", "CV-").replace("PB", "PB-").replace("--", "-")
+        nhjb = _NHJB_FORM_ID_RE.search(value)
+        if nhjb:
+            return f"NHJB-{nhjb.group('number')}-{nhjb.group('suffix').upper()}"
+        legacy = _LEGACY_FORM_ID_RE.search(value)
+        if legacy:
+            suffix = legacy.group("suffix").upper()
+            return f"{legacy.group('prefix').upper()}-{legacy.group('number')}{suffix}"
+        return None
 
     def _extract_version_date(self, text: str) -> str | None:
         match = re.search(r"(?:Rev\.?|Revised|Version)\s*(?:date)?\s*[:\-]?\s*(\d{1,2}/\d{1,2}/\d{2,4}|\d{1,2}/\d{4}|[A-Za-z]+\s+\d{4})", text, re.I)
@@ -152,19 +177,31 @@ class FormCatalogBuilder:
             return "unknown", "No current-version baseline available for this form."
         if not version_date:
             return "unknown", "Form version date was not extracted."
-        if self._version_key(version_date) < self._version_key(current):
+        detected_date = self._parse_version_date(version_date)
+        current_date = self._parse_version_date(current)
+        if detected_date is None:
+            return "unknown", f"The extracted version date for {form_id} is not recognized."
+        if current_date is None:
+            return "unknown", f"The current-version baseline for {form_id} is not recognized."
+        if detected_date < current_date:
             return "stale", f"{form_id} appears stale: extracted {version_date}, expected {current}."
         return "current", None
 
-    def _version_key(self, value: str) -> tuple[int, int, int, str]:
+    def _parse_version_date(self, value: str) -> datetime | None:
         value = value.strip()
-        for fmt in ("%m/%d/%Y", "%m/%d/%y", "%m/%Y", "%B %Y"):
+        for fmt in (
+            "%m/%d/%Y",
+            "%m/%d/%y",
+            "%m/%Y",
+            "%B %Y",
+            "%b %Y",
+            "%Y-%m-%d",
+        ):
             try:
-                dt = datetime.strptime(value, fmt)
-                return (dt.year, dt.month, dt.day, value)
+                return datetime.strptime(value, fmt)
             except ValueError:
                 continue
-        return (0, 0, 0, value)
+        return None
 
     def classify_filing_context(self, text: str) -> str:
         lowered = text.lower()
@@ -198,7 +235,10 @@ class FormCatalogBuilder:
         return sorted(field for field in fields if 2 < len(field) <= 50)
 
     def extract_dependencies(self, text: str) -> list[str]:
-        deps = {match.group(0).replace("  ", " ").strip() for match in _CITATION_RE.finditer(text)}
+        deps: set[str] = set()
+        for match in _CITATION_RE.finditer(text):
+            value = match.group(0).replace("  ", " ").strip()
+            deps.add(self._normalize_form_id(value) or value)
         return sorted(deps)
 
     def _issue_labels_for_context(self, context: str) -> list[str]:

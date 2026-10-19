@@ -33,7 +33,26 @@ def test_pass39_openapi_documents_required_api_surface():
     assert policy["audit_events_required"] is True
 
 
-def test_pass39_protected_api_routes_require_role_and_tenant_and_emit_audit_headers():
+def test_pass39_protected_api_routes_require_role_and_tenant_and_emit_audit_headers(
+    tmp_path, monkeypatch,
+):
+    from app.api.routes import deliberation as deliberation_routes
+
+    # Reproduce the hosted qualifier layout: the synthetic user profile lives
+    # inside its synthetic checkout. Read-only preset metadata must not create
+    # or fall back to a protected run store merely to answer this request.
+    project_root = tmp_path / "synthetic-source"
+    profile_root = project_root / "profile"
+    project_root.mkdir()
+    profile_root.mkdir()
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(project_root))
+    monkeypatch.setenv("HOME", str(profile_root))
+    monkeypatch.setenv("USERPROFILE", str(profile_root))
+    monkeypatch.delenv("NHFL_DELIBERATION_ROOT", raising=False)
+    monkeypatch.setattr(deliberation_routes, "HOST", None)
+    monkeypatch.setattr(deliberation_routes, "PRESET_CATALOG", None)
+    monkeypatch.setattr(deliberation_routes, "TOOL_BROKER", None)
+
     client = TestClient(app)
 
     # Exercise a retained, read-only production endpoint, not the retired
@@ -55,7 +74,55 @@ def test_pass39_protected_api_routes_require_role_and_tenant_and_emit_audit_head
     assert body["rbac"]["enforced"] is True
     assert body["audit_event"]["audit_status"] == "emitted"
     assert body["presets"]
+    assert not (profile_root / ".codex").exists()
+
+    # A route that actually needs persisted run state still fails closed while
+    # the default root would live inside the configured source tree.
+    run = client.post(
+        "/api/deliberation/runs",
+        headers={"X-User-Role": "attorney", "X-Tenant-Id": "tenant-test"},
+        json={
+            "preset_id": "quick_local_second_opinion",
+            "matter_id": "synthetic-matter",
+            "question": "Synthetic storage-boundary check",
+        },
+    )
+    assert run.status_code == 503
+    assert run.json()["detail"] == {
+        "error": "deliberation_storage_unavailable",
+        "review_required": True,
+    }
     assert client.post("/api/query", json={"query": "custody"}).status_code == 404
+
+
+def test_pass39_deliberation_run_accepts_explicit_safe_external_store(
+    tmp_path, monkeypatch,
+):
+    from app.api.routes import deliberation as deliberation_routes
+
+    project_root = tmp_path / "synthetic-source"
+    safe_store = tmp_path / "external-deliberation-store"
+    project_root.mkdir()
+    monkeypatch.setenv("NHFL_PROJECT_ROOT", str(project_root))
+    monkeypatch.setenv("NHFL_DELIBERATION_ROOT", str(safe_store))
+    monkeypatch.setattr(deliberation_routes, "HOST", None)
+
+    client = TestClient(app)
+    response = client.post(
+        "/api/deliberation/runs",
+        headers={"X-User-Role": "attorney", "X-Tenant-Id": "tenant-test"},
+        json={
+            "preset_id": "quick_local_second_opinion",
+            "matter_id": "synthetic-matter",
+            "question": "Synthetic external-store acceptance check",
+            "jurisdiction": "nh",
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["review_required"] is True
+    assert safe_store.is_dir()
+    assert not (project_root / ".codex").exists()
 
 
 def test_pass39_health_route_remains_unauthenticated_but_audited():
