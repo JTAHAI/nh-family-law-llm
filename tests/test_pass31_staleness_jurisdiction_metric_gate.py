@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from legal.evals.staleness_jurisdiction_metrics import StalenessJurisdictionMetricRunner
+from legal.forms.intelligence import FormCatalogBuilder
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -138,6 +139,44 @@ def test_pass31_metric_runner_passes_operator_source_backed_scope_and_forms(tmp_
     measurements = json.loads((tmp_path / "release_metric_measurements.pass31.partial.json").read_text())
     assert {metric["name"] for metric in measurements["metrics"]} == {"scope_verification", "form_freshness_detection"}
     assert all(metric["operator_source_backed"] for metric in measurements["metrics"])
+
+
+def test_nh_form_catalog_normalizes_nhjb_ids_and_version_baselines() -> None:
+    report = FormCatalogBuilder().build_catalog(
+        [
+            {
+                "source_id": "synthetic-form",
+                "form_id": "nhjb 9998 f",
+                "title": "Synthetic New Hampshire court form",
+                "text": "Use NHJB 9999 F as a related form.",
+                "version_date": "01/2026",
+            }
+        ],
+        current_versions={"NHJB-9998-F": "01/2026"},
+    )
+
+    assert report.form_count == 1
+    entry = report.entries[0]
+    assert entry.form_id == "NHJB-9998-F"
+    assert entry.freshness_status == "current"
+    assert entry.dependencies == ("NHJB-9999-F",)
+
+
+def test_nh_form_catalog_rejects_unparseable_version_evidence() -> None:
+    builder = FormCatalogBuilder()
+    invalid_detected = builder.build_catalog(
+        [{"form_id": "NHJB-9998-F", "version_date": "latest"}],
+        current_versions={"NHJB-9998-F": "01/2026"},
+    ).entries[0]
+    invalid_baseline = builder.build_catalog(
+        [{"form_id": "NHJB-9998-F", "version_date": "01/2026"}],
+        current_versions={"NHJB-9998-F": "latest"},
+    ).entries[0]
+
+    assert invalid_detected.freshness_status == "unknown"
+    assert "not recognized" in str(invalid_detected.stale_form_warning)
+    assert invalid_baseline.freshness_status == "unknown"
+    assert "not recognized" in str(invalid_baseline.stale_form_warning)
 
 
 def test_pass31_metric_runner_blocks_seed_and_empty_inputs(tmp_path: Path) -> None:

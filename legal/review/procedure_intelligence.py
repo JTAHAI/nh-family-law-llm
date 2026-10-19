@@ -12,7 +12,11 @@ from typing import Any, Iterable
 
 MAX_TEXT_CHARS = 250_000
 MAX_SOURCE_CARDS = 2_000
-_FORM_ID_RE = re.compile(r"\b(?:FM|PA|CV|PB)[\s-]*\d{3}[A-Z]?\b", re.I)
+_FORM_ID_RE = re.compile(
+    r"\b(?:NHJB[\s-]*\d{3,5}[\s-]*[A-Z]{1,3}|"
+    r"(?:FM|PA|CV|PB)[\s-]*\d{3}[A-Z]?)\b",
+    re.I,
+)
 
 _POSTURE_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("appeal", ("notice of appeal", "on appeal", "supreme court", "appellate record", "record on appeal")),

@@ -73,6 +73,8 @@ APPROVED_PUBLIC_PDF_ROOTS = (
 # this source-tree audit must not mistake either for operator data.
 PUBLIC_SOURCE_DIRECTORY_PREFIXES = {
     ("legal", "runtime"),
+    ("src", "nh_family_law_llm", "resources", "runtime"),
+    ("nh_family_law_llm", "resources", "runtime"),
 }
 PUBLIC_FIXTURE_DIRECTORY_PREFIXES = {
     ("data", "fixtures"),

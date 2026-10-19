@@ -8,8 +8,13 @@ from typing import Any
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.api.security import review_response
+from legal.deliberation.broker import DeliberationToolBroker
 from legal.deliberation.external_root import DeliberationRootError
-from legal.deliberation.host import DeliberationHost, DeliberationHostError
+from legal.deliberation.host import (
+    DeliberationHost,
+    DeliberationHostError,
+    DeliberationPresetCatalog,
+)
 from legal.provider_connections import ProviderConnectionService
 from legal.provider_connections.service import ProviderConnectionError
 from legal.provider_connections.store import ProviderStoreRootError
@@ -22,6 +27,55 @@ HOST: DeliberationHost | None = None
 _HOST_LOCK = threading.Lock()
 PROVIDER_SERVICE: ProviderConnectionService | None = None
 _PROVIDER_LOCK = threading.Lock()
+PRESET_CATALOG: DeliberationPresetCatalog | None = None
+_PRESET_LOCK = threading.Lock()
+TOOL_BROKER: DeliberationToolBroker | None = None
+_TOOL_LOCK = threading.Lock()
+
+
+def _project_root() -> Path:
+    configured = str(os.environ.get("NHFL_PROJECT_ROOT") or "").strip()
+    if configured:
+        return Path(configured).expanduser().absolute()
+    return Path(__file__).resolve().parents[3]
+
+
+def _get_preset_catalog() -> DeliberationPresetCatalog:
+    """Load packaged preset metadata without touching protected runtime storage."""
+
+    global PRESET_CATALOG
+    with _PRESET_LOCK:
+        if PRESET_CATALOG is None:
+            try:
+                PRESET_CATALOG = DeliberationPresetCatalog()
+            except (OSError, ValueError, KeyError) as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail={
+                        "error": "deliberation_catalog_unavailable",
+                        "review_required": True,
+                    },
+                ) from exc
+        return PRESET_CATALOG
+
+
+def _get_tool_broker() -> DeliberationToolBroker:
+    """Expose the static read-only tool catalog without creating a run store."""
+
+    global TOOL_BROKER
+    with _TOOL_LOCK:
+        if TOOL_BROKER is None:
+            try:
+                TOOL_BROKER = DeliberationToolBroker()
+            except (OSError, ValueError, KeyError, RuntimeError) as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail={
+                        "error": "deliberation_tool_catalog_unavailable",
+                        "review_required": True,
+                    },
+                ) from exc
+        return TOOL_BROKER
 
 
 def _get_provider_service() -> ProviderConnectionService:
@@ -30,7 +84,7 @@ def _get_provider_service() -> ProviderConnectionService:
         if PROVIDER_SERVICE is None:
             try:
                 PROVIDER_SERVICE = ProviderConnectionService(
-                    project_root=Path(__file__).resolve().parents[3],
+                    project_root=_project_root(),
                     store_root=os.environ.get("NHFL_PROVIDER_STORE_ROOT") or None,
                 )
             except (ProviderStoreRootError, OSError, ValueError) as exc:
@@ -46,7 +100,13 @@ def _get_host() -> DeliberationHost:
     with _HOST_LOCK:
         if HOST is None:
             try:
-                HOST = DeliberationHost(project_root=Path(__file__).resolve().parents[3])
+                host_kwargs: dict[str, Any] = {"project_root": _project_root()}
+                configured_root = str(
+                    os.environ.get("NHFL_DELIBERATION_ROOT") or ""
+                ).strip()
+                if configured_root:
+                    host_kwargs["root"] = configured_root
+                HOST = DeliberationHost(**host_kwargs)
             except (DeliberationRootError, OSError, ValueError) as exc:
                 # Do not expose filesystem details or fall back to an unsafe root.
                 # A failed initialization leaves HOST unset so recovery is retryable.
@@ -89,7 +149,7 @@ def _invoke(handler, *args, action: str, endpoint: str, **kwargs) -> dict[str, A
 
 @router.get("/deliberation/presets", summary="List deliberation presets")
 def list_presets(x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    presets = _get_host().list_presets()
+    presets = _get_preset_catalog().list()
     return review_response(
         "GET /api/deliberation/presets",
         "deliberation_list_presets",
@@ -99,7 +159,7 @@ def list_presets(x_user_role: str | None = Header(default=None, alias="X-User-Ro
 
 @router.get("/deliberation/tools", summary="List deliberation tools")
 def list_tools(x_user_role: str | None = Header(default=None, alias="X-User-Role")):
-    tools = _get_host().list_tools()
+    tools = _get_tool_broker().list_tools()
     return review_response(
         "GET /api/deliberation/tools",
         "deliberation_list_tools",

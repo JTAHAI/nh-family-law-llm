@@ -31,13 +31,16 @@ def test_router_import_does_not_open_default_deliberation_store(tmp_path):
     assert result.returncode == 0, result.stderr
 
 
-def test_rejected_default_returns_safe_503_without_breaking_unrelated_route(monkeypatch, tmp_path):
+def test_rejected_default_keeps_static_catalog_available_and_run_store_fail_closed(
+    monkeypatch, tmp_path,
+):
     from app.api.routes import deliberation
 
     home = tmp_path / "fictional-private-home"
     monkeypatch.setenv("HOME", str(home))
     monkeypatch.setenv("USERPROFILE", str(home))
     monkeypatch.setattr(deliberation, "HOST", None)
+    monkeypatch.setattr(deliberation, "PRESET_CATALOG", None)
     app = FastAPI()
     app.include_router(deliberation.router, prefix="/api")
 
@@ -49,11 +52,22 @@ def test_rejected_default_returns_safe_503_without_breaking_unrelated_route(monk
         assert client.get("/synthetic-health").status_code == 200
         for _ in range(2):
             response = client.get("/api/deliberation/presets")
-            assert response.status_code == 503
-            assert response.json()["detail"] == {
+            assert response.status_code == 200
+            assert response.json()["presets"]
+            assert response.json()["review_required"] is True
+        response = client.post(
+            "/api/deliberation/runs",
+            json={
+                "preset_id": "quick_local_second_opinion",
+                "matter_id": "synthetic-matter",
+                "question": "Synthetic storage refusal check",
+            },
+        )
+        assert response.status_code == 503
+        assert response.json()["detail"] == {
                 "error": "deliberation_storage_unavailable", "review_required": True,
-            }
-            assert str(tmp_path) not in response.text
+        }
+        assert str(tmp_path) not in response.text
         assert client.get("/synthetic-health").status_code == 200
     assert deliberation.HOST is None
     assert not (home / ".codex" / "deliberation_store").exists()

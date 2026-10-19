@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 from zipfile import ZipFile
 
 REQUIRED_RELEASE_PATHS = {
@@ -75,11 +76,13 @@ def _strip_archive_root(name: str) -> str:
     if len(parts) <= 1:
         return clean
     root = parts[0].casefold()
+    normalized_root = re.sub(r"[\s_-]+", "-", root)
     if (
         root == "nh_family_law_llm"
         or root.startswith("nh_family_law_llm_v")
         or root.startswith("nh-family-law-llm_v")
         or root.startswith("nh-family-law-llm-v")
+        or normalized_root.startswith("new-hampshire-family-law-llm-v")
     ):
         return "/".join(parts[1:])
     return clean
