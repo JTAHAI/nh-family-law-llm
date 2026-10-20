@@ -1,0 +1,8 @@
+{
+  "schema_version": "nhfl.sample_evidence_manifest.v1",
+  "files": [
+    "local_smoke_report.json"
+  ],
+  "production_evidence": false,
+  "review_required": true
+}

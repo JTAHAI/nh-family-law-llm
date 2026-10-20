@@ -105,9 +105,11 @@ def test_v602_strict_json_enforces_size_depth_and_root_type() -> None:
         strict_json_loads("[]", require_object=True)
 
 
-def test_v602_release_ledger_rejects_ambiguous_json_rows(tmp_path: Path) -> None:
-    release_root = tmp_path / "release"
-    store = GAReleaseCandidateOperationsStore(ROOT, release_root)
+def test_v602_release_ledger_rejects_ambiguous_json_rows(
+    tmp_path: Path, synthetic_repo_copy: Path
+) -> None:
+    release_root = synthetic_repo_copy.parent / f"release-{tmp_path.name}"
+    store = GAReleaseCandidateOperationsStore(synthetic_repo_copy, release_root)
     release_root.mkdir(parents=True, exist_ok=True)
     assert store.ledger_path is not None
     store.ledger_path.write_text(
@@ -118,9 +120,11 @@ def test_v602_release_ledger_rejects_ambiguous_json_rows(tmp_path: Path) -> None
         store.verify()
 
 
-def test_v602_release_ledgers_flush_and_fsync_before_success(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    release_root = tmp_path / "release"
-    store = GAReleaseCandidateOperationsStore(ROOT, release_root)
+def test_v602_release_ledgers_flush_and_fsync_before_success(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, synthetic_repo_copy: Path
+) -> None:
+    release_root = synthetic_repo_copy.parent / f"release-{tmp_path.name}"
+    store = GAReleaseCandidateOperationsStore(synthetic_repo_copy, release_root)
     calls: list[int] = []
 
     import legal.release.release_candidate_operations as module
