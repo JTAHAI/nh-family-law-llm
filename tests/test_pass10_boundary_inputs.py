@@ -228,5 +228,9 @@ def test_pass10_workflows_keep_full_and_focused_gates_fail_closed() -> None:
     assert "python -m pytest" in focused
     assert "pytest', 'tests'" in full
     assert "xvfb-run" in full
+    assert "RUNNER_TEMP" in full
+    assert "NHFL_CI_EXTERNAL_ROOT" in full
+    assert "external / 'pytest'" in full
+    assert "work / 'pytest'" not in full
     assert "continue-on-error" not in focused + full
     assert "if: always()" in focused and "if: always()" in full
