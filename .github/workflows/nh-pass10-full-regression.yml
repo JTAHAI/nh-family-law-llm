@@ -45,6 +45,7 @@ jobs:
         run: >-
           python -m pip install
           ".[api,dev]"
+          "psutil>=6,<8"
           "fpdf2>=2.8,<3"
           "Pillow>=12.3,<13"
           "jsonschema>=4,<5"
