@@ -1,0 +1,97 @@
+name: NH Pass 10 full regression
+on:
+  push:
+    branches: [master, 'hardening/pass10-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  full-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare repository-owned synthetic workspace
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          root = Path.cwd() / 'dist' / 'pass10-full'
+          paths = {
+              'HOME': 'profile', 'USERPROFILE': 'profile',
+              'LOCALAPPDATA': 'profile', 'TEMP': 'tmp', 'TMP': 'tmp',
+              'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache',
+              'NHFL_VAULT_KEY_ROOT': 'profile/vault',
+              'NHFL_IDEMPOTENCY_STATE_ROOT': 'profile/idempotency',
+          }
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              for key, leaf in paths.items():
+                  path = root / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\n')
+              output.write('HF_HUB_OFFLINE=1\nTRANSFORMERS_OFFLINE=1\n')
+      - name: Install declared dependencies and synthetic fixtures
+        run: >-
+          python -m pip install
+          ".[api,dev]"
+          "fpdf2>=2.8,<3"
+          "Pillow>=12.3,<13"
+          "jsonschema>=4,<5"
+          "setuptools>=69"
+          build wheel
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Record resolved dependencies
+        run: python -m pip list --format=json > dist/pass10-full/dependencies.json
+      - name: Run complete regression suite
+        shell: python
+        run: |
+          import os, shutil, subprocess, sys
+          from pathlib import Path
+          work = Path('dist/pass10-full').absolute()
+          command = [
+              sys.executable, '-B', '-m', 'pytest', 'tests',
+              '--basetemp=' + str(work / 'pytest'),
+              '--junitxml=' + str(work / 'results.xml'),
+              '-ra', '--tb=short',
+          ]
+          if os.name != 'nt':
+              display = shutil.which('xvfb-run')
+              if not display:
+                  raise SystemExit('Virtual display required for graphical regressions')
+              command = [
+                  display, '--auto-servernum',
+                  '--auth-file=' + str(work / 'xauthority'),
+                  '--error-file=' + str(work / 'xvfb.log'),
+                  *command,
+              ]
+          subprocess.run(command, check=True)
+      - name: Verify exact staged source after tests
+        if: ${{ !cancelled() }}
+        run: >-
+          python scripts/run-public-source-preflight.py
+          --index --require-ready
+          --output dist/pass10-full/public-source-index.json
+      - name: Preserve compact engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass10-full-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/pass10-full/results.xml
+            dist/pass10-full/dependencies.json
+            dist/pass10-full/public-source-index.json
+            dist/pass10-full/xvfb.log
+          retention-days: 14
+          if-no-files-found: warn

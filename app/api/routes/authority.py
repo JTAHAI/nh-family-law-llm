@@ -325,6 +325,12 @@ def authority_rule_history_timeline(query: str = ""):
 
 @router.post("/authority/verify-output", summary="Verify an answer against the active immutable authority generation")
 def verify_active_authority_output(payload: dict):
+    # Validate safety-sensitive request types before constructing a service.
+    # An unavailable external authority store must not mask malformed input
+    # behind a successful blocked response.
+    auto_extract_claims = strict_json_bool(
+        payload, "auto_extract_claims", default=True
+    )
     try:
         result = AuthorityProductService().verify_output(
             text=str(payload.get("text") or ""),
@@ -332,7 +338,7 @@ def verify_active_authority_output(payload: dict):
             quotes=payload.get("quotes") or [],
             claims=payload.get("claims") or [],
             expected_jurisdiction=str(payload.get("expected_jurisdiction") or "nh"),
-            auto_extract_claims=strict_json_bool(payload, "auto_extract_claims", default=True),
+            auto_extract_claims=auto_extract_claims,
         )
     except (FileNotFoundError, ValueError, OSError):
         result = {
