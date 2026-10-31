@@ -54,7 +54,7 @@ retrieval-evaluation = ["sqlite-vec>=0.1.9,<0.2", "qdrant-client>=1.18.0,<2", "d
 release-hardening = [
   "opentelemetry-api>=1.42.1,<2",
   "opentelemetry-sdk>=1.42.1,<2",
-  "Pillow>=12.3.0,<13",
+  "Pillow>=12.3.0,<14",
 ]
 
 [tool.setuptools.package-dir]
