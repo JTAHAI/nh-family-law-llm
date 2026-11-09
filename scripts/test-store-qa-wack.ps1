@@ -47,16 +47,17 @@ try {
   foreach ($name in @('TMP','TEMP')) { [Environment]::SetEnvironmentVariable($name,(Join-Path $work 'tmp'),'Process') }
   $trustAttempted=$true
   Import-Certificate -FilePath (Join-Path $work 'temporary-public-certificate.cer') -CertStoreLocation 'Cert:\LocalMachine\TrustedPeople' | Out-Null
+  # Let WACK select its packaged-app workflow from the signed MSIX itself.
+  # The prior packagefullname attempt failed at inventory; preserve that result
+  # separately, and do not reuse its report or classify it as a pass.
   $installAttempted=$true
-  Add-AppxPackage -Path $package -ErrorAction Stop
-  $installed=Get-AppxPackage -Name $receipt.qa_identity -ErrorAction Stop
-  if (-not $installed) { throw 'QA registration failed before WACK.' }
+  $report.invocation='appxpackagepath'
   & $appcert reset | Out-Host
   if ($LASTEXITCODE -ne 0) { throw 'WACK reset failed.' }
   $nativeReport=Join-Path $out 'native-report.xml'
   $start=New-Object Diagnostics.ProcessStartInfo
   $start.FileName=$appcert
-  $start.Arguments='test -packagefullname "'+$installed.PackageFullName+'" -reportoutputpath "'+$nativeReport+'"'
+  $start.Arguments='test -appxpackagepath "'+$package+'" -reportoutputpath "'+$nativeReport+'"'
   $start.UseShellExecute=$false
   $start.RedirectStandardOutput=$true; $start.RedirectStandardError=$true
   $process=New-Object Diagnostics.Process
@@ -78,6 +79,8 @@ try {
     $process.Dispose()
   }
   & python -B (Join-Path $PSScriptRoot 'parse-wack-report.py') --package $package --output-root $out --execution-status $report.execution_status --output (Join-Path $out 'parsed-result.json')
+  $report.parser_exit_code=$LASTEXITCODE
+  if (-not (Test-Path -LiteralPath (Join-Path $out 'parsed-result.json'))) { throw 'WACK parser did not write a receipt.' }
   $parsed=Get-Content -LiteralPath (Join-Path $out 'parsed-result.json') -Raw | ConvertFrom-Json
   $report.status=$parsed.status
   if (Test-Path -LiteralPath $nativeReport) {

@@ -4,13 +4,22 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from legal.release.wack_qualification import parse_wack_report
+# This parser intentionally needs only the standard library. Import its exact
+# implementation without running legal.release.__init__, which loads unrelated
+# document/crypto dependencies before a failed native report can be recorded.
+_spec = importlib.util.spec_from_file_location(
+    "nhfl_standalone_wack_parser", ROOT / "legal/release/wack_qualification.py"
+)
+if _spec is None or _spec.loader is None:
+    raise RuntimeError("wack_parser_implementation_unavailable")
+_module = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_module)
+parse_wack_report = _module.parse_wack_report
 
 
 def main() -> int:
