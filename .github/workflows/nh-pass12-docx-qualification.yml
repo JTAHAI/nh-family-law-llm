@@ -1,0 +1,108 @@
+name: NH Pass 12 DOCX and full regression
+on:
+  push:
+    branches: [master, 'hardening/pass12-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  docx-and-full-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare owned state and exact disposable source identity
+        shell: python
+        run: |
+          import json, os, subprocess
+          from pathlib import Path
+          root = Path.cwd()
+          work = root / 'dist' / 'pass12-ci'
+          work.mkdir(parents=True, exist_ok=True)
+          source = work / 'source'
+          if source.exists():
+              raise SystemExit('Refusing to reuse an existing qualification source')
+          subprocess.run(['git', 'clone', '--no-hardlinks', '--no-checkout', str(root), str(source)], check=True)
+          commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          subprocess.run(['git', '-C', str(source), 'checkout', '--detach', commit], check=True)
+          tree = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD^{tree}'], text=True).strip()
+          original_tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip()
+          if tree != original_tree:
+              raise SystemExit('Disposable source tree mismatch')
+          (work / 'source-identity.json').write_text(json.dumps({
+              'commit': commit, 'tree': tree, 'uses_synthetic_input_only': True,
+              'production_ready': False, 'legal_review_verified': False}, indent=2), encoding='utf-8')
+          paths = {'HOME': 'profile', 'USERPROFILE': 'profile', 'LOCALAPPDATA': 'profile',
+                   'TEMP': 'tmp', 'TMP': 'tmp', 'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache',
+                   'NHFL_VAULT_KEY_ROOT': 'profile/vault',
+                   'NHFL_IDEMPOTENCY_STATE_ROOT': 'profile/idempotency'}
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              for key, leaf in paths.items():
+                  path = work / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\nHF_HUB_OFFLINE=1\nTRANSFORMERS_OFFLINE=1\n')
+      - name: Install declared dependencies and synthetic fixture helpers
+        run: >-
+          python -m pip install ".[api,dev]"
+          "psutil>=6,<8" "fpdf2>=2.8,<3" "Pillow>=12.3,<13"
+          "jsonschema>=4,<5" "setuptools>=69" build wheel
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Record exact dependency versions
+        run: python -m pip list --format=json > dist/pass12-ci/dependencies.json
+      - name: DOCX trust boundaries and real tracked-edit workflow
+        run: >-
+          python -B -m pytest
+          tests/test_pass12_docx_boundaries.py
+          tests/test_pass71_tracked_docx_workflow_acceptance.py
+          tests/test_v520_document_workspace.py
+          --basetemp=dist/pass12-ci/focused-pytest
+          --junitxml=dist/pass12-ci/focused-results.xml
+          -ra --tb=short
+      - name: Complete regression with protected state outside the disposable source
+        if: ${{ !cancelled() }}
+        shell: python
+        run: |
+          import os, shutil, subprocess, sys
+          from pathlib import Path
+          work = Path('dist/pass12-ci').absolute()
+          command = [sys.executable, '-B', '-m', 'pytest', 'tests',
+                     '--basetemp=' + str(work / 'full-pytest'),
+                     '--junitxml=' + str(work / 'full-results.xml'), '-ra', '--tb=short']
+          if os.name != 'nt':
+              display = shutil.which('xvfb-run')
+              if not display:
+                  raise SystemExit('Virtual display required for graphical regressions')
+              command = [display, '--auto-servernum', '--auth-file=' + str(work / 'xauthority'),
+                         '--error-file=' + str(work / 'xvfb.log'), *command]
+          subprocess.run(command, cwd=work / 'source', check=True)
+      - name: Exact publication-tree gate after tests
+        if: ${{ !cancelled() }}
+        run: >-
+          python scripts/run-public-source-preflight.py --index --require-ready
+          --output dist/pass12-ci/public-source-index.json
+      - name: Preserve compact engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass12-docx-full-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/pass12-ci/focused-results.xml
+            dist/pass12-ci/full-results.xml
+            dist/pass12-ci/dependencies.json
+            dist/pass12-ci/source-identity.json
+            dist/pass12-ci/public-source-index.json
+            dist/pass12-ci/xvfb.log
+          retention-days: 14
+          if-no-files-found: warn

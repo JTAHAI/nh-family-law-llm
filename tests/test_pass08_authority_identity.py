@@ -80,12 +80,13 @@ def test_library_delegations_preserve_source_identity(tmp_path,monkeypatch):
 
 
 def test_cli_refusal_keeps_source_and_filesystem_untouched(tmp_path):
-    import os, subprocess, sys
+    import os, shutil, subprocess, sys
     # Both scripts are invoked by their actual installed source path. No test
     # environment value can exempt the source checkout from their policy.
     for script,mode in [('ingest-nh-authority.py','--dry-run'),
                         ('run-authority-data-product.py','--plan-only')]:
-        forbidden=tmp_path/('forbidden-'+script)
+        forbidden=ROOT/'dist'/'pass11-cli-refusal'/tmp_path.name/('forbidden-'+script)
+        shutil.rmtree(forbidden.parent, ignore_errors=True)
         env=dict(os.environ,NHFL_PROJECT_ROOT=str(tmp_path/'fictional-project'))
         result=subprocess.run([sys.executable,'-B',str(ROOT/'scripts'/script),
             '--data-root',str(forbidden),mode],cwd=ROOT,env=env,capture_output=True,text=True,timeout=30)

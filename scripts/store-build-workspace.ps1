@@ -1,10 +1,11 @@
 # Shared containment for generated Store build state. No deletion is performed here.
 function Resolve-RepoBuildDirectory([string]$PathText, [string]$RepoRootPath) {
   if (-not $PathText) { throw "Build directory is required." }
-  $repo = [System.IO.Path]::GetFullPath($RepoRootPath).TrimEnd('\')
+  $repo = [System.IO.Path]::GetFullPath($RepoRootPath).TrimEnd('\', '/')
   $dist = Join-Path $repo 'dist'
-  $full = [System.IO.Path]::GetFullPath($PathText).TrimEnd('\')
-  if (-not $full.StartsWith($dist + '\', [System.StringComparison]::OrdinalIgnoreCase)) {
+  $full = [System.IO.Path]::GetFullPath($PathText).TrimEnd('\', '/')
+  $distPrefix = $dist.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+  if (-not $full.StartsWith($distPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
     throw "Build directories must be dedicated children of repository dist; no external drive folders."
   }
   $cursor = $full
@@ -22,8 +23,9 @@ function Resolve-RepoBuildDirectory([string]$PathText, [string]$RepoRootPath) {
 }
 
 function Assert-SeparateBuildDirectories([string]$First, [string]$Second) {
-  $a = $First.TrimEnd('\') + '\'
-  $b = $Second.TrimEnd('\') + '\'
+  $separator = [System.IO.Path]::DirectorySeparatorChar
+  $a = $First.TrimEnd('\', '/') + $separator
+  $b = $Second.TrimEnd('\', '/') + $separator
   if ($a.StartsWith($b, [System.StringComparison]::OrdinalIgnoreCase) -or
       $b.StartsWith($a, [System.StringComparison]::OrdinalIgnoreCase)) {
     throw "Build output, staging and temporary directories must not overlap."

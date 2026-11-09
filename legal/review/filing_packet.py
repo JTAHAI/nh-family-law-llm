@@ -43,7 +43,15 @@ _CITATION_RE = re.compile(
     r"\b(?:\d{4}\s+ME\s+\d+|\d{1,2}(?:-A)?\s+M\.R\.S\.\s*§+\s*[\w.-]+|M\.R\.\s+Civ\.\s+P\.\s*\d+[A-Za-z.-]*)\b",
     re.IGNORECASE,
 )
-_FORM_RE = re.compile(r"\b(?:FM|PA|CV|PB)[ -]?\d{1,4}[A-Z]?\b", re.IGNORECASE)
+_FORM_RE = re.compile(
+    r"\b(?:NHJB(?:[-\s]+)?\d{3,5}(?:[-\s]+)?[A-Z]{1,3}|"
+    r"(?:FM|PA|CV|PB)[ -]?\d{1,4}[A-Z]?)\b",
+    re.IGNORECASE,
+)
+_NHJB_FORM_RE = re.compile(
+    r"\bNHJB(?:[-\s]+)?(?P<number>\d{3,5})(?:[-\s]+)?(?P<suffix>[A-Z]{1,3})\b",
+    re.IGNORECASE,
+)
 _LOCK = threading.RLock()
 
 
@@ -53,6 +61,13 @@ class ReviewedFilingPacketError(RuntimeError):
         self.code = code
         self.message = message
         self.status_code = status_code
+
+
+def _normalize_changed_form_id(value: str) -> str:
+    match = _NHJB_FORM_RE.search(value)
+    if match:
+        return f"NHJB-{match.group('number')}-{match.group('suffix').upper()}"
+    return re.sub(r"[ -]", "-", value.upper())
 
 
 def _utc_now() -> str:
@@ -258,7 +273,7 @@ def build_incremental_review_diff(
     diff = structured_diff(str(before.get("content") or ""), str(after.get("content") or ""))
     changed_text = _changed_text(diff)
     citations = sorted(set(_CITATION_RE.findall(changed_text)))[:200]
-    form_ids = sorted({re.sub(r"[ -]", "-", value.upper()) for value in _FORM_RE.findall(changed_text)})[:100]
+    form_ids = sorted({_normalize_changed_form_id(value) for value in _FORM_RE.findall(changed_text)})[:100]
     units = _unit_map(diff, packet)
     return {
         "schema_version": "incremental_revision_review_v1",

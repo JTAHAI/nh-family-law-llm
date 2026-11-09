@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -36,9 +37,11 @@ def test_rejected_default_keeps_static_catalog_available_and_run_store_fail_clos
 ):
     from app.api.routes import deliberation
 
-    home = tmp_path / "fictional-private-home"
+    home = ROOT / "dist" / "pass11-tests" / f"deliberation-{tmp_path.name}"
+    shutil.rmtree(home, ignore_errors=True)
     monkeypatch.setenv("HOME", str(home))
     monkeypatch.setenv("USERPROFILE", str(home))
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
     monkeypatch.setattr(deliberation, "HOST", None)
     monkeypatch.setattr(deliberation, "PRESET_CATALOG", None)
     app = FastAPI()
