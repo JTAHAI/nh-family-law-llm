@@ -47,17 +47,7 @@ function Stop-StoreRuntimeProcesses([string]$RuntimeRootPath) {
 }
 
 function Resolve-TesseractRoot {
-  $candidates = @(
-    "C:\Program Files\Tesseract-OCR",
-    "C:\Program Files (x86)\Tesseract-OCR",
-    (Join-Path ([Environment]::GetFolderPath("LocalApplicationData")) "Programs\Tesseract-OCR")
-  )
-  foreach ($candidate in $candidates) {
-    if (Test-Path -LiteralPath (Join-Path $candidate "tesseract.exe")) {
-      return $candidate
-    }
-  }
-  throw "Bundled Tesseract source was not found on this build machine."
+  return (& (Join-Path $PSScriptRoot "provision-tesseract-engine.ps1") -Offline:$Offline)
 }
 
 function Copy-TesseractRuntime([string]$SourceRoot, [string]$DestinationRoot) {
@@ -83,7 +73,7 @@ function Copy-TesseractRuntime([string]$SourceRoot, [string]$DestinationRoot) {
   $sourceData = Join-Path $SourceRoot "tessdata"
   $destinationData = Join-Path $DestinationRoot "tessdata"
   New-Item -ItemType Directory -Force -Path $destinationData | Out-Null
-  foreach ($name in @("eng.traineddata", "osd.traineddata", "eng.user-patterns", "eng.user-words", "pdf.ttf")) {
+  foreach ($name in @("eng.traineddata", "osd.traineddata", "eng.user-patterns", "eng.user-words")) {
     $source = Join-Path $sourceData $name
     if (Test-Path -LiteralPath $source) {
       Copy-Item -LiteralPath $source -Destination (Join-Path $destinationData $name) -Force
@@ -96,6 +86,8 @@ function Copy-TesseractRuntime([string]$SourceRoot, [string]$DestinationRoot) {
     }
     Copy-Item -LiteralPath $source -Destination (Join-Path $destinationData $directory) -Recurse -Force
   }
+
+  Copy-Item -LiteralPath (Join-Path $SourceRoot "licenses") -Destination (Join-Path $DestinationRoot "licenses") -Recurse -Force
 
   foreach ($required in @(
     "tesseract.exe",
@@ -169,6 +161,9 @@ if ($Offline -and -not (Test-Path -LiteralPath (Join-Path $venvRoot "Scripts\pyt
 }
 $venvPython = Join-Path $venvRoot "Scripts\python.exe"
 $requirementsPath = Join-Path $RepoRoot "store\pyinstaller\requirements-store-build.txt"
+if ($FeatureTier -eq "essential") {
+  $requirementsPath = Join-Path $RepoRoot "store\pyinstaller\requirements-store-essential.in"
+}
 $specPath = Join-Path $RepoRoot "store\pyinstaller\nh_family_law_llm.spec"
 $pyiDistRoot = Join-Path $OutputRoot "pyinstaller"
 $pyiWorkRoot = Join-Path $OutputRoot "build"
@@ -188,7 +183,11 @@ if (-not (Test-Path -LiteralPath $venvPython)) {
 
 if (-not $SkipDependencyInstall -and -not $Offline) {
   & $venvPython -m pip install --upgrade pip
+  if ($LASTEXITCODE -ne 0) { throw "Store build pip provisioning failed." }
   & $venvPython -m pip install -r $requirementsPath
+  if ($LASTEXITCODE -ne 0) { throw "Store runtime dependency installation failed." }
+  & $venvPython -B -m pip check
+  if ($LASTEXITCODE -ne 0) { throw "Store runtime dependencies are inconsistent." }
   if ($FeatureTier -eq "full") {
     Ensure-SpacyModel $venvPython
   }

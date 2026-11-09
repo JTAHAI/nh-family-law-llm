@@ -48,11 +48,13 @@ function Assert-Hash([string]$Path, [string]$Expected, [string]$Label) {
 New-Item -ItemType Directory -Force -Path $cacheRoot | Out-Null
 if (-not (Test-Path -LiteralPath $archive)) {
   if ($Offline) { throw "Pinned whisper.cpp archive is absent from the external build cache." }
-  Invoke-WebRequest -Uri $archiveUrl -OutFile $archive
+  & python -B (Join-Path $PSScriptRoot "fetch_pinned_build_input.py") --url $archiveUrl --destination $archive --sha256 $archiveSha256
+  if ($LASTEXITCODE -ne 0) { throw "Pinned whisper.cpp archive acquisition failed." }
 }
 if (-not (Test-Path -LiteralPath $model)) {
   if ($Offline) { throw "Pinned whisper.cpp model is absent from the external build cache." }
-  Invoke-WebRequest -Uri $modelUrl -OutFile $model
+  & python -B (Join-Path $PSScriptRoot "fetch_pinned_build_input.py") --url $modelUrl --destination $model --sha256 $modelSha256
+  if ($LASTEXITCODE -ne 0) { throw "Pinned whisper.cpp model acquisition failed." }
 }
 Assert-Hash $archive $archiveSha256 "whisper.cpp release archive"
 Assert-Hash $model $modelSha256 "whisper.cpp model"

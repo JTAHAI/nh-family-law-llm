@@ -1,0 +1,6 @@
+{
+  "name": "nhfl-ocr-runtime",
+  "version-string": "5.5.4",
+  "builtin-baseline": "ec48c11eae9448c8c6e7739d93e06fa2433aa95f",
+  "dependencies": [{"name": "tesseract", "default-features": false}]
+}

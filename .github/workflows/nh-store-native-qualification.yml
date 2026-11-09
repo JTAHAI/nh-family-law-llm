@@ -1,0 +1,47 @@
+name: NH frozen native and portable qualification
+on:
+  push:
+    branches: ['hardening/pass13-installed-qualification']
+    paths:
+      - '.github/workflows/nh-store-native-qualification.yml'
+      - 'scripts/test-store-native-tools.ps1'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  native-and-portable:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Parse the native qualification harness
+        shell: powershell
+        run: |
+          $tokens=$null; $errors=$null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'scripts/test-store-native-tools.ps1'),[ref]$tokens,[ref]$errors) | Out-Null
+          if ($errors.Count) { $errors | Format-List; throw 'Native harness syntax invalid.' }
+      - uses: actions/download-artifact@v4
+        with:
+          name: nh-store-candidate-6e1208291e26bd5f86333888e9927c5f5dd12c33
+          run-id: 42584016414
+          github-token: ${{ github.token }}
+          path: dist/pass13-native/candidate
+      - name: Exercise exact portable payload and real offline native engines
+        shell: powershell
+        run: |
+          $packages=@(Get-ChildItem -LiteralPath dist/pass13-native/candidate -Recurse -File -Filter *.msix)
+          if ($packages.Count -ne 1) { throw 'Exactly one candidate is required.' }
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-native-tools.ps1 -PackagePath $packages[0].FullName -WorkRoot "$PWD/dist/pass13-native/work"
+          if ($LASTEXITCODE -ne 0) { throw 'Portable and native qualification failed.' }
+      - name: Preserve synthetic engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-native-functional-${{ github.sha }}
+          path: |
+            dist/pass13-native/work/evidence/*.json
+            dist/pass13-native/work/evidence/*.log
+          if-no-files-found: warn
+          retention-days: 14

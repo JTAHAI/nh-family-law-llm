@@ -40,21 +40,37 @@ def _find_report(output_root: Path) -> Path | None:
 
 
 def _classify_xml(payload: bytes) -> tuple[list[dict[str, str]], list[dict[str, str]], int]:
-    if b"<!DOCTYPE" in payload.upper() or b"<!ENTITY" in payload.upper():
+    # Native WACK emits UTF-16; inspect declarations before XML expansion.
+    lexical = payload.replace(b"\x00", b"").upper()
+    if b"<!DOCTYPE" in lexical or b"<!ENTITY" in lexical:
         raise ValueError("wack_report_declarations_not_allowed")
     root = ElementTree.fromstring(payload)
     failures: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
     passed_tests = 0
+    native = root.tag.split("}")[-1].lower() == "report"
+    if native:
+        overall = [str(child.text or "").strip().lower() for child in root
+                   if child.tag.split("}")[-1].lower() == "overall_result"]
+        if overall != ["pass"]:
+            failures.append({"node": "OVERALL_RESULT", "id": "",
+                             "message": "native_overall_result_failed_incomplete_or_unrecognized"})
     for node in root.iter():
         attrs = {str(key).split("}")[-1].lower(): str(value).strip() for key, value in node.attrib.items()}
         text = " ".join(part.strip() for part in node.itertext() if part.strip())[:500]
         basis = " ".join([node.tag.split("}")[-1], *attrs.values(), text]).lower()
         row = {"node": node.tag.split("}")[-1][:120], "id": attrs.get("id") or attrs.get("name") or "", "message": attrs.get("message") or text[:300]}
-        if row["node"].lower() in {"test", "testresult"}:
-            outcome = str(attrs.get("status") or attrs.get("result") or "").lower()
-            if outcome in {"pass", "passed"}:
-                passed_tests += 1
+        if row["node"].lower() in {"test", "testresult", "testcase"}:
+            # SDK reports use direct RESULT child elements; legacy fixtures
+            # use attributes. Contradictory, absent or duplicated child results
+            # remain blocking, including a skipped nested TESTCASE.
+            outcomes = [attrs[key].lower() for key in ("status", "result") if key in attrs]
+            children = [str(child.text or "").strip().lower() for child in node
+                        if child.tag.split("}")[-1].lower() == "result"]
+            outcomes.extend(children)
+            if outcomes and len(children) <= 1 and all(value in {"pass", "passed"} for value in outcomes):
+                if row["node"].lower() in {"test", "testresult"}:
+                    passed_tests += 1
             else:
                 failures.append({**row, "message": "test_result_failed_incomplete_or_unrecognized"})
         if re.search(r"\b(fail\w*|error\w*|not.?pass\w*)\b", basis):
