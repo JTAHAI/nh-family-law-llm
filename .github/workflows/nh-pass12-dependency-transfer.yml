@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
@@ -20,10 +21,10 @@ jobs:
         run: >-
           python -m pip download --no-cache-dir --no-deps --only-binary=:all:
           --dest dist/pass12-dependency docx-editor==0.7.1
-      - name: Verify official release digest
+      - name: Verify official release digest and export tracked Git objects
         shell: python
         run: |
-          import hashlib, json
+          import hashlib, json, subprocess
           from pathlib import Path
           root = Path('dist/pass12-dependency')
           wheel = root / 'docx_editor-0.7.1-py3-none-any.whl'
@@ -31,9 +32,14 @@ jobs:
           expected = 'da7e11d8a4f5dc0fddcdd183e42b36ec01de7f626f3c445782cc5548a947d520'
           if actual != expected:
               raise SystemExit('DOCX dependency release digest mismatch')
+          bundle = root / 'tracked-source.bundle'
+          subprocess.run(['git', 'bundle', 'create', str(bundle), 'HEAD'], check=True)
+          subprocess.run(['git', 'bundle', 'verify', str(bundle)], check=True)
+          identity = subprocess.check_output(['git', 'rev-parse', 'HEAD', 'HEAD^{tree}'], text=True).splitlines()
           (root / 'receipt.json').write_text(json.dumps({
               'package': 'docx-editor', 'version': '0.7.1', 'sha256': actual,
               'source': 'https://pypi.org/project/docx-editor/0.7.1/',
+              'git_identity': identity, 'bundle_sha256': hashlib.sha256(bundle.read_bytes()).hexdigest(),
               'installed': False, 'legal_review_verified': False}, indent=2), encoding='utf-8')
       - uses: actions/upload-artifact@v4
         with:
