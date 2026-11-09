@@ -1,0 +1,93 @@
+name: NH installed Store candidate qualification
+on:
+  push:
+    branches: ['hardening/pass13-installed-qualification']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  installed-candidate:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Parse isolated installation harness before any system change
+        shell: powershell
+        run: |
+          $tokens=$null; $errors=$null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD 'scripts/test-store-msix-lifecycle.ps1'),[ref]$tokens,[ref]$errors) | Out-Null
+          if ($errors.Count) { $errors | Format-List; throw 'Installation harness syntax invalid.' }
+      - name: Require the exact candidate build to finish successfully
+        shell: python
+        env:
+          GH_READ_TOKEN: ${{ github.token }}
+        run: |
+          import json, os, time
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          root = Path('dist/pass13-qualification')
+          root.mkdir(parents=True)
+          url = 'https://api.github.com/repos/JTAHAI/nh-family-law-llm/actions/runs/42584016414'
+          for attempt in range(90):
+              request = Request(url, headers={'Authorization': 'Bearer ' + os.environ['GH_READ_TOKEN'], 'Accept': 'application/vnd.github+json'})
+              with urlopen(request, timeout=30) as response:
+                  run = json.load(response)
+              if run['head_sha'] != '6e1208291e26bd5f86333888e9927c5f5dd12c33' or run['workflow_id'] != 411807383:
+                  raise SystemExit('Unexpected candidate build identity')
+              if run['status'] == 'completed':
+                  if run['conclusion'] != 'success':
+                      raise SystemExit('Candidate build did not pass; no installation attempted')
+                  (root / 'build-identity.json').write_text(json.dumps({k:run[k] for k in ('id','head_sha','conclusion','html_url')}, indent=2))
+                  break
+              time.sleep(10)
+          else:
+              raise SystemExit('Candidate build deadline exceeded; no installation attempted')
+      - uses: actions/download-artifact@v4
+        with:
+          name: nh-store-candidate-6e1208291e26bd5f86333888e9927c5f5dd12c33
+          run-id: 42584016414
+          github-token: ${{ github.token }}
+          path: dist/pass13-qualification/candidate
+      - name: Bind the installation to passing candidate receipts
+        shell: python
+        run: |
+          import hashlib, json, os, re
+          from pathlib import Path
+          root=Path('dist/pass13-qualification/candidate')
+          packages=list(root.rglob('*.msix'))
+          if len(packages)!=1:
+              raise SystemExit('Exactly one candidate is required')
+          identity=(root/'pass13/evidence/source-identity.txt').read_text(encoding='utf-8-sig').splitlines()
+          if identity != ['6e1208291e26bd5f86333888e9927c5f5dd12c33','196fd31de0d14b1a09b445c72cf73c0d82e610d2']:
+              raise SystemExit('Candidate source identity mismatch')
+          evidence=root/'pass13/store/evidence'
+          for name in ('sealed-msix-archive-audit.json','private-data-audit.json','bundled-engine-inventory.json'):
+              if json.loads((evidence/name).read_text(encoding='utf-8-sig'))['status']!='pass':
+                  raise SystemExit('Candidate audit did not pass')
+          digest=hashlib.sha256(packages[0].read_bytes()).hexdigest()
+          summary=(evidence/'test-summary.txt').read_text(encoding='utf-8-sig')
+          if 'Package SHA-256: '+digest not in summary:
+              raise SystemExit('Candidate digest differs from build receipt')
+          with open(os.environ['GITHUB_ENV'],'a',encoding='utf-8') as stream:
+              stream.write('NHFL_QA_CANDIDATE='+str(packages[0].absolute())+'\n')
+      - name: Install and exercise isolated signed QA identity
+        shell: powershell
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-msix-lifecycle.ps1 -PackagePath $env:NHFL_QA_CANDIDATE -WorkRoot "$PWD/dist/pass13-qualification/install-test" -IsolatedTestEnvironment
+          if ($LASTEXITCODE -ne 0) { throw 'Installed candidate qualification failed' }
+      - name: Preserve compact install and graphical evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-installed-msix-${{ github.sha }}
+          path: |
+            dist/pass13-qualification/build-identity.json
+            dist/pass13-qualification/install-test/evidence/*.json
+            dist/pass13-qualification/install-test/evidence/*.png
+          if-no-files-found: warn
+          retention-days: 14
