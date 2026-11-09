@@ -80,6 +80,11 @@ jobs:
         run: |
           & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-msix-lifecycle.ps1 -PackagePath $env:NHFL_QA_CANDIDATE -WorkRoot "$PWD/dist/pass13-qualification/install-test" -IsolatedTestEnvironment
           if ($LASTEXITCODE -ne 0) { throw 'Installed candidate qualification failed' }
+      - name: Run WACK against the isolated signed candidate
+        shell: powershell
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-qa-wack.ps1 -WorkRoot "$PWD/dist/pass13-qualification/install-test"
+          if ($LASTEXITCODE -ne 0) { throw 'QA WACK remains blocked; inspect its exact report.' }
       - name: Preserve compact install and graphical evidence only
         if: always()
         uses: actions/upload-artifact@v4
@@ -89,5 +94,8 @@ jobs:
             dist/pass13-qualification/build-identity.json
             dist/pass13-qualification/install-test/evidence/*.json
             dist/pass13-qualification/install-test/evidence/*.png
+            dist/pass13-qualification/install-test/evidence/wack/*.json
+            dist/pass13-qualification/install-test/evidence/wack/*.xml
+            dist/pass13-qualification/install-test/evidence/wack/*.log
           if-no-files-found: warn
           retention-days: 14

@@ -32,15 +32,34 @@ foreach ($name in @('LOCALAPPDATA','USERPROFILE','HOME','TMP','TEMP','HF_HUB_OFF
   $before[$name] = [Environment]::GetEnvironmentVariable($name,'Process')
 }
 function Invoke-OwnedProcess([string]$Exe,[string[]]$Arguments,[string]$Label,[int]$Seconds=120) {
-  $process = Start-Process -FilePath $Exe -ArgumentList $Arguments -PassThru -WindowStyle Hidden `
-    -RedirectStandardOutput (Join-Path $evidence ($Label+'.stdout.log')) `
-    -RedirectStandardError (Join-Path $evidence ($Label+'.stderr.log'))
+  # Own the .NET process handle directly. Windows PowerShell's Start-Process
+  # wrapper can lose ExitCode after redirected asynchronous completion.
+  $start=New-Object Diagnostics.ProcessStartInfo
+  $start.FileName=$Exe
+  $start.Arguments=$Arguments -join ' '
+  $start.UseShellExecute=$false
+  $start.CreateNoWindow=$true
+  $start.RedirectStandardOutput=$true
+  $start.RedirectStandardError=$true
+  $process=New-Object Diagnostics.Process
+  $process.StartInfo=$start
+  $exitCode=$null
+  $started=$false
   try {
+    if (-not $process.Start()) { throw "$Label failed to start." }
+    $started=$true
+    $stdout=$process.StandardOutput.ReadToEndAsync()
+    $stderr=$process.StandardError.ReadToEndAsync()
     if (-not $process.WaitForExit($Seconds * 1000)) { throw "$Label timed out." }
-    if ($process.ExitCode -ne 0) { throw "$Label returned a failing exit code." }
+    $exitCode=$process.ExitCode
+    if (-not $stdout.Wait(10000) -or -not $stderr.Wait(10000)) { throw "$Label output capture did not complete." }
+    $stdout.Result | Set-Content -LiteralPath (Join-Path $evidence ($Label+'.stdout.log')) -Encoding UTF8
+    $stderr.Result | Set-Content -LiteralPath (Join-Path $evidence ($Label+'.stderr.log')) -Encoding UTF8
+    if ($exitCode -ne 0) { throw "$Label returned a failing exit code: $exitCode." }
   } finally {
-    $process.Refresh()
-    if (-not $process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }
+    if ($started -and -not $process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }
+    @{exit_code=$exitCode; label=$Label} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence ($Label+'-exit.json')) -Encoding UTF8
+    $process.Dispose()
   }
 }
 try {
