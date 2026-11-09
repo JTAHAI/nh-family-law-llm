@@ -32,11 +32,15 @@ def test_essential_build_keeps_core_security_versions_without_full_model_stack()
 
 def test_ocr_build_input_is_pinned_and_not_installed_on_the_host():
     text = (ROOT / 'scripts/provision-tesseract-engine.ps1').read_text()
-    assert 'f3fc4236425b690c8be756f35793f77394ee004be0a6460a440c754d892f68bc' in text
+    import json
+    manifest = json.loads((ROOT / 'store/native/tesseract/vcpkg.json').read_text())
+    assert manifest['builtin-baseline'] == 'ec48c11eae9448c8c6e7739d93e06fa2433aa95f'
+    assert manifest['dependencies'] == [{'name': 'tesseract', 'default-features': False}]
+    assert '7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2' in text
+    assert '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff' in text
     assert 'Get-FileHash' in text and 'SHA256' in text
-    assert text.index('if ($actual -cne $expected)') < text.index('& $seven.Source x')
-    assert 'installer_executed = $false' in text
-    assert 'runtime_downloads = $false' in text
+    assert 'installer_executed=$false' in text
+    assert 'runtime_downloads=$false' in text and 'native_url_reading=$false' in text
     assert 'Resolve-RepoBuildDirectory' in text
     assert 'if ($Offline)' in text
     assert 'Start-Process' not in text
@@ -50,3 +54,39 @@ def test_store_candidate_has_no_submission_or_failure_waiver():
     assert 'contents: write' not in text
     assert '--index --require-ready' in text
     assert '*.pfx' not in text and '*.cer' not in text
+
+
+def _spec_function(name):
+    import ast
+    path = ROOT / 'store/pyinstaller/nh_family_law_llm.spec'
+    node = next(n for n in ast.parse(path.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == name)
+    namespace = {'Path': Path}
+    exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), 'exec'), namespace)
+    return namespace[name]
+
+
+def test_frozen_resources_cover_every_declared_wheel_resource():
+    import tomllib
+    package = ROOT / 'src/nh_family_law_llm'
+    collect = _spec_function('collect_source_package_files')
+    actual = {Path(source) for source, _ in collect(package, destination='nh_family_law_llm')}
+    config = tomllib.loads((ROOT / 'pyproject.toml').read_text())
+    expected = {p for pattern in config['tool']['setuptools']['package-data']['nh_family_law_llm']
+                for p in package.glob(pattern) if p.is_file()}
+    assert expected <= actual, sorted(str(p.relative_to(package)) for p in expected - actual)
+
+
+def test_canonical_source_hook_and_post_analysis_completeness_gate():
+    import importlib.util
+    from types import SimpleNamespace
+    path = ROOT / 'store/pyinstaller/hooks/pre_find_module_path/hook-nh_family_law_llm.py'
+    spec = importlib.util.spec_from_file_location('canonical_source_hook', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    api = SimpleNamespace(search_dirs=[str(ROOT)])
+    module.pre_find_module_path(api)
+    assert api.search_dirs == [str(ROOT / 'src')]
+    text = (ROOT / 'store/pyinstaller/nh_family_law_llm.spec').read_text()
+    assert 'hookspath=[str(ROOT / "store" / "pyinstaller" / "hooks")]' in text
+    assert 'incomplete_canonical_frozen_application' in text
+    assert text.index('incomplete_canonical_frozen_application') < text.index('pyz = PYZ')

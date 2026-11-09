@@ -47,22 +47,7 @@ function Stop-StoreRuntimeProcesses([string]$RuntimeRootPath) {
 }
 
 function Resolve-TesseractRoot {
-  if (-not $Offline) {
-    # Download only during the build, verify the pinned upstream digest, and
-    # extract under dist without running an installer or changing the host.
-    return (& (Join-Path $PSScriptRoot "provision-tesseract-engine.ps1"))
-  }
-  $candidates = @(
-    "C:\Program Files\Tesseract-OCR",
-    "C:\Program Files (x86)\Tesseract-OCR",
-    (Join-Path ([Environment]::GetFolderPath("LocalApplicationData")) "Programs\Tesseract-OCR")
-  )
-  foreach ($candidate in $candidates) {
-    if (Test-Path -LiteralPath (Join-Path $candidate "tesseract.exe")) {
-      return $candidate
-    }
-  }
-  throw "Bundled Tesseract source was not found on this build machine."
+  return (& (Join-Path $PSScriptRoot "provision-tesseract-engine.ps1") -Offline:$Offline)
 }
 
 function Copy-TesseractRuntime([string]$SourceRoot, [string]$DestinationRoot) {
@@ -101,6 +86,8 @@ function Copy-TesseractRuntime([string]$SourceRoot, [string]$DestinationRoot) {
     }
     Copy-Item -LiteralPath $source -Destination (Join-Path $destinationData $directory) -Recurse -Force
   }
+
+  Copy-Item -LiteralPath (Join-Path $SourceRoot "licenses") -Destination (Join-Path $DestinationRoot "licenses") -Recurse -Force
 
   foreach ($required in @(
     "tesseract.exe",

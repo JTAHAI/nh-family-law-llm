@@ -61,6 +61,6 @@ jobs:
             dist/pass13/store/evidence/*.txt
             dist/pass13/store/evidence/*.log
             dist/pass13/evidence/*
-            dist/build-cache/tesseract/5.5.0.20241111/receipt.json
+            dist/ocr/receipt.json
           if-no-files-found: error
           retention-days: 14

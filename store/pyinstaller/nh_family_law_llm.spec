@@ -55,7 +55,7 @@ def collect_flat_files(root: Path, *, destination: str, names: tuple[str, ...]) 
 
 def collect_source_package_files(package_root: Path, *, destination: str) -> list[tuple[str, str]]:
     results: list[tuple[str, str]] = []
-    allowed_suffixes = {".py", ".html", ".css", ".js", ".svg", ".json", ".pdf", ".csv"}
+    allowed_suffixes = {".py", ".html", ".css", ".js", ".svg", ".json", ".pdf", ".csv", ".md", ".png", ".ico", ".jsonl", ".webmanifest"}
     for path in package_root.rglob("*"):
         if not path.is_file() or "__pycache__" in path.parts:
             continue
@@ -316,13 +316,21 @@ a = Analysis(
     binaries=[],
     datas=datas,
     hiddenimports=hiddenimports,
-    hookspath=[],
+    hookspath=[str(ROOT / "store" / "pyinstaller" / "hooks")],
     hooksconfig={},
     runtime_hooks=[FEATURE_TIER_RUNTIME_HOOK] if FEATURE_TIER_RUNTIME_HOOK else [],
     excludes=excluded_packages,
     noarchive=False,
     optimize=0,
 )
+# A collected executable is not proof that dynamic application imports exist.
+required_modules = set(collect_source_submodules(
+    ROOT / "src" / "nh_family_law_llm", package_name="nh_family_law_llm"
+))
+frozen_modules = {entry[0] for entry in a.pure}
+missing_modules = sorted(required_modules - frozen_modules)
+if missing_modules:
+    raise RuntimeError("incomplete_canonical_frozen_application: " + ",".join(missing_modules))
 pyz = PYZ(a.pure)
 
 exe = EXE(

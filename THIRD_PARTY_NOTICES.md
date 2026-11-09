@@ -92,3 +92,14 @@ The following repositories were reviewed but their code was not incorporated:
 - Claude Code source snapshot mirrors — no source copied or used.
 
 All legal outputs remain review-required. Third-party attribution does not imply endorsement, affiliation, legal accuracy, or attorney review.
+
+## Tesseract OCR and tessdata_fast
+
+The essential Windows package builds Tesseract 5.5.4 from the source selected
+by the pinned Microsoft vcpkg baseline in `store/native/tesseract/vcpkg.json`.
+Tesseract and the bundled English/orientation tessdata_fast models are licensed
+under Apache-2.0. The package includes their license text and copyright notices
+for statically linked native dependencies under `store/tesseract/licenses`.
+URL-reading, archive-input, and training-tool features are not enabled in this
+build. Language data is acquired and digest-verified during packaging, never
+fetched by the installed application. OCR output still requires human review.
