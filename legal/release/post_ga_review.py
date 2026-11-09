@@ -73,6 +73,26 @@ class PostGARepoReviewReport:
         }
 
 
+def _root_pass_logs(project_root: Path, txt_files: list[Path]) -> list[Path]:
+    """Return only root-level pass-control logs in deterministic order.
+
+    Nested engineering evidence can legitimately include pass-prefixed text
+    files. Those receipts must not masquerade as a second repository control
+    log or make an otherwise valid PASS_CHANGES.txt inventory fail.
+    """
+
+    return sorted(
+        (
+            path
+            for path in txt_files
+            if path.parent == project_root
+            and path.name.casefold().startswith("pass")
+            and path.suffix.casefold() == ".txt"
+        ),
+        key=lambda path: path.name.casefold(),
+    )
+
+
 class PostGARepoReviewer:
     """Review the post-Pass-51 repo and produce the real build path.
 
@@ -109,7 +129,8 @@ class PostGARepoReviewer:
         numbered_complete = pass_number >= 51
         ignored = {".git", ".pytest_cache", ".ruff_cache", "__pycache__", ".venv", "venv", "node_modules", "dist", "build", ".eggs"}
         txt_files = [path for path in pruned_source_paths(self.project_root, ignored) if path.match("*.txt") and self._is_repo_file(path)]
-        only_one_pass_txt = len([path for path in txt_files if "pass" in path.name.lower()]) == 1
+        root_pass_logs = _root_pass_logs(self.project_root, txt_files)
+        only_one_pass_txt = root_pass_logs == [pass_log]
         single_pass_log_present = pass_log.exists() and pass_log in txt_files
         fixture_detected = self._fixture_evidence_detected()
         source_manifest = ReleaseManifest(project_root=self.project_root, version="post-ga-review").generate()

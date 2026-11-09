@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import shutil
 import stat
 import sys
 import zipfile
@@ -265,8 +266,10 @@ def load_qualifier():
 
 def test_installed_journey_requires_exact_wheel_before_spawning(tmp_path, monkeypatch):
     module = load_qualifier()
-    output = tmp_path / 'receipt.json'
-    monkeypatch.setattr(sys, 'argv', ['qualify', '--installed', '--work-dir', str(tmp_path / 'journey'), '--output', str(output)])
+    work = ROOT / 'dist' / 'pass11-qualifier-tests' / tmp_path.name
+    shutil.rmtree(work, ignore_errors=True)
+    output = work / 'receipt.json'
+    monkeypatch.setattr(sys, 'argv', ['qualify', '--installed', '--work-dir', str(work / 'journey'), '--output', str(output)])
     monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: pytest.fail('Must not launch without exact wheel'))
     assert module.main() == 1
     result = json.loads(output.read_text())
@@ -276,8 +279,10 @@ def test_installed_journey_requires_exact_wheel_before_spawning(tmp_path, monkey
 
 def test_import_failure_still_writes_sanitized_journey_receipt(tmp_path, monkeypatch):
     module = load_qualifier()
-    output = tmp_path / 'receipt.json'
-    monkeypatch.setattr(sys, 'argv', ['qualify', '--work-dir', str(tmp_path / 'journey'), '--output', str(output)])
+    work = ROOT / 'dist' / 'pass11-qualifier-tests' / tmp_path.name
+    shutil.rmtree(work, ignore_errors=True)
+    output = work / 'receipt.json'
+    monkeypatch.setattr(sys, 'argv', ['qualify', '--work-dir', str(work / 'journey'), '--output', str(output)])
     monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: SimpleNamespace(returncode=1, stdout='', stderr='fictional-private-directory'))
     assert module.main() == 1
     result = json.loads(output.read_text())

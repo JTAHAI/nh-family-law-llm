@@ -1,0 +1,119 @@
+name: NH Pass 11 full regression closure
+on:
+  push:
+    branches: [master, 'hardening/pass11-*']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  full-regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Prepare external protected state and repository-owned evidence
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          artifacts = Path.cwd() / 'dist' / 'pass11-full'
+          artifacts.mkdir(parents=True, exist_ok=True)
+          runner_temp = Path(os.environ.get('RUNNER_TEMP') or Path.cwd().parent)
+          external = runner_temp / 'nhfl-pass11-full-external'
+          paths = {
+              'HOME': 'profile', 'USERPROFILE': 'profile',
+              'LOCALAPPDATA': 'profile', 'TEMP': 'tmp', 'TMP': 'tmp',
+              'TMPDIR': 'tmp', 'PIP_CACHE_DIR': 'cache',
+              'NHFL_VAULT_KEY_ROOT': 'profile/vault',
+              'NHFL_IDEMPOTENCY_STATE_ROOT': 'profile/idempotency',
+          }
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as output:
+              output.write(f'NHFL_CI_EXTERNAL_ROOT={external}\n')
+              for key, leaf in paths.items():
+                  path = external / leaf
+                  path.mkdir(parents=True, exist_ok=True)
+                  output.write(f'{key}={path}\n')
+              output.write('PYTHONDONTWRITEBYTECODE=1\n')
+              output.write('HF_HUB_OFFLINE=1\nTRANSFORMERS_OFFLINE=1\n')
+      - name: Install declared dependencies and synthetic fixtures
+        run: >-
+          python -m pip install
+          ".[api,dev]"
+          "psutil>=6,<8"
+          "fpdf2>=2.8,<3"
+          "Pillow>=12.3,<13"
+          "jsonschema>=4,<5"
+          "setuptools>=69"
+          build wheel
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Record resolved dependencies
+        run: python -m pip list --format=json > dist/pass11-full/dependencies.json
+      - name: Recheck the repaired failure families
+        run: >-
+          python -m pytest
+          tests/test_pass11_full_regression_closure.py
+          tests/test_pass01_deliberation_startup.py
+          tests/test_pass04_wheel_integrity.py
+          tests/test_pass05_fixture_contracts.py
+          tests/test_pass08_authority_identity.py
+          tests/test_post_ga_repo_review.py
+          tests/test_prelaunch_release_verification.py
+          tests/test_release_unattended_build.py
+          tests/test_v5140_reviewed_filing_packet.py
+          --basetemp=${{ env.NHFL_CI_EXTERNAL_ROOT }}/focused-pytest
+          --junitxml=dist/pass11-full/focused-results.xml
+          -ra --tb=short
+      - name: Run complete regression suite
+        shell: python
+        run: |
+          import os, shutil, subprocess, sys
+          from pathlib import Path
+          work = Path('dist/pass11-full').absolute()
+          external = Path(os.environ['NHFL_CI_EXTERNAL_ROOT']).absolute()
+          command = [
+              sys.executable, '-B', '-m', 'pytest', 'tests',
+              '--basetemp=' + str(external / 'pytest'),
+              '--junitxml=' + str(work / 'results.xml'),
+              '-ra', '--tb=short',
+          ]
+          if os.name != 'nt':
+              display = shutil.which('xvfb-run')
+              if not display:
+                  raise SystemExit('Virtual display required for graphical regressions')
+              command = [
+                  display, '--auto-servernum',
+                  '--auth-file=' + str(external / 'xauthority'),
+                  '--error-file=' + str(work / 'xvfb.log'),
+                  *command,
+              ]
+          subprocess.run(command, check=True)
+      - name: Verify exact staged source after tests
+        if: ${{ !cancelled() }}
+        run: >-
+          python scripts/run-public-source-preflight.py
+          --index --require-ready
+          --output dist/pass11-full/public-source-index.json
+      - name: Preserve compact engineering evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass11-full-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/pass11-full/focused-results.xml
+            dist/pass11-full/results.xml
+            dist/pass11-full/dependencies.json
+            dist/pass11-full/public-source-index.json
+            dist/pass11-full/xvfb.log
+          retention-days: 14
+          if-no-files-found: warn

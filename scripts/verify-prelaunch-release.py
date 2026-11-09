@@ -8,7 +8,7 @@ import hashlib
 import json
 import subprocess
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +36,15 @@ def _revision() -> str:
 
 
 def _resolve_candidate(path_text: str) -> Path:
-    candidate = Path(path_text).expanduser()
+    raw = str(path_text or "").strip()
+    if not raw or any(ord(char) < 32 or ord(char) == 127 for char in raw):
+        raise ValueError("candidate package must be inside the repository")
+    candidate = Path(raw).expanduser()
+    windows_path = PureWindowsPath(raw)
+    # Path treats a Windows drive/UNC path as relative on POSIX. Refuse it
+    # before joining it to ROOT so qualification is platform-independent.
+    if windows_path.drive and not candidate.is_absolute():
+        raise ValueError("candidate package must be inside the repository")
     if not candidate.is_absolute():
         candidate = ROOT / candidate
     candidate = candidate.resolve(strict=False)

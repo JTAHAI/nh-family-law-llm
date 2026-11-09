@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -14,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_real_checkout_still_rejects_repository_owned_authority_data(tmp_path):
-    assert tmp_path.is_relative_to(ROOT / "dist"), "run with repository-owned --basetemp"
-    data = tmp_path / "must-not-be-created"
+    data = ROOT / "dist" / "pass11-fixture-contract" / tmp_path.name / "must-not-be-created"
+    shutil.rmtree(data.parent, ignore_errors=True)
     with pytest.raises(ValueError, match="outside the source repository"):
         ensure_external_authority_root(data, project_root=ROOT)
     assert not data.exists()

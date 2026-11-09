@@ -182,7 +182,6 @@ def test_layout_rejects_linked_child_before_creating_siblings(project, tmp_path)
     assert not list(target.iterdir())
 
 
-
 def test_eval_root_cannot_contain_the_source_checkout(project) -> None:
     with pytest.raises(roots.ExternalEvalRootError) as caught:
         roots.resolve_external_eval_root(project.parent, project_root=project, create=False)
@@ -195,6 +194,7 @@ def test_invalid_eval_paths_are_sanitized(project, raw) -> None:
         roots.resolve_external_eval_root(raw, project_root=project, create=False)
     assert caught.value.code == "external_eval_root_path_invalid"
     assert raw not in str(caught.value)
+
 
 def test_pass10_readiness_metadata_matches_active_version() -> None:
     import json
