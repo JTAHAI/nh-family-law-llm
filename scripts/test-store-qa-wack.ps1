@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$WorkRoot)
+param(
+  [Parameter(Mandatory=$true)][string]$WorkRoot,
+  [Parameter(Mandatory=$true)][ValidatePattern("^[a-fA-F0-9]{64}$")][string]$ExpectedCandidateSha256
+)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'store-build-workspace.ps1')
@@ -11,8 +14,8 @@ if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hoste
 $receipt=Get-Content -LiteralPath (Join-Path $work 'evidence\installed-lifecycle.json') -Raw | ConvertFrom-Json
 if ($receipt.status -ne 'pass' -or $receipt.cleanup_complete -ne $true -or
     $receipt.production_identity_installed -ne $false -or
-    $receipt.candidate_sha256 -cne '69a6f22ef6d45c8a85498c5ac5ac780c21302bf4df7b9d227c23a0e0b7916937' -or
-    $receipt.qa_identity -notmatch '^TAHAIWebServices\.NewHampshireFamilyLawLLM\.QA[0-9a-f]{6}$') {
+    $receipt.candidate_sha256 -cne $ExpectedCandidateSha256.ToLowerInvariant() -or
+    $receipt.qa_identity -cne 'TAHAIWebServices.NewHampshireFamilyLawLLM.Q') {
   throw 'A passing exact isolated installation receipt is required before QA WACK.'
 }
 $package=Join-Path $work 'isolated-qa.msix'

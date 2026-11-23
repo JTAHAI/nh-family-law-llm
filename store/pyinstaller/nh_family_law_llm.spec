@@ -348,6 +348,8 @@ exe = EXE(
     argv_emulation=False,
     target_arch=None,
     icon=str(ICON_PATH),
+    # WACK validates the executable PE manifest, not AppxManifest.xml.
+    manifest=str(ROOT / "store" / "pyinstaller" / "windows-app.manifest"),
 )
 
 coll = COLLECT(

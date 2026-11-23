@@ -45,7 +45,11 @@ function Payload-Inventory([string]$Root) {
 $realName = 'TAHAIWebServices.NewHampshireFamilyLawLLM'
 $realBefore = @(Get-AppxPackage -Name $realName | ForEach-Object { $_.PackageFullName })
 $nonce = [Guid]::NewGuid().ToString('N').Substring(0, 6)
-$qaName = $realName + '.QA' + $nonce
+# The QA publisher is independently randomized; its distinct package family
+# permits a short QA name that is still LONGER than the production name.
+# WACK uses legacy MAX_PATH APIs and the prior .QAxxxxxx identifier made
+# an otherwise identical binary fail PathTooLongException.
+$qaName = $realName + '.Q'
 $publisher = 'CN=NHFL.IsolatedQA.' + $nonce
 $cert = $null
 $installed = $null
@@ -197,6 +201,10 @@ try {
   }
   & $makeappx pack /d $unpacked /p $qaPackage /o | Out-Host
   if ($LASTEXITCODE -ne 0) { throw 'QA package creation failed.' }
+  # Bound the real installed WindowsApps paths for both QA and production
+  # identities before importing any signing certificate or installing files.
+  & python -B (Join-Path $PSScriptRoot 'verify-store-path-budget.py') --msix $qaPackage --output (Join-Path $evidence 'qa-path-budget.json')
+  if ($LASTEXITCODE -ne 0) { throw 'QA package exceeds the legacy certification path budget.' }
   $cert = New-SelfSignedCertificate -Type Custom -Subject $publisher -KeyAlgorithm RSA -KeyLength 2048 `
     -HashAlgorithm SHA256 -KeyUsage DigitalSignature -KeyExportPolicy NonExportable `
     -CertStoreLocation 'Cert:\CurrentUser\My' -NotAfter (Get-Date).AddDays(1) `
