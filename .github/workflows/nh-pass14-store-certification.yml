@@ -1,0 +1,94 @@
+name: NH Pass 14 Store DPI and native certification
+on:
+  push:
+    branches: ['hardening/pass14-wack-dpi']
+permissions:
+  contents: read
+jobs:
+  windows-store-candidate:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare isolated build workspace and source identity
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/pass14/profile,dist/pass14/tmp,dist/pass14/evidence | Out-Null
+          foreach ($name in @('HOME','USERPROFILE','LOCALAPPDATA')) { "$name=$PWD/dist/pass14/profile" >> $env:GITHUB_ENV }
+          foreach ($name in @('TEMP','TMP','TMPDIR','PIP_CACHE_DIR')) { "$name=$PWD/dist/pass14/tmp" >> $env:GITHUB_ENV }
+          "PYTHONDONTWRITEBYTECODE=1" >> $env:GITHUB_ENV
+          "HF_HUB_OFFLINE=1" >> $env:GITHUB_ENV
+          "TRANSFORMERS_OFFLINE=1" >> $env:GITHUB_ENV
+          git rev-parse HEAD 'HEAD^{tree}' | Set-Content dist/pass14/evidence/source-identity.txt
+      - name: Install declared source tests and PE inspection dependency
+        shell: pwsh
+        run: |
+          python -m pip install ".[api,dev]" "Pillow==12.3.0" "psutil>=6,<8" "pefile==2024.8.26"
+          if ($LASTEXITCODE -ne 0) { throw 'Declared dependencies failed.' }
+          python -m pip check
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency consistency failed.' }
+      - name: WACK rejection regressions and packaging contract
+        shell: pwsh
+        run: |
+          python -B -m pytest tests/test_pass14_store_certification.py tests/test_pass13_store_candidate.py tests/test_pass13_installed_contract.py tests/test_pass13_native_wack_report.py tests/test_store_packaging.py --basetemp=dist/pass14/test-root --junitxml=dist/pass14/evidence/contract-tests.xml -ra --tb=short
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging regression failed.' }
+      - name: Build fresh unsigned Essential Windows MSIX
+        shell: pwsh
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-msix.ps1 -RepoRoot $PWD -OutputRoot "$PWD/dist/pass14/store" -PackagingRoot "$PWD/dist/pass14/staging" -IdentityConfigPath store/msix/identity.example.json -FeatureTier essential -Unsigned
+          if ($LASTEXITCODE -ne 0) { throw 'Store candidate build failed.' }
+      - name: Check actual PE DPI manifest and installed-path budget
+        shell: pwsh
+        run: |
+          python -B scripts/verify-store-launcher-dpi.py --exe dist/pass14/store/runtime/NHFamilyLawLLM.exe --source-manifest store/pyinstaller/windows-app.manifest --output dist/pass14/evidence/pe-dpi-manifest.json
+          if ($LASTEXITCODE -ne 0) { throw 'Built launcher DPI declaration is missing.' }
+          $packages=@(Get-ChildItem -LiteralPath dist/pass14/store/msix -File -Filter '*.msix')
+          if ($packages.Count -ne 1) { throw 'Exactly one candidate is required.' }
+          python -B scripts/verify-store-path-budget.py --msix $packages[0].FullName --output dist/pass14/evidence/production-path-budget.json
+          if ($LASTEXITCODE -ne 0) { throw 'Package exceeds certification path budget.' }
+          "NHFL_PASS14_MSIX=$($packages[0].FullName)" >> $env:GITHUB_ENV
+          "NHFL_PASS14_SHA256=$((Get-FileHash -LiteralPath $packages[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant())" >> $env:GITHUB_ENV
+      - name: Install signed temporary QA package and exercise actual UI/reinstall
+        shell: powershell
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-msix-lifecycle.ps1 -PackagePath $env:NHFL_PASS14_MSIX -WorkRoot "$PWD/dist/pass14/installed" -IsolatedTestEnvironment
+          if ($LASTEXITCODE -ne 0) { throw 'Installed QA lifecycle did not qualify.' }
+          $receipt=Get-Content -LiteralPath dist/pass14/installed/evidence/installed-lifecycle.json -Raw | ConvertFrom-Json
+          if ($receipt.candidate_sha256 -cne $env:NHFL_PASS14_SHA256 -or $receipt.status -ne 'pass' -or !$receipt.cleanup_complete) {
+            throw 'Installed candidate receipt does not bind the current MSIX.'
+          }
+      - name: Run native WACK against the same signed candidate
+        shell: powershell
+        run: |
+          & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-store-qa-wack.ps1 -WorkRoot "$PWD/dist/pass14/installed" -ExpectedCandidateSha256 $env:NHFL_PASS14_SHA256
+          if ($LASTEXITCODE -ne 0) { throw 'Native certification is not green; keep release blocked.' }
+      - name: Exact source publication gate
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          python scripts/run-public-source-preflight.py --index --require-ready --output dist/pass14/evidence/public-source-index.json
+          if ($LASTEXITCODE -ne 0) { throw 'Source publication gate failed.' }
+      - name: Preserve unsigned candidate, path, DPI, and WACK evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nh-pass14-store-${{ github.sha }}
+          path: |
+            dist/pass14/store/msix/*.msix
+            dist/pass14/store/evidence/*.json
+            dist/pass14/store/evidence/*.txt
+            dist/pass14/evidence/*.json
+            dist/pass14/evidence/*.xml
+            dist/pass14/evidence/*.txt
+            dist/pass14/installed/evidence/*.json
+            dist/pass14/installed/evidence/*.png
+            dist/pass14/installed/evidence/wack/*.json
+            dist/pass14/installed/evidence/wack/*.xml
+            dist/pass14/installed/evidence/wack/*.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -9,7 +9,9 @@ def test_qa_is_host_limited_and_never_uses_real_store_identity():
     assert "RUNNER_ENVIRONMENT -ne 'github-hosted'" in text
     assert '-not $IsolatedTestEnvironment' in text
     assert text.index('disposable GitHub-hosted Windows runners') < text.index('New-Item -ItemType Directory -Path $work')
-    assert "$qaName = $realName + '.QA' + $nonce" in text
+    assert "$qaName = $realName + '.Q'" in text
+    assert "$publisher = 'CN=NHFL.IsolatedQA.' + $nonce" in text
+    assert "verify-store-path-budget.py" in text
     assert '$manifest.Package.Identity.Name = $qaName' in text
     assert '-KeyExportPolicy NonExportable' in text
     assert 'Export-PfxCertificate' not in text
