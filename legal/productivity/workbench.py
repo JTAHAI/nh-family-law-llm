@@ -17,6 +17,7 @@ import uuid
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any
 
 from legal.model_orchestration.hardware import profile_hardware
@@ -1086,30 +1087,41 @@ class ProductivitySuiteStore:
         verification = self.verify_backup(safe_backup_id)
         if verification["status"] != "pass":
             raise ProductivitySuiteError("backup_integrity_failed", status_code=409)
-        recovery_root = backup_root / "recovery" / safe_backup_id
-        if recovery_root.exists():
-            raise ProductivitySuiteError("backup_recovery_already_exists", status_code=409)
-        recovery_root.mkdir(parents=True, exist_ok=False)
-        restored: list[dict[str, Any]] = []
-        total = 0
-        for row in package.get("files", []):
-            relative = Path(str(row.get("path") or ""))
-            if relative.is_absolute() or ".." in relative.parts or not relative.parts:
-                raise ProductivitySuiteError("backup_path_invalid", status_code=409)
-            if package.get("schema_version") == "encrypted_matter_backup_v2":
-                chunks = row.get("chunks") if isinstance(row.get("chunks"), list) else []
-                raw = b"".join(self._read_backup_chunk(backup_root, str(digest)) for digest in chunks)
-            else:
-                raw = base64.b64decode(str(row.get("content") or ""), validate=True)
-            if _digest(raw) != row.get("sha256"):
-                raise ProductivitySuiteError("backup_integrity_failed", status_code=409)
-            target = (recovery_root / relative).resolve()
-            if recovery_root.resolve() not in target.parents:
-                raise ProductivitySuiteError("backup_path_invalid", status_code=409)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            atomic_write_bytes(target, raw, mode=0o600)
-            restored.append({"path": relative.as_posix(), "sha256": _digest(raw), "size": len(raw)})
-            total += len(raw)
+        recovery_parent = backup_root / "recovery"
+        recovery_root = recovery_parent / safe_backup_id
+        try:
+            if recovery_parent.is_symlink() or recovery_parent.resolve() != recovery_parent:
+                raise ProductivitySuiteError("backup_recovery_root_link_refused", status_code=409)
+            recovery_parent.mkdir(parents=True, exist_ok=True)
+            with exclusive_file_lock(recovery_parent / ".restore.lock"):
+                if recovery_root.exists() or recovery_root.is_symlink():
+                    raise ProductivitySuiteError("backup_recovery_already_exists", status_code=409)
+                with TemporaryDirectory(dir=recovery_parent, prefix=".r-") as directory:
+                    staged = Path(directory) / "payload"
+                    staged.mkdir()
+                    restored: list[dict[str, Any]] = []
+                    total = 0
+                    for row in package.get("files", []):
+                        relative = Path(str(row.get("path") or ""))
+                        if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+                            raise ProductivitySuiteError("backup_path_invalid", status_code=409)
+                        if package.get("schema_version") == "encrypted_matter_backup_v2":
+                            chunks = row.get("chunks") if isinstance(row.get("chunks"), list) else []
+                            raw = b"".join(self._read_backup_chunk(backup_root, str(digest)) for digest in chunks)
+                        else:
+                            raw = base64.b64decode(str(row.get("content") or ""), validate=True)
+                        if _digest(raw) != row.get("sha256"):
+                            raise ProductivitySuiteError("backup_integrity_failed", status_code=409)
+                        target = (staged / relative).resolve()
+                        if staged not in target.parents:
+                            raise ProductivitySuiteError("backup_path_invalid", status_code=409)
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        atomic_write_bytes(target, raw, mode=0o600)
+                        restored.append({"path": relative.as_posix(), "sha256": _digest(raw), "size": len(raw)})
+                        total += len(raw)
+                    staged.rename(recovery_root)
+        except OSError as exc:
+            raise ProductivitySuiteError("backup_restore_incomplete", status_code=503) from exc
         recovery_matter_id = f"recovery_{_digest({'scope': self.scope, 'backup_id': safe_backup_id})[:20]}"
         receipt = {
             "backup_id": safe_backup_id,

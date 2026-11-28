@@ -21,6 +21,40 @@ def _headers() -> dict[str, str]:
     }
 
 
+def test_interrupted_restore_leaves_no_partial_matter_and_can_be_retried(monkeypatch, tmp_path):
+    from legal.productivity import workbench
+
+    matter = tmp_path / "fictional-matter"
+    matter.mkdir()
+    (matter / "first.txt").write_text("first fictional record", encoding="utf-8")
+    (matter / "second.txt").write_text("second fictional record", encoding="utf-8")
+    backup_root = tmp_path / "external-backups"
+    monkeypatch.setenv("NHFL_BACKUP_ROOT", str(backup_root))
+    store = ProductivitySuiteStore(matter, encryption_key="fictional-backup-key")
+    store.save_backup_schedule({"schedule_id": "fictional_backup", "enabled": False})
+    backup_id = store.run_backup({"schedule_id": "fictional_backup"})["backup_id"]
+    recovery_parent = backup_root / "recovery"
+    recovered = recovery_parent / backup_id
+    write = workbench.atomic_write_bytes
+
+    def interrupted(path, content, **kwargs):
+        if path.name == "second.txt":
+            assert (path.parent / "first.txt").exists()
+            raise OSError("synthetic interruption")
+        return write(path, content, **kwargs)
+
+    with monkeypatch.context() as failure:
+        failure.setattr(workbench, "atomic_write_bytes", interrupted)
+        with pytest.raises(ProductivitySuiteError, match="backup_restore_incomplete"):
+            store.restore_backup(backup_id, {"confirmed": True})
+    assert not recovered.exists()
+    assert not list(recovery_parent.glob(".r-*"))
+
+    receipt = store.restore_backup(backup_id, {"confirmed": True})
+    assert receipt["live_matter_overwritten"] is False
+    assert (recovered / "second.txt").read_text(encoding="utf-8") == "second fictional record"
+
+
 def test_pass151_incremental_chunks_deduplicate_verify_and_restore_independently(monkeypatch, tmp_path: Path) -> None:
     matter = tmp_path / "fictional-backup-matter"
     matter.mkdir()
