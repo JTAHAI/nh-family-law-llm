@@ -68,3 +68,41 @@ def test_judicial_branch_rule_books_keep_distinct_in_page_citations():
     ]
     assert len({row.document_id for row in rows}) == 2
     assert all(row.retrieved_freshness_status == "official_snapshot_timestamp_required" for row in rows)
+
+
+def test_administrative_index_records_matching_chapters_without_admitting_index(tmp_path):
+    targets = {target.target_id: target for target in load_official_source_targets()}
+    body = b"""
+    <a href="http://gencourt.state.nh.us/rules/state_agencies/he-w400.html">CHAPTER He-W 400</a>
+    <a href="he-w400.html">Chapter He-W 400</a>
+    <a href="he-w500.html">Chapter He-W 600</a>
+    <a href="he-c700.html">Chapter He-C 700</a>
+    <a href="https://unaffiliated.example/rules/state_agencies/he-w800.html">Chapter He-W 800</a>
+    """
+    ingestor = OfficialAuthorityIngestor(fetcher=StaticFetcher(body), snapshot_base_dir=tmp_path)
+
+    result = ingestor.ingest_target(targets["NH-0034"])
+
+    assert result.parser_audit.status == "parsed"
+    assert result.canonical_count == 1
+    assert result.canonical_examples[0]["chapter"] == "He-W 400"
+    assert result.source_record.metadata["retrieval_admission"] == "quarantined"
+    assert result.source_record.metadata["retrieval_quarantine_review_required"] is True
+
+
+def test_guidance_identity_requires_matching_h1_and_stays_quarantined(tmp_path):
+    targets = {target.target_id: target for target in load_official_source_targets()}
+    target = targets["NH-0036"]
+    fetcher = StaticFetcher(b"<h1>Child <strong>Support</strong> Services</h1>")
+    ingestor = OfficialAuthorityIngestor(fetcher=fetcher, snapshot_base_dir=tmp_path)
+
+    result = ingestor.ingest_target(target)
+    assert result.parser_audit.status == "snapshot_only"
+    assert result.parser_audit.metadata["heading"] == "Child Support Services"
+    assert result.canonical_count == 0
+    assert result.source_record.metadata["retrieval_admission"] == "quarantined"
+
+    fetcher.body = b"<title>Child Support Services</title><h1>Temporarily unavailable</h1>"
+    rejected = ingestor.ingest_target(target)
+    assert rejected.parser_audit.status == "parsed_empty"
+    assert rejected.source_record.metadata["retrieval_quarantine_reason"] == "parser_status:parsed_empty"

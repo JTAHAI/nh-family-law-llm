@@ -10,6 +10,7 @@ from legal.connectors.base import ParserAuditEvent, RetrievedSource, SourceFetch
 from legal.connectors.http_fetcher import OfficialSourceFetchError
 from legal.connectors.nh_forms import parse_form_text, parse_forms_index
 from legal.connectors.nh_general_court import parse_general_court_html, parse_general_court_section_html
+from legal.connectors.nh_reference_pages import inspect_guidance_page, parse_administrative_rule_index
 from legal.connectors.nh_rules import parse_rules_index, parse_rules_text
 from legal.connectors.pdf_text import extract_pdf_text
 from legal.connectors.nh_supreme_court_opinions import parse_supreme_court_opinion_index, parse_supreme_court_opinion_text
@@ -144,6 +145,14 @@ class OfficialAuthorityIngestor:
             return audit, canonical_count, examples, freshness_status
 
         text = retrieved.text
+        if target.parser_name == "nh_administrative_rule_index":
+            chapters, audit = parse_administrative_rule_index(text, source_id=source_id, url=target.url)
+            return audit, len(chapters), chapters[:3], "administrative_rule_index_retrieved"
+
+        if target.parser_name == "nh_guidance_snapshot":
+            audit = inspect_guidance_page(text, source_id=source_id, url=target.url)
+            return audit, canonical_count, examples, "official_guidance_snapshot_retrieved"
+
         if target.parser_name in {"nh_general_court_chapter_index", "nh_general_court_section"}:
             if target.parser_name == "nh_general_court_section":
                 document, audit = parse_general_court_section_html(
@@ -229,11 +238,16 @@ class OfficialAuthorityIngestor:
         # useful for a future repair, but it is never an admissible retrieval
         # source. Preserve it outside the repo and make that exclusion explicit
         # for every downstream builder and release audit.
+        quarantine_reason = None
         if parser_status not in {"parsed", "snapshot_only"}:
+            quarantine_reason = f"parser_status:{parser_status}"
+        elif target.parser_name in {"nh_administrative_rule_index", "nh_guidance_snapshot"}:
+            quarantine_reason = "reference_page_not_primary_authority"
+        if quarantine_reason:
             metadata.update(
                 {
                     "retrieval_admission": "quarantined",
-                    "retrieval_quarantine_reason": f"parser_status:{parser_status}",
+                    "retrieval_quarantine_reason": quarantine_reason,
                     "retrieval_quarantine_review_required": True,
                 }
             )
