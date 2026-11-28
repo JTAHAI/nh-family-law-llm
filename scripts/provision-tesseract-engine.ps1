@@ -6,11 +6,13 @@ $repo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $baseline = "ec48c11eae9448c8c6e7739d93e06fa2433aa95f"
 $version = "5.5.4"
 $cache = Resolve-RepoBuildDirectory (Join-Path $repo "dist\ocr") $repo
-$runtime = Resolve-RepoBuildDirectory (Join-Path $cache "runtime-5.5.4") $repo
-$receiptPath = Join-Path $cache "receipt.json"
+$runtime = Resolve-RepoBuildDirectory (Join-Path $cache "runtime-5.5.4-headless") $repo
+$receiptPath = Join-Path $cache "receipt-headless.json"
 $manifest = Join-Path $repo "store\native\tesseract"
 $triplets = Join-Path $repo "store\native\triplets"
 $triplet = "x64-windows-static-release"
+$manifestHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $manifest "vcpkg.json")).Hash.ToLowerInvariant()
+$tripletHash = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $triplets "$triplet.cmake")).Hash.ToLowerInvariant()
 $env:VCPKG_DISABLE_METRICS = "1"
 
 function Assert-RegularInput([string]$Path) {
@@ -25,7 +27,9 @@ function Assert-RegularInput([string]$Path) {
 if (Test-Path -LiteralPath $receiptPath -PathType Leaf) {
   Assert-RegularInput $receiptPath
   $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
-  if ($receipt.version -cne $version -or $receipt.vcpkg_baseline -cne $baseline -or
+  if ($receipt.schema -cne "family_law_ocr_build.v3" -or $receipt.graphics_disabled -ne $true -or
+      $receipt.manifest_sha256 -cne $manifestHash -or $receipt.triplet_sha256 -cne $tripletHash -or
+      $receipt.version -cne $version -or $receipt.vcpkg_baseline -cne $baseline -or
       -not $receipt.files -or $receipt.files.Count -lt 5) {
     throw "Cached OCR build receipt is not the pinned runtime."
   }
@@ -73,10 +77,10 @@ if ($LASTEXITCODE -ne 0 -or $dirty.Count) { throw "Modified OCR tool source refu
 $env:VCPKG_ROOT = $toolRoot
 & (Join-Path $toolRoot "bootstrap-vcpkg.bat") -disableMetrics | Out-Host
 if ($LASTEXITCODE -ne 0) { throw "Pinned OCR dependency tool bootstrap failed." }
-$installed = Join-Path $cache "installed"
+$installed = Join-Path $cache "installed-headless"
 & (Join-Path $toolRoot "vcpkg.exe") install "--x-manifest-root=$manifest" `
-  "--x-install-root=$installed" "--x-buildtrees-root=$cache\b" `
-  "--x-packages-root=$cache\p" "--downloads-root=$cache\downloads" `
+  "--x-install-root=$installed" "--x-buildtrees-root=$cache\b-headless" `
+  "--x-packages-root=$cache\p-headless" "--downloads-root=$cache\downloads" `
   "--overlay-triplets=$triplets" "--triplet=$triplet" "--binarysource=clear" --disable-metrics | Out-Host
 if ($LASTEXITCODE -ne 0) { throw "Pinned security-fixed OCR source build failed." }
 $prefix = Join-Path $installed $triplet
@@ -125,7 +129,8 @@ $files = @(Get-ChildItem -LiteralPath $runtime -Recurse -File | ForEach-Object {
   @{path=$_.FullName.Substring($runtime.Length + 1).Replace('\','/');
     sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
 })
-@{schema="nhfl.native_build_input.v2"; version=$version; vcpkg_baseline=$baseline;
+@{schema="family_law_ocr_build.v3"; version=$version; vcpkg_baseline=$baseline;
+  graphics_disabled=$true; manifest_sha256=$manifestHash; triplet_sha256=$tripletHash;
   model_commit=$modelsCommit; files=$files; source_built=$true; native_url_reading=$false;
   installer_executed=$false; runtime_downloads=$false; legal_review_verified=$false} |
   ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $receiptPath -Encoding UTF8

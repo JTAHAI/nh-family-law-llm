@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import psutil
+
 from legal.security.durable_io import DurableIOError, atomic_write_bytes
 from legal.security.strict_json import StrictJSONError, strict_json_load_path
 
@@ -287,35 +289,45 @@ def stop_local_service(context: RuntimeContext) -> bool:
     if pid <= 0 or port <= 0:
         _state_file(context).unlink(missing_ok=True)
         return False
+    process = None
+    if os.name == "nt":
+        # Capture the process identity before making the loopback request.
+        try:
+            process = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            _state_file(context).unlink(missing_ok=True)
+            return False
+        except psutil.AccessDenied:
+            return False
     # A stale PID may have been reused by an unrelated process. Never terminate
     # it unless the responding service proves both the saved launch nonce and PID.
     if not _state_service_is_healthy(state):
         _state_file(context).unlink(missing_ok=True)
         return False
     try:
-        if os.name == "nt":
-            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], check=False, capture_output=True, text=True, timeout=15)
+        if process is not None:
+            children = process.children(recursive=True)
+            for member in (process, *reversed(children)):
+                try:
+                    member.kill()
+                except psutil.NoSuchProcess:
+                    pass
+            _, surviving = psutil.wait_procs([process, *children], timeout=2.0)
+            if surviving:
+                return False
         else:
             os.kill(pid, signal.SIGTERM)
-        instance_id = str(state.get("instance_id") or "")
-        deadline = time.time() + 2.0
-        while time.time() < deadline:
-            identity = _read_health_identity(port, timeout=0.35)
-            if not (
-                identity.get("healthy") is True
-                and identity.get("instance_id") == instance_id
-                and int(identity.get("pid", 0) or 0) == pid
-            ):
-                break
-            time.sleep(0.1)
-        else:
-            return False
-    finally:
-        try:
+    except (ProcessLookupError, psutil.NoSuchProcess):
+        pass
+    except (PermissionError, psutil.AccessDenied):
+        return False
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline:
+        if not _state_service_is_healthy(state, timeout=0.35):
             _state_file(context).unlink(missing_ok=True)
-        except Exception:
-            pass
-    return True
+            return True
+        time.sleep(0.1)
+    return False
 
 
 def run_local_service(port: int, context: RuntimeContext) -> int:

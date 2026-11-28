@@ -7,7 +7,9 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
+import psutil
 import pytest
 from fastapi.testclient import TestClient
 
@@ -158,6 +160,61 @@ def test_stop_service_never_kills_identity_mismatch(tmp_path: Path, monkeypatch)
     assert local_api_service.stop_local_service(context) is False
     assert killed == []
     assert not context.api_state_path.exists()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows service process-tree shutdown")
+def test_stop_service_stops_owned_windows_tree_without_a_system_tool(tmp_path: Path, monkeypatch) -> None:
+    context = _context(tmp_path)
+    instance_id = "a" * 64
+    worker = """
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+child = subprocess.Popen([sys.executable, "-I", "-c", "import time; time.sleep(60)"])
+Path(sys.argv[1]).write_text(str(child.pid), encoding="ascii")
+time.sleep(60)
+"""
+    ready = tmp_path / "service-child.pid"
+    service = subprocess.Popen([sys.executable, "-I", "-c", worker, str(ready)])
+    child = None
+    try:
+        deadline = time.monotonic() + 15
+        while not (ready.exists() and ready.stat().st_size):
+            if service.poll() is not None or time.monotonic() >= deadline:
+                pytest.fail("The test service did not start its worker")
+            time.sleep(0.05)
+        child = psutil.Process(int(ready.read_text(encoding="ascii")))
+        state = {"pid": service.pid, "port": 8011, "instance_id": instance_id}
+        local_api_service._write_state(context, state)
+        served_instance_id = "b" * 64
+        monkeypatch.setattr(
+            local_api_service, "_read_health_identity",
+            lambda port, timeout=1.5: {
+                "healthy": service.poll() is None, "instance_id": served_instance_id, "pid": service.pid,
+            },
+        )
+
+        def reject_launcher(*args, **kwargs):
+            pytest.fail("Windows service shutdown attempted to launch a system tool")
+
+        monkeypatch.setattr(local_api_service.subprocess, "run", reject_launcher)
+        assert local_api_service.stop_local_service(context) is False
+        assert service.poll() is None and child.is_running()
+        local_api_service._write_state(context, state)
+        served_instance_id = instance_id
+        assert local_api_service.stop_local_service(context) is True
+        service.wait(timeout=2)
+        assert not child.is_running()
+        assert not context.api_state_path.exists()
+    finally:
+        if child is not None and child.is_running():
+            child.kill()
+            child.wait(timeout=3)
+        if service.poll() is None:
+            service.kill()
+            service.wait(timeout=3)
 
 
 def test_health_response_proves_local_service_instance(monkeypatch) -> None:
