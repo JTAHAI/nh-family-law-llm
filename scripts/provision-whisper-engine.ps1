@@ -68,8 +68,21 @@ Assert-Hash $cli $cliSha256 "whisper.cpp CLI"
 if (-not $Destination) { $Destination = Join-Path $cacheRoot "runtime" }
 New-Item -ItemType Directory -Force -Path $Destination | Out-Null
 Copy-Item -LiteralPath $cli -Destination (Join-Path $Destination "whisper-cli.exe") -Force
-Get-ChildItem -LiteralPath $releaseRoot -Filter "*.dll" -File | ForEach-Object {
-  Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $Destination $_.Name) -Force
+# The release archive also carries libraries for separate streaming and
+# Parakeet executables. The bundled file-transcription CLI uses Whisper and
+# the dynamically selected ggml CPU backends.
+$whisperDlls = @(
+  "whisper.dll", "ggml.dll", "ggml-base.dll",
+  "ggml-cpu-alderlake.dll", "ggml-cpu-cannonlake.dll", "ggml-cpu-cascadelake.dll",
+  "ggml-cpu-haswell.dll", "ggml-cpu-icelake.dll", "ggml-cpu-sandybridge.dll",
+  "ggml-cpu-skylakex.dll", "ggml-cpu-sse42.dll", "ggml-cpu-x64.dll"
+)
+foreach ($name in $whisperDlls) {
+  $source = Join-Path $releaseRoot $name
+  if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+    throw "The pinned Whisper release is missing a required library: $name"
+  }
+  Copy-Item -LiteralPath $source -Destination (Join-Path $Destination $name) -Force
 }
 Copy-Item -LiteralPath $model -Destination (Join-Path $Destination "ggml-tiny.en-q5_1.bin") -Force
 $licenseSource = Join-Path ([System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))) "licenses\whisper.cpp-MIT.md"
@@ -77,7 +90,11 @@ if (Test-Path -LiteralPath $licenseSource) {
   Copy-Item -LiteralPath $licenseSource -Destination (Join-Path $Destination "LICENSE-whisper.cpp.txt") -Force
 }
 
+. (Join-Path $PSScriptRoot "stage-whisper-vc-runtime.ps1")
+$redistributables = Install-WhisperVisualCppRuntime $Destination
+
 $manifest = [ordered]@{
+  visual_cpp_runtime = $redistributables
   schema_version = "whisper_cpp_bundle_v1"
   version = $version
   architecture = "x64"
