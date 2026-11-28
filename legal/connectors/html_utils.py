@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from html.parser import HTMLParser
+from urllib.parse import urlsplit
 
 from legal.corpus.source_normalizer import normalize_url, normalize_whitespace
 
 
 class LinkCollector(HTMLParser):
-    def __init__(self, *, base_url: str | None = None) -> None:
+    def __init__(self, *, base_url: str | None = None, preserve_fragments: bool = False) -> None:
         super().__init__(convert_charrefs=True)
         self.base_url = base_url
+        self.preserve_fragments = preserve_fragments
         self.links: list[dict[str, str]] = []
         self._current_href: str | None = None
         self._current_text: list[str] = []
@@ -20,6 +22,8 @@ class LinkCollector(HTMLParser):
             href = attrs_dict.get("href")
             if href:
                 self._current_href = normalize_url(href, self.base_url)
+                if self.preserve_fragments and (fragment := urlsplit(href).fragment):
+                    self._current_href += "#" + fragment
                 self._current_text = []
 
     def handle_data(self, data: str) -> None:
@@ -43,7 +47,9 @@ class LinkCollector(HTMLParser):
         return normalize_whitespace(" ".join(self.text_parts))
 
 
-def collect_links_and_text(html: str, *, base_url: str | None = None) -> tuple[list[dict[str, str]], str]:
-    parser = LinkCollector(base_url=base_url)
+def collect_links_and_text(
+    html: str, *, base_url: str | None = None, preserve_fragments: bool = False,
+) -> tuple[list[dict[str, str]], str]:
+    parser = LinkCollector(base_url=base_url, preserve_fragments=preserve_fragments)
     parser.feed(html)
     return parser.links, parser.visible_text

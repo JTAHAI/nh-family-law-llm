@@ -6,10 +6,10 @@ import re
 
 from legal.connectors.base import ParserAuditEvent
 from legal.connectors.html_utils import collect_links_and_text
-from legal.corpus.source_normalizer import normalize_whitespace, stable_source_id
+from legal.corpus.source_normalizer import normalize_url, normalize_whitespace, stable_source_id
 from legal.documents.models import CourtRule, SourceLocation
 
-PARSER_VERSION = "nh_judicial_branch_rules_parser_v1"
+PARSER_VERSION = "nh_judicial_branch_rules_parser_v2"
 _RULE_RE = re.compile(r"(?:^|\n|\s)Rule\s+(?P<number>\d+(?:\.\d+)*(?:-[A-Z0-9]+)?[A-Z]?)\b", re.I)
 _RULE_DATE = r"(?:\d{1,2}/\d{1,2}/\d{2,4}|[A-Z][a-z]+\s+\d{1,2},\s+\d{4})"
 _EFFECTIVE_RE = re.compile(rf"\b(?:effective|eff\.)\s*(?:date)?\s*[:,-]?\s*({_RULE_DATE})", re.I)
@@ -18,7 +18,7 @@ _AMENDMENT_RE = re.compile(rf"\b(amended|adopted|restyled|revised)\s*(?:effectiv
 
 def _infer_rule_set(text: str, url: str) -> tuple[str, str]:
     combined = f"{url}\n{text[:5000]}".lower()
-    if "family division" in combined:
+    if "family division" in combined or "family-division" in combined:
         return "New Hampshire Circuit Court Family Division Rules", "N.H. R. Cir. Ct. Fam. Div."
     if "rules of evidence" in combined or "evidence" in combined:
         return "New Hampshire Rules of Evidence", "N.H. R. Evid."
@@ -88,7 +88,16 @@ def parse_rules_text(text: str, *, source_id: str, url: str) -> tuple[list[Court
 
 
 def parse_rules_index(html: str, *, source_id: str, url: str) -> tuple[list[CourtRule], ParserAuditEvent]:
-    links, visible_text = collect_links_and_text(html, base_url=url)
+    links, visible_text = collect_links_and_text(html, base_url=url, preserve_fragments=True)
+    # The Judicial Branch's online rule books link individual provisions using
+    # in-page anchors. Prefer those references over the shared navigation.
+    page = normalize_url(url)
+    anchored_rules = [
+        link for link in links
+        if link["href"].startswith(page + "#") and _RULE_RE.match(link.get("text", ""))
+    ]
+    if anchored_rules:
+        links = anchored_rules
     rules: list[CourtRule] = []
     seen: set[str] = set()
     for link in links:
@@ -101,7 +110,7 @@ def parse_rules_index(html: str, *, source_id: str, url: str) -> tuple[list[Cour
         if key in seen:
             continue
         seen.add(key)
-        rule_set, citation_prefix = _infer_rule_set(label, href)
+        rule_set, citation_prefix = _infer_rule_set("" if anchored_rules else label, href)
         match = _RULE_RE.search(label)
         rule_number = match.group("number") if match else None
         rules.append(

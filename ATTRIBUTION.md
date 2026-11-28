@@ -32,9 +32,9 @@ Catalog version: `8.0.6-pass4-seed-inventory`
 | `nh-statutes-rsa-464-a-index` | `nh_statute_title_index` | `nh` | true | https://gc.nh.gov/rsa/html/XLIII/464-A/464-A-mrg.htm |
 | `nh-statutes-rsa-490-d-index` | `nh_statute_title_index` | `nh` | true | https://gc.nh.gov/rsa/html/LI/490-D/490-D-mrg.htm |
 | `nh-statutes-rsa-546-b-index` | `nh_statute_title_index` | `nh` | true | https://gc.nh.gov/rsa/html/LIII/546-B/546-B-mrg.htm |
-| `nh-rules-family-division` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-comment/rules-circuit-court-state-new-hampshire-family-division |
-| `nh-rules-evidence` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-comment/new-hampshire-rules-evidence |
-| `nh-rules-supreme-court` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-comment/supreme-court-rules |
+| `nh-rules-family-division` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-circuit-court-state-new-hampshire-family-division |
+| `nh-rules-evidence` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-evidence |
+| `nh-rules-supreme-court` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-supreme-court-state-new-hampshire |
 | `nh-rules-court-records` | `nh_court_rules` | `nh` | true | https://www.courts.nh.gov/rules-comment |
 | `nh-family-division-forms-index` | `nh_court_forms` | `nh` | true | https://www.courts.nh.gov/our-courts/circuit-court/family-division/forms |
 | `nh-guidance-nh-0033` | `nh_official_guidance` | `nh` | true | https://www.courts.nh.gov/self-help |

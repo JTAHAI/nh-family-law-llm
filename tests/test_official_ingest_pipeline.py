@@ -3,6 +3,8 @@ from pathlib import Path
 
 from legal.connectors.base import RetrievedSource, SourceTarget
 from legal.connectors.ingest_pipeline import OfficialAuthorityIngestor
+from legal.connectors.nh_rules import parse_rules_index
+from legal.connectors.official_source_catalog import load_official_source_targets
 
 
 class StaticFetcher:
@@ -45,3 +47,24 @@ def test_ingest_pipeline_snapshots_and_manifests_official_source(tmp_path):
     assert manifest_path.exists()
     assert Path(result.snapshot_path).exists() is True
     assert "official_authority_store" not in result.snapshot_path
+
+
+def test_judicial_branch_rule_books_keep_distinct_in_page_citations():
+    targets = {target.target_id: target for target in load_official_source_targets()}
+    target = targets["NH-0030"]
+    assert target.url == "https://www.courts.nh.gov/rules-supreme-court-state-new-hampshire"
+    body = """
+        <nav><a href="/rules-circuit-court-state-new-hampshire-family-division">Family Division Rules</a></nav>
+        <a href="#page-id-100">Rule 11. Fictional provision.</a>
+        <a href="#page-id-101">Rule 12. Fictional provision.</a>
+        <section id="page-id-100"></section>
+        <section id="page-id-101"></section>
+    """
+    rows, audit = parse_rules_index(body, source_id="fictional-rules", url=target.url)
+    assert audit.extracted_count == 2
+    assert [row.citation for row in rows] == ["N.H. Sup. Ct. R. 11", "N.H. Sup. Ct. R. 12"]
+    assert [row.source_location.url_or_path for row in rows] == [
+        f"{target.url}#page-id-100", f"{target.url}#page-id-101",
+    ]
+    assert len({row.document_id for row in rows}) == 2
+    assert all(row.retrieved_freshness_status == "official_snapshot_timestamp_required" for row in rows)
