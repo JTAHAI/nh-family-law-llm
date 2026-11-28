@@ -155,3 +155,116 @@ h3 { font-size: 1.3rem; margin: 0 0 10px; }
   .card { padding: 22px; }
   .cta-band { padding: 28px; }
 }
+
+/* Public Pages theme */
+.edition-me { --edition-ink: #102b43; --edition-accent: #085d60; --edition-paper: #f7f4ed; --edition-panel: #e3edea; --edition-rule: #cbd8d7; }
+.edition-nh { --edition-ink: #12332d; --edition-accent: #345e4d; --edition-paper: #f8f5eb; --edition-panel: #e3ebe0; --edition-rule: #c9d7ca; }
+.edition-me, .edition-nh {
+  color: var(--edition-ink);
+  --navy: var(--edition-ink);
+  --teal: var(--edition-accent);
+  --wash: var(--edition-paper);
+  --warm: var(--edition-panel);
+}
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid #98632a; outline-offset: 4px; }
+#main-content:focus { outline: none; }
+.site-header { position: relative; background: #fff; }
+.header-grid { min-height: 76px; }
+.brand-mark { width: 42px; height: 42px; object-fit: contain; }
+.brand-title { font-size: clamp(1rem, 1.65vw, 1.2rem); line-height: 1.24; }
+.site-nav a { font-size: .92rem; }
+.site-nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .36em; }
+.edition-hero { background: var(--edition-paper); padding: clamp(2.75rem, 6.2vw, 5.7rem) 0; }
+.edition-grid { display: grid; grid-template-columns: minmax(0, 1.13fr) minmax(0, .87fr); gap: clamp(2rem, 6vw, 5.5rem); align-items: center; }
+.edition-hero h1 {
+  color: var(--edition-ink);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.55rem, 6.05vw, 5.95rem);
+  letter-spacing: -.061em;
+  line-height: .98;
+  margin: 0 0 1.35rem;
+}
+.release-label, .product-boundary { font-size: .875rem; color: var(--edition-accent); font-weight: 650; }
+.release-label { margin: 0 0 1.4rem; }
+.release-label span { margin-inline: .4rem; }
+.edition-hero .lead { max-width: 41ch; margin: 0; color: #334740; font-size: clamp(1.04rem, 2vw, 1.23rem); }
+.edition-hero .hero-actions { margin-top: 1.6rem; }
+.product-boundary { margin-bottom: 0; }
+.button { border-radius: 7px; }
+.button--primary { background: var(--edition-accent); color: white; }
+.button--primary:hover { background: var(--edition-ink); color: white; }
+.button--secondary { color: var(--edition-ink); background: #fff; border-color: var(--edition-rule); }
+.edition-feature {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(170px, 1fr) auto;
+  border-radius: 18px;
+  background: var(--edition-ink);
+  color: white;
+  box-shadow: 0 17px 42px #102b4321;
+}
+.edition-mark {
+  display: grid;
+  min-height: clamp(180px, 22vw, 284px);
+  place-items: center;
+  background: radial-gradient(ellipse at 50% 45%, var(--edition-panel) 0%, var(--edition-paper) 80%);
+  border: 1px solid var(--edition-rule);
+  border-radius: 18px 18px 0 0;
+}
+.edition-mark img { display: block; width: clamp(140px, 19vw, 235px); height: auto; }
+.edition-feature__copy { padding: 1.45rem clamp(1.3rem, 3vw, 2.1rem) 1.8rem; }
+.edition-feature__copy > p:first-child { margin: 0; color: #cfe1d9; font-weight: 650; font-size: .88rem; }
+.edition-feature__copy h2 { color: white; font-size: clamp(1.35rem, 2.5vw, 1.94rem); margin: .27rem 0 .47rem; line-height: 1.14; letter-spacing: -.025em; }
+.edition-feature__copy > p:last-child { color: #eef3f1; margin: 0; }
+.lane-section { padding-block: 3.5rem; }
+.lane-section h2, .cta-band h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 600; letter-spacing: -.035em; }
+.source-lanes { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border: 1px solid var(--edition-rule); border-radius: 12px; overflow: hidden; }
+.source-lanes article { padding: 1.5rem clamp(1.2rem,3vw,2.4rem); }
+.source-lanes article:nth-child(even) { border-left: 1px solid var(--edition-rule); }
+.source-lanes article:nth-child(n+3) { border-top: 1px solid var(--edition-rule); }
+.source-lanes h2, .source-lanes h3 { color: var(--edition-ink); font-size: 1.24rem; margin: 0 0 .5rem; }
+.source-lanes p { margin: 0; }
+.text-action { display: inline-block; margin-top: 1.3rem; font-weight: 700; }
+.feature-note { margin-block: 2rem; padding: 1.1rem 1.5rem 1.5rem; background: var(--edition-paper); border-radius: 12px; }
+.feature-note h2 { margin-top: .35rem; }
+.page-hero { background: var(--edition-paper); border-bottom: 1px solid var(--edition-rule); }
+.page-hero h1 { font-family: "Source Serif 4", Georgia, serif; letter-spacing: -.042em; font-weight: 600; }
+.release-facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; margin: 0 0 2.35rem; }
+.release-facts div { border-top: 3px solid var(--edition-accent); padding: 1rem; background: var(--edition-paper); }
+.release-facts dt { font-size: .88rem; font-weight: 650; }
+.release-facts dd { margin: .28rem 0 0; }
+.release-facts dd:nth-child(2) { font-size: 1.22rem; font-weight: 700; line-height: 1.24; }
+.start-steps { padding-inline-start: 1.6rem; }
+.start-steps > li { padding: 0 0 1.2rem .5rem; }
+.start-steps > li::marker { font-weight: 750; color: var(--edition-accent); }
+.start-steps h2 { margin: 0; font-size: 1.45rem; }
+.start-steps p { margin: .5rem 0; }
+@media (max-width: 940px) {
+  .header-grid { flex-wrap: wrap; justify-content: space-between; gap: .6rem; padding-block: .65rem; }
+  .site-nav:not([hidden]) { display: flex; width: 100%; flex-wrap: wrap; align-items: start; gap: .25rem .8rem; }
+  .nav-toggle:not([hidden]) { display: inline-block; }
+  .edition-grid { gap: 2rem; }
+}
+@media (max-width: 680px) {
+  .edition-grid, .source-lanes, .release-facts { grid-template-columns: minmax(0,1fr); }
+  .edition-hero h1 { font-size: clamp(2.55rem, 10vw, 4.2rem); }
+  .source-lanes article:nth-child(even) { border-left: 0; }
+  .source-lanes article + article { border-top: 1px solid var(--edition-rule); }
+  .brand-title { max-width: 14ch; }
+  .site-nav:not([hidden]) { flex-direction: column; align-items: stretch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+
+
+@media (min-width: 941px) {
+  .edition-nh .edition-hero h1 { font-size: clamp(2.55rem, 5.2vw, 5.15rem); }
+}
+
+.setup-details { padding: .8rem 0; border-top: 1px solid var(--edition-rule); }
+.setup-details summary { cursor: pointer; font-weight: 650; }
+.setup-details p:last-child { margin-bottom: .4rem; }

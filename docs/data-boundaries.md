@@ -1,3 +1,9 @@
+---
+layout: default
+title: Data boundaries
+description: How the New Hampshire project separates private records, authority, models, and audit data.
+permalink: /data-boundaries/
+---
 # Data Boundaries
 
 Enterprise Pass 1 establishes hard separation between legal authority, private matter files, evaluation assets, model artifacts, and audit records.

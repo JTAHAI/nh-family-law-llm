@@ -18,9 +18,9 @@ brand:
 github_url: https://github.com/JTAHAI/nh-family-law-llm
 
 header_pages:
-  - index.md
+  - index.html
   - features.md
-  - RELEASE_STATUS_v7.0.0.md
+  - release-status.md
   - safety.md
   - fork-your-state.md
   - privacy.md
@@ -39,3 +39,9 @@ exclude:
   - dist
   - .venv
   - node_modules
+
+release:
+  source_version: "8.0.10"
+  package_version: "8.0.10.0"
+  source_ref: "4b44401a31271d84cf218cdb4a4c615081d596d0"
+  qualification_url: "https://github.com/JTAHAI/family-law-core/blob/8eb438f/docs/windows-qualification-c3a896a.md"

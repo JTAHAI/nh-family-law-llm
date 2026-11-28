@@ -1,6 +1,6 @@
 # New Hampshire Family Law LLM v7.0.0
 
-v7.0.0 is the current Microsoft Store and source release, focused on dependable local workflows, exact-source review, local privacy, and a broad family-law workbench catalog.
+These archived notes describe an earlier version of the workbench. See the project site for the current New Hampshire release status.
 
 ## Included
 

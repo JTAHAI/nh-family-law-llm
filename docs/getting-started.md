@@ -1,88 +1,27 @@
 ---
 layout: default
-title: Getting Started
-description: First-run instructions for installing New Hampshire Family Law LLM, building a sample or matter corpus, opening Local AI Chat, and protecting private records.
+title: Get started
+description: Try the fictional sample in New Hampshire Family Law LLM and learn how to create a local workspace.
 permalink: /getting-started/
 ---
 
-<section class="page-hero">
-  <div class="shell">
-    <div class="eyebrow">First run</div>
-    <h1>Start safely in about ten minutes.</h1>
-    <p class="lead">Install v7 from Microsoft Store or run it from source, build a neutral sample or a workspace from records you select, make that corpus active, and then open the local chat and review tools.</p>
-    <div class="hero-actions">
-      <a class="button button--primary" href="https://apps.microsoft.com/detail/9NV67WCQW0DM">Download v7 free</a>
-      <a class="button button--secondary" href="{{ '/features/' | relative_url }}">Explore v7 features</a>
-      <a class="button button--secondary" href="{{ '/privacy/' | relative_url }}">Read the privacy policy</a>
-    </div>
-  </div>
-</section>
-
+<section class="page-hero"><div class="shell"><h1>Start with the fictional sample.</h1><p class="lead">Explore the desktop workbench before you add personal records. This website provides instructions and source links.</p></div></section>
 <div class="content-wrap">
-  <div class="callout callout--teal">
-    <h2>Fastest first-run path</h2>
-    <ol>
-      <li>Install and open <strong>New Hampshire Family Law LLM</strong>.</li>
-      <li>Select <strong>Build Neutral Sample Corpus</strong>.</li>
-      <li>Wait for the background build to finish.</li>
-      <li>Select the new sample in the <strong>Installed corpus library</strong>.</li>
-      <li>Select <strong>Use selected corpus</strong>.</li>
-      <li>Select <strong>Open Local AI Chat</strong>.</li>
-    </ol>
-    <p>The neutral sample contains fictional material and is the safest way to learn the workflow before importing private records.</p>
-  </div>
-
-  <h2>Create a workspace from your own records</h2>
-  <ol>
-    <li>Select <strong>Create New Case Corpus</strong>.</li>
-    <li>Use <strong>Add folder</strong> or <strong>Add files</strong> to select only the records you intend to process.</li>
-    <li>Enter a neutral case name or alias. Avoid placing children’s full names, Social Security numbers, or other sensitive details in the workspace name.</li>
-    <li>Review the output location. Prefer a protected local folder or encrypted drive that you control.</li>
-    <li>Select <strong>Build corpus</strong> and keep the app open while the background build runs.</li>
-    <li>When complete, select the matter in the installed corpus library and choose <strong>Use selected corpus</strong>.</li>
-    <li>Open <strong>Local AI Chat</strong>, <strong>Search / Indexes</strong>, or a review package.</li>
+  <ol class="start-steps">
+    <li><h2>Open the Windows app</h2><p>Check release status and the repository for the available source and Windows build instructions. The current x64 MSIX is a qualification candidate.</p><p><a class="button button--primary" href="{{ '/release-status/' | relative_url }}">Check release status</a> <a href="{{ site.github_url }}">Open GitHub</a></p></li>
+    <li><h2>Build and open the sample</h2><p>In the launcher, choose the fictional NH sample option. Open Local AI Chat and use the sample matter to inspect records and supporting excerpts.</p></li>
+    <li><h2>Choose your source scope</h2><p>Ask about the active matter or consult admitted New Hampshire authority separately. Open the source card and check the exact support, date, and jurisdiction.</p></li>
+    <li><h2>Create your own local matter</h2><p>When you are ready, create a new case corpus and select the documents you want to include. Check the active matter before importing, drafting, or exporting.</p></li>
   </ol>
 
-  <div class="callout">
-    <h3>Use copies when practical</h3>
-    <p>Keep original legal records preserved in their existing location. For large or sensitive matters, consider staging copies in a dedicated folder before intake. Review cloud-sync settings before choosing OneDrive, Dropbox, Google Drive, or another synchronized location.</p>
-  </div>
-
-  <h2>Open an existing matter</h2>
-  <p>Select <strong>Open Existing Case Corpus</strong> and choose the matter workspace. You can also select a known matter in the installed corpus library and choose <strong>Use selected corpus</strong>.</p>
-
-  <h2>Add more evidence later</h2>
-  <p>Select <strong>Reopen Intake / Add More Evidence</strong>. Add only the new or changed records you want reviewed. The application tracks hashes and prior intake information so unchanged records can remain distinguishable from newly added material.</p>
-
-  <h2>What Local AI Chat can see</h2>
-  <p>Case-specific search and review depend on the currently active corpus. For the clearest first-run experience, activate the neutral sample or your own matter before opening Local AI Chat. General New Hampshire-law research and personal-record review are separate tasks; always check which source scope is active before relying on an answer.</p>
-
-  <h2>Before relying on an output</h2>
-  <ul class="check-list">
-    <li>Open the cited source card and confirm the source actually supports the statement.</li>
-    <li>Check whether the source is official, current, and within New Hampshire jurisdiction.</li>
-    <li>Verify quoted language against the source text.</li>
-    <li>Review generated timelines, evidence maps, classifications, and drafts for omissions or mistakes.</li>
-    <li>Do not treat a generated document as filing-ready without qualified human review.</li>
-  </ul>
-
-  <h2>Privacy basics</h2>
-  <ul class="check-list">
-    <li>The standard application is designed to process selected records locally.</li>
-    <li>Do not import records you are not authorized to possess or process.</li>
-    <li>Protect your Windows account, matter folders, backups, and removable drives.</li>
-    <li>Review every proposed export before sharing it.</li>
-    <li>Do not post private matter files, logs, screenshots, or identifying facts in a public GitHub issue.</li>
-  </ul>
-
-  <h2>Troubleshooting</h2>
-  <p>Use <strong>Repair / Troubleshoot</strong> from the launcher. Local logs are stored under <code>%LOCALAPPDATA%\NHFamilyLawLLM\logs</code>. Redact private paths and matter information before sharing a log or screenshot.</p>
-
-  <div class="cta-band">
-    <div>
-      <h2>Install, learn with the neutral sample, then create a protected matter workspace.</h2>
-      <p>The sample-first workflow makes the controls familiar before any sensitive family records are added.</p>
-    </div>
-    <a class="button button--warm" href="https://apps.microsoft.com/detail/9NV67WCQW0DM">Get v7 from Microsoft Store</a>
-  </div>
+  <details class="setup-details">
+    <summary>Run from source on Windows</summary>
+    <p>Open the copy of the repository on your PC and follow the versioned Windows setup instructions.</p>
+    <p><a href="{{ site.github_url }}/blob/{{ site.release.source_ref }}/README.md#quick-start">Open the Windows source instructions</a></p>
+  </details>
+  <details class="setup-details">
+    <summary>Troubleshoot a local launch</summary>
+    <p>Use <strong>Repair / Troubleshoot</strong> in the launcher. Logs are under <code>%LOCALAPPDATA%\NHFamilyLawLLM\logs</code>. Remove private details before sharing a log or screenshot.</p>
+  </details>
+  <p><a href="{{ '/privacy/' | relative_url }}">Read the privacy policy</a> · <a href="{{ '/safety/' | relative_url }}">Understand the review safeguards</a></p>
 </div>

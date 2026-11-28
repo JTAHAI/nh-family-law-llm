@@ -38,7 +38,7 @@
 - Publishes 16 end-to-end verified core workflows and catalogs 24 specialized source workbenches with explicit development-preview labels.
 - Adds the admitted external official-authority generation, exact-source verification, fail-closed filing gate, Local-only hardening, and self-contained offline document/OCR/privacy runtime.
 - The exact v7 package candidate passed package, privacy, sealed-payload, bundled-engine, and frozen-runtime offline audits.
-- Version 7 is published and available as a free download from the Microsoft Store. Enterprise legal/product validation remains a separate evidence gate.
+- This entry describes the earlier Maine-derived release scope. The current New Hampshire Windows distribution status is documented in the release ledger.
 - Full details: [v7 release notes](RELEASE_NOTES_v7.0.0.md) and [release status](RELEASE_STATUS_v7.0.0.md).
 
 ## v6.0.4 — Release-clean MSIX packaging
