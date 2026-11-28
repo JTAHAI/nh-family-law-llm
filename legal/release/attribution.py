@@ -149,10 +149,19 @@ keywords:
         if not resources:
             blockers.append("resource_catalog_empty_or_missing")
         if write:
-            license_path.write_text(license_text, encoding="utf-8")
-            notice_path.write_text(notice_text, encoding="utf-8")
-            attribution_path.write_text(attribution_text, encoding="utf-8")
-            citation_path.write_text(citation_text, encoding="utf-8")
+            for path, text in (
+                (license_path, license_text),
+                (notice_path, notice_text),
+                (attribution_path, attribution_text),
+                (citation_path, citation_text),
+            ):
+                # These are scaffolds for missing files. The repository may
+                # already carry approved licensing and attribution terms.
+                try:
+                    with path.open("x", encoding="utf-8") as stream:
+                        stream.write(text)
+                except FileExistsError:
+                    continue
         expected = [license_path, notice_path, attribution_path, citation_path]
         for path in expected:
             if write and not path.is_file():

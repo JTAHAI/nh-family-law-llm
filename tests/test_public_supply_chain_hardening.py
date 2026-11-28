@@ -3,13 +3,17 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from legal.ops import SupplyChainAuditor
 from legal.release import AttributionKitBuilder, PublicRepoReadinessAuditor
 
 
-def test_attribution_kit_generates_required_public_files() -> None:
-    root = Path(__file__).resolve().parents[1]
+def test_attribution_kit_generates_required_public_files(tmp_path: Path) -> None:
+    root = tmp_path / "source"
+    (root / "configs").mkdir(parents=True)
+    catalog = Path("configs/nh_enterprise_resource_catalog.json")
+    shutil.copyfile(Path(__file__).resolve().parents[1] / catalog, root / catalog)
     report = AttributionKitBuilder(project_root=root).build(write=True)
     assert report.status == "pass"
     assert report.resource_count >= 10
@@ -36,23 +40,24 @@ def test_supply_chain_auditor_builds_source_sbom_and_keeps_legal_readiness_block
 
 def test_public_readiness_requires_attribution_kit_and_still_passes() -> None:
     root = Path(__file__).resolve().parents[1]
+    paths = [root / name for name in ("LICENSE.md", "NOTICE.md", "ATTRIBUTION.md", "CITATION.cff")]
+    before = [path.read_bytes() for path in paths]
     AttributionKitBuilder(project_root=root).build(write=True)
+    assert [path.read_bytes() for path in paths] == before
     report = PublicRepoReadinessAuditor(project_root=root).audit()
     assert report.status == "pass"
     assert report.public_source_ready is True
     assert report.production_legal_ready is False
 
 
-def test_public_readiness_ignores_workbench_cache(tmp_path: Path) -> None:
+def test_public_readiness_ignores_workbench_cache() -> None:
     root = Path(__file__).resolve().parents[1]
     cache_dir = root / ".nhfl_work" / "cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
-    (cache_dir / "fixture.metadata.json").write_text('{"token": "not-a-secret-cache"}', encoding="utf-8")
 
-    try:
+    with TemporaryDirectory(prefix="audit-fixture-", dir=cache_dir) as fixture:
+        (Path(fixture) / "fixture.metadata.json").write_text('{"token": "not-a-secret-cache"}', encoding="utf-8")
         report = PublicRepoReadinessAuditor(project_root=root).audit()
-    finally:
-        shutil.rmtree(root / ".nhfl_work", ignore_errors=True)
 
     assert report.status == "pass"
     assert not any(".nhfl_work" in finding.path for finding in report.findings)
