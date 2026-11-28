@@ -21,7 +21,12 @@ from legal.retrieval.models import RetrievalDocument
 from legal.retrieval.optional_backends import SQLiteHybridIndex, optional_backend_status
 from nh_family_law_llm.case_corpus_builder import create_sample_case_build
 from nh_family_law_llm.api import load_case_search_records
-from nh_family_law_llm.installed_runtime import DEFAULT_PACKAGE_NAME, resolve_installed_runtime_executable
+from nh_family_law_llm.installed_runtime import (
+    DEFAULT_PACKAGE_NAME,
+    query_package_registration as _package_registration,
+    resolve_installed_runtime_executable,
+    run_package_query,
+)
 from nh_family_law_llm.version import APP_DISPLAY_NAME, APP_EXECUTABLE_NAME, PACKAGE_VERSION
 
 
@@ -114,43 +119,38 @@ def _status_text(value: Any) -> str:
     return str(value or "").strip().lower()
 
 
-def _powershell_json(command: str) -> dict[str, Any]:
-    completed = subprocess.run(
-        ["powershell", "-NoProfile", "-Command", command],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+def _powershell_json(command: str, package_name: str) -> dict[str, Any]:
+    completed = run_package_query(command, package_name)
+    if completed is None or completed.returncode != 0:
+        return {}
     payload = (completed.stdout or "").strip()
     if not payload:
         return {}
     try:
         loaded = json.loads(payload)
     except json.JSONDecodeError:
-        return {"raw": payload, "returncode": completed.returncode}
-    return loaded if isinstance(loaded, dict) else {"items": loaded}
-
-
-def _package_registration(package_name: str = DEFAULT_PACKAGE_NAME) -> dict[str, Any]:
-    return _powershell_json(
-        f"$pkg = Get-AppxPackage -Name '{package_name}' -ErrorAction SilentlyContinue | "
-        "Select-Object -First 1 PackageFullName,InstallLocation,Version; "
-        "if ($pkg) { $pkg | ConvertTo-Json -Compress }"
-    )
+        return {}
+    if isinstance(loaded, dict):
+        return loaded
+    return {"items": loaded} if isinstance(loaded, list) else {}
 
 
 def _start_menu_entries(package_name: str) -> list[dict[str, Any]]:
     payload = _powershell_json(
-        f"Get-StartApps | Where-Object {{ $_.Name -like '*{package_name.split('.')[-1]}*' -or $_.AppID -like '*{package_name}*' }} | "
-        "Select-Object Name,AppID | ConvertTo-Json -Compress"
+        "$packagePrefix = $env:FAMILY_LAW_PACKAGE_QUERY + '_*'; "
+        "Get-StartApps | Where-Object { $_.AppID -like $packagePrefix } | "
+        "Select-Object Name,AppID | ConvertTo-Json -Compress",
+        package_name,
     )
-    if not payload:
+    rows = payload.get("items", [payload])
+    if not isinstance(rows, list):
         return []
-    if isinstance(payload, dict):
-        return [payload]
-    if isinstance(payload, list):
-        return [row for row in payload if isinstance(row, dict)]
-    return []
+    prefix = package_name.casefold() + "_"
+    return [
+        row for row in rows
+        if isinstance(row, dict) and isinstance(row.get("AppID"), str)
+        and row["AppID"].casefold().startswith(prefix)
+    ]
 
 
 def _tree_manifest(root: Path) -> dict[str, Any]:

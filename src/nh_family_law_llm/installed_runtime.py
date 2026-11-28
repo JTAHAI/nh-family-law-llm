@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -11,7 +12,48 @@ from typing import Any
 
 from .version import APP_EXECUTABLE_NAME
 
+
+def run_package_query(command: str, package_name: str) -> subprocess.CompletedProcess | None:
+    """Run a fixed package query with its selector passed separately as data."""
+    if re.fullmatch(r"[A-Za-z0-9.-]{3,50}", package_name) is None:
+        raise ValueError("Invalid Windows package identity name")
+    try:
+        return subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+            env={**os.environ, "FAMILY_LAW_PACKAGE_QUERY": package_name},
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
 DEFAULT_PACKAGE_NAME = "TAHAIWebServices.NewHampshireFamilyLawLLM"
+
+
+def query_package_registration(package_name: str = DEFAULT_PACKAGE_NAME) -> dict[str, str]:
+    command = (
+        "$pkg = Get-AppxPackage -Name $env:FAMILY_LAW_PACKAGE_QUERY -ErrorAction SilentlyContinue | "
+        "Select-Object -First 1 PackageFullName,InstallLocation,@{Name='Version';Expression={[string]$_.Version}}; "
+        "if ($pkg) { $pkg | ConvertTo-Json -Compress }"
+    )
+    completed = run_package_query(command, package_name)
+    if completed is None or completed.returncode != 0:
+        return {}
+    try:
+        payload = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return {}
+    fields = ("PackageFullName", "InstallLocation", "Version")
+    if not isinstance(payload, dict) or not all(
+        isinstance(payload.get(key), str) and payload[key].strip() for key in fields
+    ):
+        return {}
+    if not payload["PackageFullName"].casefold().startswith(package_name.casefold() + "_"):
+        return {}
+    return {key: payload[key] for key in fields}
 
 
 @dataclass(frozen=True)
@@ -51,42 +93,19 @@ def resolve_installed_runtime_executable(
 ) -> InstalledRuntimeResolution:
     """Resolve the installed Store package executable, or fall back to the bundled runtime."""
 
-    command = (
-        f"$pkg = Get-AppxPackage -Name '{package_name}' -ErrorAction SilentlyContinue | "
-        "Select-Object -First 1 PackageFullName,InstallLocation,Version; "
-        "if ($pkg) { $pkg | ConvertTo-Json -Compress }"
-    )
-    try:
-        completed = subprocess.run(
-            ["powershell", "-NoProfile", "-Command", command],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except FileNotFoundError:
-        completed = None
-
-    if completed and completed.returncode == 0 and completed.stdout.strip():
-        try:
-            payload = json.loads(completed.stdout)
-        except json.JSONDecodeError:
-            payload = None
-        if isinstance(payload, dict):
-            install_location = str(payload.get("InstallLocation") or "").strip()
-            package_full_name = str(payload.get("PackageFullName") or "").strip()
-            version = str(payload.get("Version") or "").strip()
-            if install_location:
-                exe = Path(install_location) / APP_EXECUTABLE_NAME
-                if exe.is_file():
-                    return InstalledRuntimeResolution(
-                        package_name=package_name,
-                        package_full_name=package_full_name,
-                        install_location=install_location,
-                        version=version,
-                        executable_path=str(exe),
-                        source="appx_package",
-                        available=True,
-                    )
+    registration = query_package_registration(package_name)
+    if registration:
+        exe = Path(registration["InstallLocation"]) / APP_EXECUTABLE_NAME
+        if exe.is_file():
+            return InstalledRuntimeResolution(
+                package_name=package_name,
+                package_full_name=registration["PackageFullName"],
+                install_location=registration["InstallLocation"],
+                version=registration["Version"],
+                executable_path=str(exe),
+                source="appx_package",
+                available=True,
+            )
 
     fallback_exe = _fallback_runtime_executable(fallback_runtime_root)
     if fallback_exe is not None:

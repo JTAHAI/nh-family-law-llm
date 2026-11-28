@@ -13,7 +13,8 @@ from docx import Document
 
 from legal.document_intelligence.service import analyze_document, document_intelligence_status
 from legal.retrieval.optional_backends import optional_backend_status
-from nh_family_law_llm.installed_runtime import resolve_installed_runtime_executable
+from nh_family_law_llm.install_lifecycle_qualification import _package_registration, _start_menu_entries
+from nh_family_law_llm.installed_runtime import DEFAULT_PACKAGE_NAME, resolve_installed_runtime_executable
 from nh_family_law_llm.local_only_boundary import LocalOnlyNetworkBlocked, local_only_network_boundary
 
 
@@ -64,13 +65,47 @@ def test_resolve_installed_runtime_executable_prefers_appx_location(monkeypatch,
         stdout=json.dumps(payload),
         stderr="",
     )
-    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: completed)
+    def query(arguments, **kwargs):
+        assert DEFAULT_PACKAGE_NAME not in arguments[-1]
+        assert kwargs["env"]["FAMILY_LAW_PACKAGE_QUERY"] == DEFAULT_PACKAGE_NAME
+        assert kwargs["timeout"] == 30
+        return completed
+
+    monkeypatch.setattr(subprocess, "run", query)
 
     resolution = resolve_installed_runtime_executable()
     assert resolution.available is True
     assert resolution.source == "appx_package"
     assert resolution.executable_path == str(install / "NHFamilyLawLLM.exe")
     assert resolution.install_location == str(install)
+
+
+def test_installed_runtime_rejects_invalid_package_selectors(monkeypatch):
+    def unexpected_query(*args, **kwargs):
+        pytest.fail("invalid identity reached the package-query shell")
+
+    monkeypatch.setattr(subprocess, "run", unexpected_query)
+    with pytest.raises(ValueError, match="Invalid Windows package identity"):
+        resolve_installed_runtime_executable("Example.Invalid*Package")
+
+
+def test_package_registration_does_not_use_malformed_shell_output(monkeypatch):
+    monkeypatch.setattr(
+        subprocess, "run",
+        lambda *args, **kwargs: subprocess.CompletedProcess([], 0, "not JSON", ""),
+    )
+    assert _package_registration() == {}
+    assert _start_menu_entries(DEFAULT_PACKAGE_NAME) == []
+
+
+def test_start_menu_qualification_checks_app_identity_for_each_entry(monkeypatch):
+    expected = {"AppID": f"{DEFAULT_PACKAGE_NAME}_example!App", "Name": "Installed app"}
+    other = {"AppID": "Example.Unrelated_example!App", "Name": "Unrelated app"}
+    monkeypatch.setattr(
+        subprocess, "run",
+        lambda *args, **kwargs: subprocess.CompletedProcess([], 0, json.dumps([other, expected]), ""),
+    )
+    assert _start_menu_entries(DEFAULT_PACKAGE_NAME) == [expected]
 
 
 def test_local_only_network_boundary_blocks_and_restores_socket_hooks() -> None:
