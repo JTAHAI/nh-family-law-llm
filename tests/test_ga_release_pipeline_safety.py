@@ -83,7 +83,7 @@ $UseDevIdentity = __DEVELOPMENT__
         cwd=ROOT,
         capture_output=True,
         text=True,
-        timeout=30,
+        timeout=60,
         check=True,
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )

@@ -16,6 +16,8 @@ def ps(code: str) -> subprocess.CompletedProcess:
         [
             "powershell.exe",
             "-NoProfile",
+            "-NoLogo",
+            "-NonInteractive",
             "-ExecutionPolicy",
             "Bypass",
             "-Command",
@@ -23,7 +25,9 @@ def ps(code: str) -> subprocess.CompletedProcess:
         ],
         capture_output=True,
         text=True,
-        timeout=15,
+        # Include cold Windows PowerShell startup in the test-process budget.
+        timeout=60,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         cwd=ROOT,
     )
 
