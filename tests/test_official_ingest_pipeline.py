@@ -106,3 +106,15 @@ def test_guidance_identity_requires_matching_h1_and_stays_quarantined(tmp_path):
     rejected = ingestor.ingest_target(target)
     assert rejected.parser_audit.status == "parsed_empty"
     assert rejected.source_record.metadata["retrieval_quarantine_reason"] == "parser_status:parsed_empty"
+
+
+def test_electronic_filing_books_keep_separate_court_rule_identities():
+    body = '<a href="#page-id-1">Rule 11. Fictional provision.</a><section id="page-id-1"></section>'
+    citations = []
+    for court in ("circuit", "superior", "supreme"):
+        url = f"https://www.courts.nh.gov/supplemental-rules-{court}-court-new-hampshire-electronic-filing"
+        rules, audit = parse_rules_index(body, source_id=f"fictional-{court}", url=url)
+        assert audit.extracted_count == 1
+        assert f"{court.title()} Court" in rules[0].rule_set
+        citations.append(rules[0].citation)
+    assert citations == ["N.H. Cir. Ct. E-Filing R. 11", "N.H. Super. Ct. E-Filing R. 11", "N.H. Sup. Ct. E-Filing R. 11"]

@@ -3,20 +3,37 @@ from __future__ import annotations
 """Parsers for official New Hampshire Judicial Branch rule snapshots."""
 
 import re
+from urllib.parse import urlsplit
 
 from legal.connectors.base import ParserAuditEvent
 from legal.connectors.html_utils import collect_links_and_text
 from legal.corpus.source_normalizer import normalize_url, normalize_whitespace, stable_source_id
 from legal.documents.models import CourtRule, SourceLocation
 
-PARSER_VERSION = "nh_judicial_branch_rules_parser_v2"
+PARSER_VERSION = "nh_judicial_branch_rules_parser_v3"
 _RULE_RE = re.compile(r"(?:^|\n|\s)Rule\s+(?P<number>\d+(?:\.\d+)*(?:-[A-Z0-9]+)?[A-Z]?)\b", re.I)
 _RULE_DATE = r"(?:\d{1,2}/\d{1,2}/\d{2,4}|[A-Z][a-z]+\s+\d{1,2},\s+\d{4})"
 _EFFECTIVE_RE = re.compile(rf"\b(?:effective|eff\.)\s*(?:date)?\s*[:,-]?\s*({_RULE_DATE})", re.I)
 _AMENDMENT_RE = re.compile(rf"\b(amended|adopted|restyled|revised)\s*(?:effective\s*)?[:,-]?\s*({_RULE_DATE})", re.I)
+_E_FILING_COLLECTIONS = {
+    "/supplemental-rules-circuit-court-new-hampshire-electronic-filing": (
+        "Supplemental Rules of the Circuit Court of New Hampshire for Electronic Filing",
+        "N.H. Cir. Ct. E-Filing R.",
+    ),
+    "/supplemental-rules-superior-court-new-hampshire-electronic-filing": (
+        "Supplemental Rules of the Superior Court of New Hampshire for Electronic Filing",
+        "N.H. Super. Ct. E-Filing R.",
+    ),
+    "/supplemental-rules-supreme-court-new-hampshire-electronic-filing": (
+        "Supplemental Rules of the Supreme Court of New Hampshire for Electronic Filing",
+        "N.H. Sup. Ct. E-Filing R.",
+    ),
+}
 
 
 def _infer_rule_set(text: str, url: str) -> tuple[str, str]:
+    if collection := _E_FILING_COLLECTIONS.get(urlsplit(url).path.rstrip("/").lower()):
+        return collection
     combined = f"{url}\n{text[:5000]}".lower()
     if "family division" in combined or "family-division" in combined:
         return "New Hampshire Circuit Court Family Division Rules", "N.H. R. Cir. Ct. Fam. Div."
@@ -28,7 +45,7 @@ def _infer_rule_set(text: str, url: str) -> tuple[str, str]:
         return "New Hampshire Rules of Civil Procedure", "N.H. R. Civ. P."
     if "probate" in combined:
         return "New Hampshire Circuit Court Probate Division Rules", "N.H. R. Cir. Ct. Prob. Div."
-    if "electronic filing" in combined or "e-filing" in combined or "efiling" in combined:
+    if any(label in combined for label in ("electronic filing", "electronic-filing", "e-filing", "efiling")):
         return "New Hampshire Electronic Filing Rules", "N.H. E-Filing R."
     return "New Hampshire Court Rules", "N.H. Ct. R."
 
