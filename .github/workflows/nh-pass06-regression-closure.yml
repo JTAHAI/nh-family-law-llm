@@ -40,7 +40,7 @@ jobs:
                   output.write(f'{key}={path}\n')
               output.write('PYTHONDONTWRITEBYTECODE=1\n')
       - name: Install declared dependencies and synthetic PDF fixtures
-        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=12.3,<13" "jsonschema>=4,<5"
+        run: python -m pip install ".[api,dev]" "fpdf2>=2.8,<3" "Pillow>=13,<14" "jsonschema>=4,<5"
       - name: Check dependency consistency
         run: python -m pip check
       - name: Run repaired regression families

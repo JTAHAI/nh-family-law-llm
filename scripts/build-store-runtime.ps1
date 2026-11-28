@@ -182,7 +182,7 @@ if (-not (Test-Path -LiteralPath $venvPython)) {
 }
 
 if (-not $SkipDependencyInstall -and -not $Offline) {
-  & $venvPython -m pip install --upgrade pip
+  & $venvPython -m pip install --upgrade "pip>=26.2"
   if ($LASTEXITCODE -ne 0) { throw "Store build pip provisioning failed." }
   & $venvPython -m pip install -r $requirementsPath
   if ($LASTEXITCODE -ne 0) { throw "Store runtime dependency installation failed." }

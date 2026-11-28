@@ -66,7 +66,9 @@ def test_optional_build_packages_can_be_strictly_checked():
         "python-docx": "1.2.0",
         "defusedxml": "0.7.1",
         "docx-editor": "0.7.1",
-        "Pillow": "12.3.0",
+        "Pillow": "13.0.0",
+        "pip": "26.2",
+        "setuptools": "84.1.0",
         "PyInstaller": "6.21.0",
         "pyinstaller-hooks-contrib": "2026.6",
     }
@@ -77,6 +79,12 @@ def test_optional_build_packages_can_be_strictly_checked():
         strict_optional=True,
     )
     assert report.status == "pass"
+
+    versions.update(Pillow="12.3.0", pip="26.1.2", setuptools="84.0.0")
+    report = audit_dependency_floors(versions, include_api=False, include_build=True, strict_optional=True)
+    assert {item.distribution for item in report.findings if item.status == "blocked"} == {
+        "Pillow", "pip", "setuptools",
+    }
 
 
 def test_pdf_iteration_vulnerabilities_are_blocked():

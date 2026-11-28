@@ -51,9 +51,9 @@ jobs:
           ".[api,dev]"
           "psutil>=6,<8"
           "fpdf2>=2.8,<3"
-          "Pillow>=12.3,<13"
+          "Pillow>=13,<14"
           "jsonschema>=4,<5"
-          "setuptools>=69"
+          "setuptools>=84.1,<85"
           build wheel
       - name: Check dependency consistency
         run: python -m pip check

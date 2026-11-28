@@ -244,7 +244,7 @@ if FULL_DOCUMENT_INTELLIGENCE:
         datas += collect_data_files(package_name)
 # ``docx`` is the import package; the installed distribution whose metadata
 # must accompany the frozen runtime is named ``python-docx``.
-for package_name in ("fastapi", "uvicorn", "httpx", "python-multipart", "pypdf", "pypdfium2", "cryptography", "python-docx", "docx-editor"):
+for package_name in ("fastapi", "uvicorn", "httpx", "python-multipart", "pypdf", "pypdfium2", "cryptography", "python-docx", "docx-editor", "tzdata"):
     datas += copy_metadata(package_name)
 if FULL_DOCUMENT_INTELLIGENCE:
     for package_name in ("docling", "docling-slim", "docling-core", "docling-ibm-models", "docling-parse", "rapidocr", "presidio-analyzer", "tldextract", "ocrmypdf", "spacy", "sqlite-vec", "qdrant-client", "pikepdf", "fpdf2", "uharfbuzz"):

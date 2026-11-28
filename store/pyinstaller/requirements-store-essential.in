@@ -1,6 +1,7 @@
 # Essential Store runtime: no full-tier ML/document-model installation.
 # Keep shared versions identical to requirements-store-build.txt.
 PyInstaller==6.21.0
+setuptools==84.1.0
 pyinstaller-hooks-contrib==2026.6
 fastapi==0.139.2
 starlette==1.3.1
@@ -14,6 +15,7 @@ python-docx>=1.2.0,<2
 docx-editor>=0.7.1,<0.8
 defusedxml>=0.7.1,<1
 h2>=4.4.1,<5
-Pillow==12.3.0
+Pillow==13.0.0
 psutil>=6,<8
 pywin32>=311; sys_platform == "win32"
+tzdata==2026.6
